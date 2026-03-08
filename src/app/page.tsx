@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { useState } from "react";
 
-const infoItems = ["About"];
+const aboutParagraphs = [
+  "Ivan Badanjak is a documentary photographer and researcher whose work explores themes of migration, identity, and cultural preservation. He holds a Master's degree in Migration, Mobility and Development from SOAS University of London, where he developed a strong interest in the everyday experiences of diaspora communities and the ways cultural identity is maintained far from home.",
+  "Currently based in Paris, he is studying documentary photography while developing long-term visual projects that examine belonging, integration, and memory within migrant communities. Alongside his documentary work, he practices street photography as a way of exploring the city and its rhythms. He is also known for stopping to greet nearly every dog he encounters.",
+  "Ivan's work is informed by his background in humanitarian research and reflects an ongoing interest in the intersection of visual storytelling, social inquiry, and contemporary migration narratives.",
+];
 
 const qatarPrixImages = [
   {
@@ -221,6 +225,39 @@ const ssdNeonImages = [
   },
 ];
 
+const dogsImages = [
+  "IAB_20240404_00045.jpg",
+  "IAB_20250224_00093.jpg",
+  "IAB_20250322_00203.jpg",
+  "IAB_20250916_00085.jpg",
+  "IAB_20251001_01645.jpg",
+  "IAB_20251011_00091.jpg",
+  "IAB_20251011_00094.jpg",
+  "IAB_20251012_00003.jpg",
+  "IAB_20251012_00035.jpg",
+  "IAB_20251012_00088.jpg",
+  "IAB_20251024_00157.jpg",
+  "IAB_20251024_00203.jpg",
+  "IAB_20251101_00144.jpg",
+  "IAB_20251101_00157.jpg",
+  "IAB_20251101_00208.jpg",
+  "IAB_20251101_00227.jpg",
+  "IAB_20251101_00237.jpg",
+  "IAB_20251101_00241.jpg",
+  "IAB_20251103_00005.jpg",
+  "IAB_20251111_00028.jpg",
+  "IAB_20251111_00140.jpg",
+  "IAB_20251111_00146.jpg",
+  "IAB_20251210_00185.jpg",
+  "IAB_20251223_00074.jpg",
+  "IAB_20251226_00099.jpg",
+  "IAB_20260104_00030.jpg",
+  "IAB_20260115_00044.jpg",
+].map((fileName, index) => ({
+  src: `/Photo%20Gallery/Doggos/${fileName}`,
+  alt: `Dogs photo ${index + 1}`,
+}));
+
 const presences = [
   {
     name: "Instagram",
@@ -241,8 +278,14 @@ const presences = [
 
 export default function Home() {
   const [activeGallery, setActiveGallery] = useState<
-    "protests" | "qatar-prix" | "paris-fashion-week-2025" | "ssd-neon" | null
+    | "protests"
+    | "qatar-prix"
+    | "paris-fashion-week-2025"
+    | "ssd-neon"
+    | "dogs"
+    | null
   >("protests");
+  const [isAboutView, setIsAboutView] = useState(false);
   const [isGridView, setIsGridView] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
@@ -255,6 +298,8 @@ export default function Home() {
         ? "Paris Fashion Week 2025"
       : activeGallery === "ssd-neon"
         ? "SSD Neon"
+      : activeGallery === "dogs"
+        ? "Dogs"
       : null;
 
   const activeGalleryImages =
@@ -266,6 +311,8 @@ export default function Home() {
         ? parisFashionWeekImages
       : activeGallery === "ssd-neon"
         ? ssdNeonImages
+      : activeGallery === "dogs"
+        ? dogsImages
       : [];
 
   const currentImage =
@@ -276,25 +323,39 @@ export default function Home() {
             activeGalleryImages.length
         ]
       : null;
-  const isSsdNeonGallery = activeGallery === "ssd-neon";
+  const isStrictGridGallery =
+    activeGallery === "ssd-neon" || activeGallery === "protests";
 
   const openGallery = (
-    gallery: "protests" | "qatar-prix" | "paris-fashion-week-2025" | "ssd-neon",
+    gallery:
+      | "protests"
+      | "qatar-prix"
+      | "paris-fashion-week-2025"
+      | "ssd-neon"
+      | "dogs",
   ) => {
     setActiveGallery(gallery);
+    setIsAboutView(false);
     setCurrentSlideIndex(0);
+  };
+
+  const openAbout = () => {
+    setIsAboutView(true);
+    setActiveGallery(null);
   };
 
   return (
     <div className="page-shell">
       <div className="flex justify-end px-6 pt-6 md:px-10">
-        <button
-          type="button"
-          onClick={() => setIsGridView((current) => !current)}
-          className="border border-line px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-muted transition-colors hover:text-ink"
-        >
-          {isGridView ? "Slideshow View" : "Grid View"}
-        </button>
+        {activeGallery && !isAboutView ? (
+          <button
+            type="button"
+            onClick={() => setIsGridView((current) => !current)}
+            className="border border-line px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-muted transition-colors hover:text-ink"
+          >
+            {isGridView ? "Slideshow View" : "Grid View"}
+          </button>
+        ) : null}
       </div>
       <div className="flex w-full flex-1 flex-col gap-10 px-6 pb-10 pt-10 md:flex-row md:px-10 lg:gap-16">
         <aside className="w-full md:w-1/6 md:flex-none md:self-start md:sticky md:top-6 md:h-fit">
@@ -324,6 +385,15 @@ export default function Home() {
                 }`}
               >
                 Protests
+              </button>
+              <button
+                type="button"
+                onClick={() => openGallery("dogs")}
+                className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-ink ${
+                  activeGallery === "dogs" ? "text-ink" : "text-muted"
+                }`}
+              >
+                Dogs
               </button>
               <details className="group">
                 <summary className="summary-clean text-sm text-muted transition-colors hover:text-ink">
@@ -375,16 +445,21 @@ export default function Home() {
                 Info
               </p>
               <div className="mt-4 grid gap-2 text-sm">
-                {infoItems.map((item) => (
-                  <span
-                    key={item}
-                    className="text-sm text-muted transition-colors hover:text-ink"
-                  >
-                    {item}
-                  </span>
-                ))}
+                <button
+                  type="button"
+                  onClick={openAbout}
+                  className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-ink ${
+                    isAboutView ? "text-ink" : "text-muted"
+                  }`}
+                >
+                  About
+                </button>
               </div>
-              <div className="mt-4 flex items-center gap-3">
+              <div className="mt-4 border-t border-line" />
+              <p className="mt-4 text-xs uppercase tracking-[0.3em] text-muted">
+                Contact
+              </p>
+              <div className="mt-3 flex items-center gap-3">
                 {presences.map((presence) => (
                   <a
                     key={presence.name}
@@ -406,7 +481,6 @@ export default function Home() {
               <div className="mt-4 grid gap-2 text-sm">
                 <span className="text-sm text-muted">ivan.badanjak512@gmail.com</span>
                 <span className="text-sm text-muted">+306943216408</span>
-                <span className="text-sm text-muted">www.ivanbadanjak.com</span>
               </div>
             </div>
 
@@ -414,13 +488,22 @@ export default function Home() {
         </aside>
 
         <main className="flex-1">
-          {activeGallery ? (
+          {isAboutView ? (
+            <section className="max-w-4xl">
+              <h3 className="font-display text-3xl text-ink">About</h3>
+              <div className="mt-6 grid gap-5 text-base leading-relaxed text-muted">
+                {aboutParagraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            </section>
+          ) : activeGallery ? (
             <section>
               <h3 className="font-display text-3xl text-ink">{activeGalleryTitle}</h3>
               {isGridView ? (
                 <div
                   className={
-                    isSsdNeonGallery
+                    isStrictGridGallery
                       ? "mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"
                       : "mt-6 columns-1 gap-6 md:columns-2 xl:columns-3"
                   }
@@ -429,7 +512,7 @@ export default function Home() {
                     <figure
                       key={image.src}
                       className={
-                        isSsdNeonGallery
+                        isStrictGridGallery
                           ? "w-full overflow-hidden border border-line bg-glass"
                           : "mb-6 inline-block w-full overflow-hidden border border-line bg-glass [break-inside:avoid]"
                       }
