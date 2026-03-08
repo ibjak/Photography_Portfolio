@@ -535,8 +535,7 @@ export default function Home() {
                 ))}
               </div>
               <div className="mt-4 grid gap-2 text-sm">
-                <span className="text-sm text-muted">ivan.badanjak512@gmail.com</span>
-                <span className="text-sm text-muted">+306943216408</span>
+                <span className="text-sm text-muted">ivanb.jpg@gmail.com</span>
               </div>
             </div>
 
