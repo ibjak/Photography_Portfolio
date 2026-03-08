@@ -284,7 +284,8 @@ export default function Home() {
     | "ssd-neon"
     | "dogs"
     | null
-  >("protests");
+  >(null);
+  const [isHomeView, setIsHomeView] = useState(true);
   const [isAboutView, setIsAboutView] = useState(false);
   const [isGridView, setIsGridView] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -335,19 +336,29 @@ export default function Home() {
       | "dogs",
   ) => {
     setActiveGallery(gallery);
+    setIsHomeView(false);
     setIsAboutView(false);
     setCurrentSlideIndex(0);
   };
 
   const openAbout = () => {
+    setIsHomeView(false);
     setIsAboutView(true);
     setActiveGallery(null);
+  };
+
+  const openHome = () => {
+    setIsHomeView(true);
+    setIsAboutView(false);
+    setActiveGallery(null);
+    setIsGridView(false);
+    setCurrentSlideIndex(0);
   };
 
   return (
     <div className="page-shell">
       <div className="flex justify-end px-6 pt-6 md:px-10">
-        {activeGallery && !isAboutView ? (
+        {!isHomeView && activeGallery && !isAboutView ? (
           <button
             type="button"
             onClick={() => setIsGridView((current) => !current)}
@@ -357,13 +368,26 @@ export default function Home() {
           </button>
         ) : null}
       </div>
-      <div className="flex w-full flex-1 flex-col gap-10 px-6 pb-10 pt-10 md:flex-row md:px-10 lg:gap-16">
-        <aside className="w-full md:w-1/6 md:flex-none md:self-start md:sticky md:top-6 md:h-fit">
-          <div className="mt-8 md:mt-0">
+      <div
+        className={
+          isHomeView
+            ? "flex w-full flex-1 items-center justify-center px-6 pb-10 pt-10 md:px-10"
+            : "flex w-full flex-1 flex-col gap-10 px-6 pb-10 pt-10 md:flex-row md:px-10 lg:gap-16"
+        }
+      >
+        <aside
+          className={
+            isHomeView
+              ? "w-full max-w-md"
+              : "w-full md:w-1/6 md:flex-none md:self-start md:sticky md:top-6 md:h-fit"
+          }
+        >
+          <div className={isHomeView ? "mt-0" : "mt-8 md:mt-0"}>
             <div className="mb-4 pt-2">
               <div className="flex items-center">
                 <Link
                   href="/"
+                  onClick={openHome}
                   className="font-display text-4xl leading-none font-bold text-ink md:text-5xl"
                 >
                   Ivan Badanjak
@@ -487,7 +511,7 @@ export default function Home() {
           </div>
         </aside>
 
-        <main className="flex-1">
+        {!isHomeView ? <main className="flex-1">
           {isAboutView ? (
             <section className="max-w-4xl">
               <h3 className="font-display text-3xl text-ink">About</h3>
@@ -570,7 +594,7 @@ export default function Home() {
               Select a subheading to load photos.
             </section>
           )}
-        </main>
+        </main> : null}
       </div>
     </div>
   );
