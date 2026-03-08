@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const aboutParagraphs = [
   "Ivan Badanjak is a documentary photographer and researcher whose work explores themes of migration, identity, and cultural preservation. He holds a Master's degree in Migration, Mobility and Development from SOAS University of London, where he developed a strong interest in the everyday experiences of diaspora communities and the ways cultural identity is maintained far from home.",
@@ -355,6 +355,38 @@ export default function Home() {
     setCurrentSlideIndex(0);
   };
 
+  const canUseArrowNavigation =
+    !isHomeView && !isAboutView && !isGridView && activeGalleryImages.length > 0;
+
+  useEffect(() => {
+    if (!canUseArrowNavigation) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const isTypingTarget =
+        target?.tagName === "INPUT" ||
+        target?.tagName === "TEXTAREA" ||
+        target?.isContentEditable;
+
+      if (isTypingTarget) {
+        return;
+      }
+
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        setCurrentSlideIndex((index) => index - 1);
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        setCurrentSlideIndex((index) => index + 1);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [canUseArrowNavigation]);
+
   return (
     <div className="page-shell">
       <div className="flex justify-end px-6 pt-6 md:px-10">
@@ -554,6 +586,7 @@ export default function Home() {
                           alt={image.alt}
                           className="h-auto w-full"
                           loading="lazy"
+                          decoding="async"
                         />
                       </button>
                     </figure>
@@ -575,6 +608,8 @@ export default function Home() {
                         src={currentImage.src}
                         alt={currentImage.alt}
                         className="h-[62vh] max-w-full border border-line bg-glass object-contain md:h-[64vh]"
+                        loading="lazy"
+                        decoding="async"
                       />
                     ) : null}
                   </div>
