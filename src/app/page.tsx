@@ -276,19 +276,37 @@ const presences = [
   },
 ];
 
+type GalleryKey =
+  | "protests"
+  | "qatar-prix"
+  | "paris-fashion-week-2025"
+  | "ssd-neon"
+  | "dogs";
+
+type PersistedViewState = {
+  activeGallery: GalleryKey | null;
+  isHomeView: boolean;
+  isAboutView: boolean;
+  isGridView: boolean;
+  currentSlideIndex: number;
+};
+
+const GALLERY_KEYS: GalleryKey[] = [
+  "protests",
+  "qatar-prix",
+  "paris-fashion-week-2025",
+  "ssd-neon",
+  "dogs",
+];
+const VIEW_STATE_STORAGE_KEY = "ivan-portfolio-view-state-v1";
+
 export default function Home() {
-  const [activeGallery, setActiveGallery] = useState<
-    | "protests"
-    | "qatar-prix"
-    | "paris-fashion-week-2025"
-    | "ssd-neon"
-    | "dogs"
-    | null
-  >(null);
+  const [activeGallery, setActiveGallery] = useState<GalleryKey | null>(null);
   const [isHomeView, setIsHomeView] = useState(true);
   const [isAboutView, setIsAboutView] = useState(false);
   const [isGridView, setIsGridView] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [hasRestoredView, setHasRestoredView] = useState(false);
 
   const activeGalleryTitle =
     activeGallery === "protests"
@@ -327,17 +345,11 @@ export default function Home() {
   const isStrictGridGallery =
     activeGallery === "ssd-neon" || activeGallery === "protests";
 
-  const openGallery = (
-    gallery:
-      | "protests"
-      | "qatar-prix"
-      | "paris-fashion-week-2025"
-      | "ssd-neon"
-      | "dogs",
-  ) => {
+  const openGallery = (gallery: GalleryKey) => {
     setActiveGallery(gallery);
     setIsHomeView(false);
     setIsAboutView(false);
+    setIsGridView(true);
     setCurrentSlideIndex(0);
   };
 
@@ -354,6 +366,82 @@ export default function Home() {
     setIsGridView(false);
     setCurrentSlideIndex(0);
   };
+
+  useEffect(() => {
+    try {
+      const rawState = window.localStorage.getItem(VIEW_STATE_STORAGE_KEY);
+      if (!rawState) {
+        return;
+      }
+
+      const parsedState = JSON.parse(rawState) as Partial<PersistedViewState>;
+      const parsedGallery = parsedState.activeGallery;
+      const isValidGallery =
+        typeof parsedGallery === "string" &&
+        GALLERY_KEYS.includes(parsedGallery as GalleryKey);
+
+      let nextGallery: GalleryKey | null = isValidGallery
+        ? (parsedGallery as GalleryKey)
+        : null;
+      let nextIsHome = parsedState.isHomeView === true;
+      let nextIsAbout = parsedState.isAboutView === true;
+      const nextIsGrid = parsedState.isGridView === true;
+      const nextSlide =
+        typeof parsedState.currentSlideIndex === "number" &&
+        Number.isFinite(parsedState.currentSlideIndex)
+          ? parsedState.currentSlideIndex
+          : 0;
+
+      if (nextIsHome) {
+        nextGallery = null;
+        nextIsAbout = false;
+      } else if (nextIsAbout) {
+        nextGallery = null;
+      } else if (!nextGallery) {
+        nextIsHome = true;
+      }
+
+      setActiveGallery(nextGallery);
+      setIsHomeView(nextIsHome);
+      setIsAboutView(nextIsAbout);
+      setIsGridView(nextIsGrid);
+      setCurrentSlideIndex(nextSlide);
+    } catch {
+      // Ignore malformed persisted state and keep defaults.
+    } finally {
+      setHasRestoredView(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hasRestoredView) {
+      return;
+    }
+
+    const nextState: PersistedViewState = {
+      activeGallery,
+      isHomeView,
+      isAboutView,
+      isGridView,
+      currentSlideIndex,
+    };
+
+    try {
+      window.localStorage.setItem(
+        VIEW_STATE_STORAGE_KEY,
+        JSON.stringify(nextState),
+      );
+    } catch {
+      // Ignore localStorage write failures.
+    }
+  }, [
+    activeGallery,
+    currentSlideIndex,
+    hasRestoredView,
+    isAboutView,
+    isGridView,
+    isHomeView,
+  ]);
 
   const canUseArrowNavigation =
     !isHomeView && !isAboutView && !isGridView && activeGalleryImages.length > 0;
@@ -394,7 +482,7 @@ export default function Home() {
           <button
             type="button"
             onClick={() => setIsGridView((current) => !current)}
-            className="border border-line px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-muted transition-colors hover:text-ink"
+            className="border border-ink bg-white px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-ink transition-colors hover:bg-ink hover:text-white"
           >
             {isGridView ? "Slideshow View" : "Grid View"}
           </button>
@@ -427,7 +515,7 @@ export default function Home() {
               </div>
             </div>
             <div className="border-t border-line pt-6">
-              <p className="text-xs uppercase tracking-[0.3em] text-muted">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted">
                 Portfolio
               </p>
             </div>
@@ -436,8 +524,10 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => openGallery("protests")}
-                className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-ink ${
-                  activeGallery === "protests" ? "text-ink" : "text-muted"
+                className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
+                  activeGallery === "protests"
+                    ? "text-accent"
+                    : "text-muted"
                 }`}
               >
                 Protests
@@ -445,22 +535,26 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => openGallery("dogs")}
-                className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-ink ${
-                  activeGallery === "dogs" ? "text-ink" : "text-muted"
+                className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
+                  activeGallery === "dogs"
+                    ? "text-accent"
+                    : "text-muted"
                 }`}
               >
                 Dogs
               </button>
               <details className="group">
-                <summary className="summary-clean text-sm text-muted transition-colors hover:text-ink">
+                <summary className="summary-clean text-sm text-muted transition-colors hover:text-[#0B2A6F] group-open:text-accent">
                   Events
                 </summary>
                 <div className="mt-2 grid gap-2 pl-4">
                   <button
                     type="button"
                     onClick={() => openGallery("qatar-prix")}
-                    className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-ink ${
-                      activeGallery === "qatar-prix" ? "text-ink" : "text-muted"
+                    className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
+                      activeGallery === "qatar-prix"
+                        ? "text-accent"
+                        : "text-muted"
                     }`}
                   >
                     Qatar Prix De L&apos;Arc De Triomphe 2025
@@ -468,9 +562,9 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => openGallery("paris-fashion-week-2025")}
-                    className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-ink ${
+                    className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
                       activeGallery === "paris-fashion-week-2025"
-                        ? "text-ink"
+                        ? "text-accent"
                         : "text-muted"
                     }`}
                   >
@@ -479,15 +573,17 @@ export default function Home() {
                 </div>
               </details>
               <details className="group">
-                <summary className="summary-clean text-sm text-muted transition-colors hover:text-ink">
+                <summary className="summary-clean text-sm text-muted transition-colors hover:text-[#0B2A6F] group-open:text-accent">
                   Street Photography
                 </summary>
                 <div className="mt-2 grid gap-2 pl-4">
                   <button
                     type="button"
                     onClick={() => openGallery("ssd-neon")}
-                    className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-ink ${
-                      activeGallery === "ssd-neon" ? "text-ink" : "text-muted"
+                    className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
+                      activeGallery === "ssd-neon"
+                        ? "text-accent"
+                        : "text-muted"
                     }`}
                   >
                     SSD Neon
@@ -497,22 +593,24 @@ export default function Home() {
             </nav>
 
             <div className="mt-8 border-t border-line pt-6">
-              <p className="text-xs uppercase tracking-[0.3em] text-muted">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted">
                 Info
               </p>
               <div className="mt-4 grid gap-2 text-sm">
                 <button
                   type="button"
                   onClick={openAbout}
-                  className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-ink ${
-                    isAboutView ? "text-ink" : "text-muted"
+                  className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
+                    isAboutView
+                      ? "text-accent"
+                      : "text-muted"
                   }`}
                 >
                   About
                 </button>
               </div>
               <div className="mt-4 border-t border-line" />
-              <p className="mt-4 text-xs uppercase tracking-[0.3em] text-muted">
+              <p className="mt-4 text-xs font-semibold uppercase tracking-[0.3em] text-muted">
                 Contact
               </p>
               <div className="mt-3 flex items-center gap-3">
@@ -521,7 +619,7 @@ export default function Home() {
                     key={presence.name}
                     href={presence.href}
                     aria-label={presence.name}
-                    className="flex h-8 w-8 items-center justify-center text-ink transition hover:text-accent"
+                    className="group flex h-8 w-8 items-center justify-center"
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -529,7 +627,7 @@ export default function Home() {
                     <img
                       src={presence.iconSrc}
                       alt={presence.name}
-                      className="h-5 w-5 object-contain"
+                      className="h-5 w-5 object-contain transition-[filter] duration-200 group-hover:[filter:sepia(1)_saturate(6)_hue-rotate(346deg)_brightness(0.9)]"
                     />
                   </a>
                 ))}
