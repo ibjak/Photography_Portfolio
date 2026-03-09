@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Ivan Badanjak - Photographer",
-  description: "Portfolio of visual stories, portraiture, and interiors.",
+  description: "Portfolio of visual stories",
 };
 
 export default function RootLayout({
