@@ -303,6 +303,7 @@ const VIEW_STATE_STORAGE_KEY = "ivan-portfolio-view-state-v1";
 export default function Home() {
   const [activeGallery, setActiveGallery] = useState<GalleryKey | null>(null);
   const [isHomeView, setIsHomeView] = useState(true);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isAboutView, setIsAboutView] = useState(false);
   const [isGridView, setIsGridView] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -348,6 +349,7 @@ export default function Home() {
   const openGallery = (gallery: GalleryKey) => {
     setActiveGallery(gallery);
     setIsHomeView(false);
+    setIsMobileNavOpen(false);
     setIsAboutView(false);
     setIsGridView(true);
     setCurrentSlideIndex(0);
@@ -355,12 +357,14 @@ export default function Home() {
 
   const openAbout = () => {
     setIsHomeView(false);
+    setIsMobileNavOpen(false);
     setIsAboutView(true);
     setActiveGallery(null);
   };
 
   const openHome = () => {
     setIsHomeView(true);
+    setIsMobileNavOpen(false);
     setIsAboutView(false);
     setActiveGallery(null);
     setIsGridView(false);
@@ -503,7 +507,48 @@ export default function Home() {
           }
         >
           <div className={isHomeView ? "mt-0" : "mt-8 md:mt-0"}>
-            <div className="mb-4 pt-2">
+            {!isHomeView ? (
+              <div className="mb-4 flex items-center justify-between md:hidden">
+                <Link
+                  href="/"
+                  onClick={openHome}
+                  className="font-display text-3xl leading-none font-bold text-ink"
+                >
+                  Ivan Badanjak
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setIsMobileNavOpen((current) => !current)}
+                  className="inline-flex h-10 w-10 items-center justify-center border border-line text-ink transition-colors hover:text-[#0B2A6F]"
+                  aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
+                >
+                  {isMobileNavOpen ? (
+                    <svg
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M6 6l12 12M18 6L6 18" />
+                    </svg>
+                  ) : (
+                    <svg
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M4 7h16M4 12h16M4 17h16" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            ) : null}
+            <div className={`mb-4 pt-2 ${!isHomeView ? "hidden md:block" : ""}`}>
               <div className="flex items-center">
                 <Link
                   href="/"
@@ -514,6 +559,11 @@ export default function Home() {
                 </Link>
               </div>
             </div>
+            <div
+              className={
+                !isHomeView && !isMobileNavOpen ? "hidden md:block" : ""
+              }
+            >
             <div className="border-t border-line pt-6">
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted">
                 Portfolio
@@ -636,6 +686,7 @@ export default function Home() {
                 <span className="text-sm text-muted">ivanb.jpg@gmail.com</span>
               </div>
             </div>
+            </div>
 
           </div>
         </aside>
@@ -699,12 +750,12 @@ export default function Home() {
                   >
                     ←
                   </button>
-                  <div className="flex flex-1 items-center justify-center">
+                  <div className="flex min-w-0 flex-1 items-center justify-center">
                     {currentImage ? (
                       <img
                         src={currentImage.src}
                         alt={currentImage.alt}
-                        className="h-[62vh] max-w-full border border-line bg-glass object-contain md:h-[64vh]"
+                        className="h-auto w-auto max-h-[68vh] max-w-full border border-line bg-paper"
                         loading="lazy"
                         decoding="async"
                       />
