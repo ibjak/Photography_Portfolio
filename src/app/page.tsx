@@ -481,22 +481,11 @@ export default function Home() {
 
   return (
     <div className="page-shell">
-      <div className="flex justify-end px-6 pt-6 md:px-10">
-        {!isHomeView && activeGallery && !isAboutView ? (
-          <button
-            type="button"
-            onClick={() => setIsGridView((current) => !current)}
-            className="border border-ink bg-white px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-ink transition-colors hover:bg-ink hover:text-white"
-          >
-            {isGridView ? "Slideshow View" : "Grid View"}
-          </button>
-        ) : null}
-      </div>
       <div
         className={
           isHomeView
-            ? "flex w-full flex-1 items-center justify-center px-6 pb-10 pt-10 md:px-10"
-            : "flex w-full flex-1 flex-col gap-10 px-6 pb-10 pt-10 md:flex-row md:px-10 lg:gap-16"
+            ? "flex w-full flex-1 items-center justify-center px-6 pb-10 pt-6 md:px-10"
+            : "flex w-full flex-1 flex-col gap-10 px-6 pb-10 pt-6 md:flex-row md:px-10 lg:gap-16"
         }
       >
         <aside
@@ -506,7 +495,7 @@ export default function Home() {
               : "w-full md:w-1/6 md:flex-none md:self-start md:sticky md:top-6 md:h-fit"
           }
         >
-          <div className={isHomeView ? "mt-0" : "mt-8 md:mt-0"}>
+          <div className={isHomeView ? "mt-0" : "mt-4 md:mt-0"}>
             {!isHomeView ? (
               <div className="mb-4 flex items-center justify-between md:hidden">
                 <Link
@@ -703,7 +692,16 @@ export default function Home() {
             </section>
           ) : activeGallery ? (
             <section>
-              <h3 className="font-display text-3xl text-ink">{activeGalleryTitle}</h3>
+              <div className="flex flex-wrap items-center gap-3">
+                <h3 className="font-display text-3xl text-ink">{activeGalleryTitle}</h3>
+                <button
+                  type="button"
+                  onClick={() => setIsGridView((current) => !current)}
+                  className="ml-auto border border-ink bg-white px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-ink transition-colors hover:bg-ink hover:text-white"
+                >
+                  {isGridView ? "Slideshow View" : "Grid View"}
+                </button>
+              </div>
               {isGridView ? (
                 <div
                   className={
@@ -741,16 +739,27 @@ export default function Home() {
                   ))}
                 </div>
               ) : (
-                <div className="mt-6 flex items-center gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentSlideIndex((index) => index - 1)}
-                    className="h-12 w-12 shrink-0 border border-line text-xl text-ink transition-colors hover:text-accent"
-                    aria-label="Previous photo"
-                  >
-                    ←
-                  </button>
-                  <div className="flex min-w-0 flex-1 items-center justify-center">
+                <div className="mt-6 flex justify-center">
+                  <div className="inline-flex max-w-full flex-col items-start gap-3">
+                    <div className="flex items-center gap-2 text-sm text-muted">
+                      <button
+                        type="button"
+                        onClick={() => setCurrentSlideIndex((index) => index - 1)}
+                        className="border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent"
+                        aria-label="Previous photo"
+                      >
+                        Previous
+                      </button>
+                      <span aria-hidden="true">/</span>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentSlideIndex((index) => index + 1)}
+                        className="border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent"
+                        aria-label="Next photo"
+                      >
+                        Next
+                      </button>
+                    </div>
                     {currentImage ? (
                       <img
                         src={currentImage.src}
@@ -761,14 +770,6 @@ export default function Home() {
                       />
                     ) : null}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentSlideIndex((index) => index + 1)}
-                    className="h-12 w-12 shrink-0 border border-line text-xl text-ink transition-colors hover:text-accent"
-                    aria-label="Next photo"
-                  >
-                    →
-                  </button>
                 </div>
               )}
             </section>
