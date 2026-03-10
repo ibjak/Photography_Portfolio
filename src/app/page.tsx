@@ -697,9 +697,20 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setIsGridView((current) => !current)}
-                  className="ml-auto border border-ink bg-white px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-ink transition-colors hover:bg-ink hover:text-white"
+                 className="ml-auto bg-white p-1 text-gray-900 transition-colors hover:text-accent"
                 >
-                  {isGridView ? "Slideshow View" : "Grid View"}
+                 {isGridView ? (
+                   <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+                      <rect x="4" y="6" width="18" height="18" rx="1" />
+                   </svg>
+                      ) : (
+                      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+                        <rect x="3" y="3" width="9" height="9" />
+                        <rect x="14" y="3" width="9" height="9" />
+                        <rect x="3" y="14" width="9" height="9" />
+                        <rect x="14" y="14" width="9" height="9" />
+                      </svg>
+                      )}
                 </button>
               </div>
               {isGridView ? (
