@@ -751,7 +751,16 @@ export default function Home() {
                 </div>
               ) : (
                 <div className="mt-6 flex justify-center">
-                  <div className="inline-flex max-w-full flex-col items-start gap-3">
+                  <div className="inline-flex max-w-full flex-col items-end gap-3">
+                    {currentImage ? (
+                      <img
+                        src={currentImage.src}
+                        alt={currentImage.alt}
+                        className="h-auto w-auto max-h-[68vh] max-w-full border border-line bg-paper"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : null}
                     <div className="flex items-center gap-2 text-sm text-muted">
                       <button
                         type="button"
@@ -771,15 +780,6 @@ export default function Home() {
                         Next
                       </button>
                     </div>
-                    {currentImage ? (
-                      <img
-                        src={currentImage.src}
-                        alt={currentImage.alt}
-                        className="h-auto w-auto max-h-[68vh] max-w-full border border-line bg-paper"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    ) : null}
                   </div>
                 </div>
               )}
