@@ -373,7 +373,7 @@ export default function Home() {
 
   useEffect(() => {
     try {
-      const rawState = window.localStorage.getItem(VIEW_STATE_STORAGE_KEY);
+      const rawState = window.sessionStorage.getItem(VIEW_STATE_STORAGE_KEY);
       if (!rawState) {
         return;
       }
@@ -431,7 +431,7 @@ export default function Home() {
     };
 
     try {
-      window.localStorage.setItem(
+      window.sessionStorage.setItem(
         VIEW_STATE_STORAGE_KEY,
         JSON.stringify(nextState),
       );
