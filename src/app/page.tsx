@@ -274,6 +274,11 @@ const presences = [
     href: "https://www.linkedin.com/in/ivan-alexios-badanjak/",
     iconSrc: "/social-icons/linkedin.png",
   },
+  {
+    name: "The_Dographer",
+    href: "https://www.instagram.com/the.dographer111/",
+    iconSrc: "/social-icons/dographer.png",
+  },
 ];
 
 type GalleryKey =
