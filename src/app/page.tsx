@@ -671,7 +671,7 @@ export default function Home() {
                     <img
                       src={presence.iconSrc}
                       alt={presence.name}
-                      className="h-5 w-5 object-contain opacity-80 hover:opacity-100 transition-opacity"
+                      className="h-5 w-5 object-contain transition-[filter] duration-200 group-hover:[filter:sepia(1)_saturate(6)_hue-rotate(346deg)_brightness(0.9)]"
                     />
                   </a>
                 ))}
