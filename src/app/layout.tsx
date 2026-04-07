@@ -54,15 +54,6 @@ export const metadata: Metadata = {
     type: "website",
   },
 
-  // ✅ Twitter preview
-  twitter: {
-    card: "summary_large_image",
-    title: "Ivan Badanjak | Photography",
-    description:
-      "Documentary and portrait photography exploring identity and diaspora.",
-    images: ["/og-image.jpg"],
-  },
-
   // ✅ Crawling rules
   robots: {
     index: true,
