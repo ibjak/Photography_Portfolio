@@ -485,7 +485,7 @@ export default function Home() {
   }, [canUseArrowNavigation]);
 
   return (
-    <div className="page-shell">
+    <div className="page-shell" onContextMenu={(e) => e.preventDefault()}>
       <div
         className={
           isHomeView
