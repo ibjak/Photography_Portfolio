@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "./globals.css";
 
 // ✅ Viewport (important for responsiveness)
 export const viewport = {
