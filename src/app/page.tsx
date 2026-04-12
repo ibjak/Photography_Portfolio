@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -308,7 +309,6 @@ const VIEW_STATE_STORAGE_KEY = "ivan-portfolio-view-state-v1";
 export default function Home() {
   const [activeGallery, setActiveGallery] = useState<GalleryKey | null>(null);
   const [isHomeView, setIsHomeView] = useState(true);
-  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isAboutView, setIsAboutView] = useState(false);
   const [isGridView, setIsGridView] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -354,7 +354,6 @@ export default function Home() {
   const openGallery = (gallery: GalleryKey) => {
     setActiveGallery(gallery);
     setIsHomeView(false);
-    setIsMobileNavOpen(false);
     setIsAboutView(false);
     setIsGridView(true);
     setCurrentSlideIndex(0);
@@ -362,14 +361,12 @@ export default function Home() {
 
   const openAbout = () => {
     setIsHomeView(false);
-    setIsMobileNavOpen(false);
     setIsAboutView(true);
     setActiveGallery(null);
   };
 
   const openHome = () => {
     setIsHomeView(true);
-    setIsMobileNavOpen(false);
     setIsAboutView(false);
     setActiveGallery(null);
     setIsGridView(false);
@@ -488,202 +485,150 @@ export default function Home() {
     <div className="page-shell" onContextMenu={(e) => e.preventDefault()}>
       <div
         className={
-          isHomeView
-            ? "flex w-full flex-1 items-center justify-center px-6 pb-10 pt-6 md:px-10"
-            : "flex w-full flex-1 flex-col gap-10 px-6 pb-10 pt-6 md:flex-row md:px-10 lg:gap-16"
+        isHomeView
+        ? "flex w-full flex-1 items-center justify-center px-6 pb-10 pt-6 md:px-10"
+        : "flex w-full flex-1 flex-col gap-6 px-6 pb-10 pt-6 md:px-10"
         }
-      >
-        <aside
-          className={
-            isHomeView
-              ? "w-full max-w-md"
-              : "w-full md:w-1/6 md:flex-none md:self-start md:sticky md:top-6 md:h-fit"
-          }
+      >   
+        <header
+          className="w-full border-b border-line pb-4 mb-6 px-6 md:px-10"
         >
           <div className={isHomeView ? "mt-0" : "mt-4 md:mt-0"}>
-            {!isHomeView ? (
-              <div className="mb-4 flex items-center justify-between md:hidden">
-                <Link
-                  href="/"
-                  onClick={openHome}
-                  className="font-display text-3xl leading-none font-bold text-ink"
+            <div className="grid grid-cols-3 items-center w-full">
+              <Link
+                href="/"
+                onClick={openHome}
+                className="font-display text-3xl md:text-4xl font-bold text-ink"
                 >
-                  Ivan Badanjak
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setIsMobileNavOpen((current) => !current)}
-                  className="inline-flex h-10 w-10 items-center justify-center border border-line text-ink transition-colors hover:text-[#0B2A6F]"
-                  aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
-                >
-                  {isMobileNavOpen ? (
-                    <svg
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M6 6l12 12M18 6L6 18" />
-                    </svg>
-                  ) : (
-                    <svg
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M4 7h16M4 12h16M4 17h16" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-            ) : null}
-            <div className={`mb-4 pt-2 ${!isHomeView ? "hidden md:block" : ""}`}>
-              <div className="flex items-center">
-                <Link
-                  href="/"
-                  onClick={openHome}
-                  className="font-display text-4xl leading-none font-bold text-ink md:text-5xl"
-                >
-                  Ivan Badanjak
-                </Link>
-              </div>
-            </div>
-            <div
-              className={
-                !isHomeView && !isMobileNavOpen ? "hidden md:block" : ""
-              }
+                Ivan Badanjak
+              </Link>
+
+        <nav className="flex items-center gap-6 text-sm justify-self-center col-start-2">
+          <div className="flex flex-wrap items-center gap-6">
+            <button
+              type="button"
+              onClick={() => openGallery("protests")}
+              className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
+                activeGallery === "protests"
+                  ? "text-[var(--accent-color)] underline underline-offset-4"
+                  : "text-muted"
+              }`}
             >
-            <div className="border-t border-line pt-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted">
-                Portfolio
-              </p>
-            </div>
-
-            <nav className="mt-6 grid gap-2 text-sm">
+              Protests
+            </button>
+            <button
+              type="button"
+              onClick={() => openGallery("dogs")}
+              className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
+                activeGallery === "dogs"
+                  ? "text-[var(--accent-color)] underline underline-offset-4"
+                  : "text-muted"
+              }`}
+            >
+              Dogs
+            </button>
+            {/* Events dropdown (hover-based) */}
+            <div className="relative group">
               <button
-                type="button"
-                onClick={() => openGallery("protests")}
-                className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
-                  activeGallery === "protests"
-                    ? "text-accent"
+                className={`text-sm transition-colors hover:text-[#0B2A6F] ${
+                  activeGallery === "qatar-prix" ||
+                  activeGallery === "paris-fashion-week-2025"
+                    ? "text-[var(--accent-color)] underline underline-offset-4"
                     : "text-muted"
                 }`}
               >
-                Protests
+                Events
               </button>
-              <button
-                type="button"
-                onClick={() => openGallery("dogs")}
-                className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
-                  activeGallery === "dogs"
-                    ? "text-accent"
-                    : "text-muted"
-                }`}
-              >
-                Dogs
-              </button>
-              <details className="group">
-                <summary className="summary-clean text-sm text-muted transition-colors hover:text-[#0B2A6F] group-open:text-accent">
-                  Events
-                </summary>
-                <div className="mt-2 grid gap-2 pl-4">
-                  <button
-                    type="button"
-                    onClick={() => openGallery("qatar-prix")}
-                    className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
-                      activeGallery === "qatar-prix"
-                        ? "text-accent"
-                        : "text-muted"
-                    }`}
-                  >
-                    Qatar Prix De L&apos;Arc De Triomphe 2025
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => openGallery("paris-fashion-week-2025")}
-                    className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
-                      activeGallery === "paris-fashion-week-2025"
-                        ? "text-accent"
-                        : "text-muted"
-                    }`}
-                  >
-                    Paris Fashion Week 2025
-                  </button>
-                </div>
-              </details>
-              <details className="group">
-                <summary className="summary-clean text-sm text-muted transition-colors hover:text-[#0B2A6F] group-open:text-accent">
-                  Street Photography
-                </summary>
-                <div className="mt-2 grid gap-2 pl-4">
-                  <button
-                    type="button"
-                    onClick={() => openGallery("ssd-neon")}
-                    className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
-                      activeGallery === "ssd-neon"
-                        ? "text-accent"
-                        : "text-muted"
-                    }`}
-                  >
-                    SSD Neon
-                  </button>
-                </div>
-              </details>
-            </nav>
-
-            <div className="mt-8 border-t border-line pt-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted">
-                Info
-              </p>
-              <div className="mt-4 grid gap-2 text-sm">
+              <div className="absolute left-0 top-full pt-2 hidden group-hover:grid gap-2 p-3 bg-white border border-line shadow-md min-w-[220px] z-50">
                 <button
                   type="button"
-                  onClick={openAbout}
+                  onClick={() => openGallery("qatar-prix")}
                   className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
-                    isAboutView
+                    activeGallery === "qatar-prix" ? "text-accent" : "text-muted"
+                  }`}
+                >
+                  Qatar Prix De L&apos;Arc De Triomphe 2025
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openGallery("paris-fashion-week-2025")}
+                  className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
+                    activeGallery === "paris-fashion-week-2025"
                       ? "text-accent"
                       : "text-muted"
                   }`}
                 >
-                  About
+                  Paris Fashion Week 2025
                 </button>
               </div>
-              <div className="mt-4 border-t border-line" />
-              <p className="mt-4 text-xs font-semibold uppercase tracking-[0.3em] text-muted">
-                Contact
-              </p>
-              <div className="mt-3 flex items-center gap-3">
-                {presences.map((presence) => (
-                  <a
-                    key={presence.name}
-                    href={presence.href}
-                    aria-label={presence.name}
-                    className="group flex h-8 w-8 items-center justify-center"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <span className="sr-only">{presence.name}</span>
-                    <img
-                      src={presence.iconSrc}
-                      alt={presence.name}
-                      className="h-5 w-5 object-contain transition-[filter] duration-200 group-hover:[filter:sepia(1)_saturate(6)_hue-rotate(346deg)_brightness(0.9)]"
-                    />
-                  </a>
-                ))}
-              </div>
-              <div className="mt-4 grid gap-2 text-sm">
-                <span className="text-sm text-muted">ivanb.jpg@gmail.com</span>
+            </div>
+            {/* Street Photography dropdown (hover-based) */}
+            <div className="relative group">
+              <button
+                className={`text-sm transition-colors hover:text-[#0B2A6F] ${
+                  activeGallery === "ssd-neon"
+                    ? "text-[var(--accent-color)] underline underline-offset-4"
+                    : "text-muted"
+                }`}
+              >
+                Street Photography
+              </button>
+              <div className="absolute left-0 top-full pt-2 hidden group-hover:grid gap-2 p-3 bg-white border border-line shadow-md min-w-[260px] z-50">
+                <button
+                  type="button"
+                  onClick={() => openGallery("ssd-neon")}
+                  className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
+                    activeGallery === "ssd-neon"
+                      ? "text-accent"
+                      : "text-muted"
+                  }`}
+                >
+                  SSD Neon
+                </button>
               </div>
             </div>
-            </div>
-
+            <button
+              type="button"
+              onClick={openAbout}
+              className={`border-0 bg-transparent p-0 text-sm transition-colors hover:text-[#0B2A6F] ${
+                isAboutView
+                  ? "text-[var(--accent-color)] underline underline-offset-4"
+                  : "text-muted"
+              }`}
+            >
+              About
+            </button>
           </div>
-        </aside>
+          
+        </nav>
+        <div className="flex items-center gap-6 justify-self-end col-start-3">
+            <div className="flex items-center gap-3">
+              {presences.map((presence) => (
+                <a
+                  key={presence.name}
+                  href={presence.href}
+                  aria-label={presence.name}
+                  className="group flex h-8 w-8 items-center justify-center"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span className="sr-only">{presence.name}</span>
+                  <img
+                    src={presence.iconSrc}
+                    alt={presence.name}
+                    className="h-5 w-5 object-contain transition-[filter] duration-200 group-hover:[filter:sepia(1)_saturate(6)_hue-rotate(346deg)_brightness(0.9)]"
+                  />
+                </a>
+              ))}
+            </div>
+            <span className="text-sm text-muted whitespace-nowrap">
+              ivanb.jpg@gmail.com
+            </span>
+          </div>
+    </div>
+
+  </div>
+  </header>
 
         {!isHomeView ? <main className="flex-1">
           {isAboutView ? (
