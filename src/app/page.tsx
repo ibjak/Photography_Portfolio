@@ -565,8 +565,8 @@ export default function Home() {
                 onClick={() => openGallery("protests")}
                 className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
                   activeGallery === "protests"
-                    ? "text-accent"
-                    : "text-muted"
+                    ? "text-accent underline underline-offset-4"
+                    : "text-ink"
                 }`}
               >
                 Protests
@@ -576,14 +576,14 @@ export default function Home() {
                 onClick={() => openGallery("dogs")}
                 className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
                   activeGallery === "dogs"
-                    ? "text-accent"
-                    : "text-muted"
+                    ? "text-accent underline underline-offset-4"
+                    : "text-ink"
                 }`}
               >
                 Dogs
               </button>
               <details className="group">
-                <summary className="summary-clean text-sm text-muted transition-colors hover:text-[#0B2A6F] group-open:text-accent">
+                <summary className="summary-clean text-sm text-ink transition-colors hover:text-[#0B2A6F] group-open:text-accent">
                   Events
                 </summary>
                 <div className="mt-2 grid gap-2 pl-4">
@@ -592,8 +592,8 @@ export default function Home() {
                     onClick={() => openGallery("qatar-prix")}
                     className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
                       activeGallery === "qatar-prix"
-                        ? "text-accent"
-                        : "text-muted"
+                        ? "text-accent underline underline-offset-4"
+                        : "text-ink"
                     }`}
                   >
                     Qatar Prix De L&apos;Arc De Triomphe 2025
@@ -603,8 +603,8 @@ export default function Home() {
                     onClick={() => openGallery("paris-fashion-week-2025")}
                     className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
                       activeGallery === "paris-fashion-week-2025"
-                        ? "text-accent"
-                        : "text-muted"
+                        ? "text-accent underline underline-offset-4"
+                        : "text-ink"
                     }`}
                   >
                     Paris Fashion Week 2025
@@ -612,7 +612,7 @@ export default function Home() {
                 </div>
               </details>
               <details className="group">
-                <summary className="summary-clean text-sm text-muted transition-colors hover:text-[#0B2A6F] group-open:text-accent">
+                <summary className="summary-clean text-sm text-ink transition-colors hover:text-[#0B2A6F] group-open:text-accent">
                   Street Photography
                 </summary>
                 <div className="mt-2 grid gap-2 pl-4">
@@ -621,8 +621,8 @@ export default function Home() {
                     onClick={() => openGallery("ssd-neon")}
                     className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
                       activeGallery === "ssd-neon"
-                        ? "text-accent"
-                        : "text-muted"
+                        ? "text-accent underline underline-offset-4"
+                        : "text-ink"
                     }`}
                   >
                     SSD Neon
@@ -634,8 +634,8 @@ export default function Home() {
                   onClick={openAbout}
                   className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
                     isAboutView
-                      ? "text-accent"
-                      : "text-muted"
+                      ? "text-accent underline underline-offset-4"
+                      : "text-ink"
                   }`}
                 >
                   About
