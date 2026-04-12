@@ -497,7 +497,7 @@ export default function Home() {
           className={
             isHomeView
               ? "w-full max-w-md"
-              : "w-full md:w-1/6 md:flex-none md:self-start md:sticky md:top-6 md:h-fit"
+              : "w-full md:w-1/8 md:flex-none md:self-start md:sticky md:top-6 md:h-fit"
           }
         >
           <div className={isHomeView ? "mt-0" : "mt-4 md:mt-0"}>
@@ -558,11 +558,6 @@ export default function Home() {
                 !isHomeView && !isMobileNavOpen ? "hidden md:block" : ""
               }
             >
-            <div className="border-t border-line pt-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted">
-                Portfolio
-              </p>
-            </div>
 
             <nav className="mt-6 grid gap-2 text-sm">
               <button
@@ -634,13 +629,6 @@ export default function Home() {
                   </button>
                 </div>
               </details>
-            </nav>
-
-            <div className="mt-8 border-t border-line pt-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted">
-                Info
-              </p>
-              <div className="mt-4 grid gap-2 text-sm">
                 <button
                   type="button"
                   onClick={openAbout}
@@ -652,18 +640,15 @@ export default function Home() {
                 >
                   About
                 </button>
-              </div>
-              <div className="mt-4 border-t border-line" />
-              <p className="mt-4 text-xs font-semibold uppercase tracking-[0.3em] text-muted">
-                Contact
-              </p>
-              <div className="mt-3 flex items-center gap-3">
+            </nav>
+
+              <div className="mt-10 flex items-center gap-3">
                 {presences.map((presence) => (
                   <a
                     key={presence.name}
                     href={presence.href}
                     aria-label={presence.name}
-                    className="group flex h-8 w-8 items-center justify-center"
+                    className="group flex h-8 w-7 items-center justify-left"
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -676,10 +661,13 @@ export default function Home() {
                   </a>
                 ))}
               </div>
-              <div className="mt-4 grid gap-2 text-sm">
+              <div className="mt-1 grid gap-2 text-sm">
                 <span className="text-sm text-muted">ivanb.jpg@gmail.com</span>
               </div>
-            </div>
+              <div className="mt-8 text-xs text-muted">
+                © {new Date().getFullYear()} Ivan Badanjak. All rights reserved.
+              </div>
+            
             </div>
 
           </div>
