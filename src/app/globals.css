@@ -106,11 +106,11 @@ a {
 }
 
 .home-slide-enter {
-  animation: homeSlideEnter 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: homeSlideEnter 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .home-slide-exit {
-  animation: homeSlideExit 0.85s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: homeSlideExit 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes fadeUp {

@@ -275,12 +275,12 @@ const dogsImages = [
 }));
 
 const homeSlideshowImages = [
-  frenchDelegationReturnsImages[0],
-  qatarPrixImages[0],
-  parisFashionWeekImages[0],
-  ssdNeonImages[0],
-  dogsImages[0],
-].filter((image): image is { src: string; alt: string } => Boolean(image));
+  ...frenchDelegationReturnsImages.slice(0, 3),
+  ...qatarPrixImages.slice(0, 3),
+  ...parisFashionWeekImages.slice(0, 3),
+  ...ssdNeonImages.slice(0, 3),
+  ...dogsImages.slice(0, 3),
+];
 
 const presences = [
   {
@@ -537,7 +537,7 @@ export default function Home() {
         setPreviousHomeSlideIndex(index);
         return index + 1;
       });
-    }, 4200);
+    }, 6500);
 
     return () => window.clearInterval(intervalId);
   }, [isHomeView]);
@@ -549,7 +549,7 @@ export default function Home() {
 
     const timeoutId = window.setTimeout(() => {
       setPreviousHomeSlideIndex(null);
-    }, 850);
+    }, 1400);
 
     return () => window.clearTimeout(timeoutId);
   }, [previousHomeSlideIndex]);
