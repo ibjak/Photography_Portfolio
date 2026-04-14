@@ -356,7 +356,7 @@ const homeSlideshowImages: HomeSlide[] = [
   ),
   createHomeSlide(
     protestsImages,
-    "IAB_20251122_00387.jpg",
+    "IAB_20251122_00285.jpg",
     "protests",
     "Protests",
   ),
