@@ -655,34 +655,21 @@ export default function Home() {
               }
             >
 
-            <nav className="mt-6 grid gap-2 text-sm">
-              <button
-                type="button"
-                onClick={() => openGallery("protests")}
-                className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
-                  activeGallery === "protests"
-                    ? "text-accent underline underline-offset-4"
-                    : "text-ink"
-                }`}
-              >
-                Protests
-              </button>
-              <button
-                type="button"
-                onClick={() => openGallery("dogs")}
-                className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
-                  activeGallery === "dogs"
-                    ? "text-accent underline underline-offset-4"
-                    : "text-ink"
-                }`}
-              >
-                Dogs
-              </button>
-              <details className="group">
-                <summary className="summary-clean text-sm text-ink transition-colors hover:text-[#0B2A6F] group-open:text-accent">
-                  Events
-                </summary>
-                <div className="mt-2 grid gap-2 pl-4">
+            <nav className="mt-6 grid gap-4 text-sm">
+              <div className="grid gap-2">
+                <div className="text-sm font-semibold text-ink">Events</div>
+                <div className="grid gap-2 pl-4">
+                  <button
+                    type="button"
+                    onClick={() => openGallery("protests")}
+                    className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
+                      activeGallery === "protests"
+                        ? "text-accent underline underline-offset-4"
+                        : "text-ink"
+                    }`}
+                  >
+                    Protests
+                  </button>
                   <button
                     type="button"
                     onClick={() => openGallery("qatar-prix")}
@@ -706,12 +693,10 @@ export default function Home() {
                     Paris Fashion Week 2025
                   </button>
                 </div>
-              </details>
-              <details className="group">
-                <summary className="summary-clean text-sm text-ink transition-colors hover:text-[#0B2A6F] group-open:text-accent">
-                  Street Photography
-                </summary>
-                <div className="mt-2 grid gap-2 pl-4">
+              </div>
+              <div className="grid gap-2">
+                <div className="text-sm font-semibold text-ink">Street Photography</div>
+                <div className="grid gap-2 pl-4">
                   <button
                     type="button"
                     onClick={() => openGallery("ssd-neon")}
@@ -723,19 +708,30 @@ export default function Home() {
                   >
                     SSD Neon
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => openGallery("dogs")}
+                    className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
+                      activeGallery === "dogs"
+                        ? "text-accent underline underline-offset-4"
+                        : "text-ink"
+                    }`}
+                  >
+                    Dogs
+                  </button>
                 </div>
-              </details>
-                <button
-                  type="button"
-                  onClick={openAbout}
-                  className={`border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
-                    isAboutView
-                      ? "text-accent underline underline-offset-4"
-                      : "text-ink"
-                  }`}
-                >
-                  About
-                </button>
+              </div>
+              <button
+                type="button"
+                onClick={openAbout}
+                className={`border-0 bg-transparent p-0 text-left text-sm font-semibold transition-colors hover:text-[#0B2A6F] ${
+                  isAboutView
+                    ? "text-accent underline underline-offset-4"
+                    : "text-ink"
+                }`}
+              >
+                About
+              </button>
             </nav>
 
               <div className="mt-10 flex items-center gap-3">
