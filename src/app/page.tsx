@@ -274,14 +274,6 @@ const dogsImages = [
   alt: `Dogs photo ${index + 1}`,
 }));
 
-const homeSlideshowImages = [
-  ...frenchDelegationReturnsImages.slice(0, 3),
-  ...qatarPrixImages.slice(0, 3),
-  ...parisFashionWeekImages.slice(0, 3),
-  ...ssdNeonImages.slice(0, 3),
-  ...dogsImages.slice(0, 3),
-];
-
 const presences = [
   {
     name: "Instagram",
@@ -307,6 +299,13 @@ type GalleryKey =
   | "ssd-neon"
   | "dogs";
 
+type HomeSlide = {
+  src: string;
+  alt: string;
+  gallery: GalleryKey;
+  albumLabel: string;
+};
+
 type PersistedViewState = {
   activeGallery: GalleryKey | null;
   isHomeView: boolean;
@@ -324,6 +323,34 @@ const GALLERY_KEYS: GalleryKey[] = [
 ];
 const VIEW_STATE_STORAGE_KEY = "ivan-portfolio-view-state-v1";
 
+const homeSlideshowImages: HomeSlide[] = [
+  ...frenchDelegationReturnsImages.slice(0, 3).map((image) => ({
+    ...image,
+    gallery: "protests" as const,
+    albumLabel: "Protests",
+  })),
+  ...qatarPrixImages.slice(0, 3).map((image) => ({
+    ...image,
+    gallery: "qatar-prix" as const,
+    albumLabel: "Qatar Prix De L'Arc De Triomphe 2025",
+  })),
+  ...parisFashionWeekImages.slice(0, 3).map((image) => ({
+    ...image,
+    gallery: "paris-fashion-week-2025" as const,
+    albumLabel: "Paris Fashion Week 2025",
+  })),
+  ...ssdNeonImages.slice(0, 3).map((image) => ({
+    ...image,
+    gallery: "ssd-neon" as const,
+    albumLabel: "SSD Neon",
+  })),
+  ...dogsImages.slice(0, 3).map((image) => ({
+    ...image,
+    gallery: "dogs" as const,
+    albumLabel: "Dogs",
+  })),
+];
+
 export default function Home() {
   const [activeGallery, setActiveGallery] = useState<GalleryKey | null>(null);
   const [isHomeView, setIsHomeView] = useState(true);
@@ -332,6 +359,7 @@ export default function Home() {
   const [isGridView, setIsGridView] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [homeSlideIndex, setHomeSlideIndex] = useState(0);
+  const [isHomeSlideshowPaused, setIsHomeSlideshowPaused] = useState(false);
   const [previousHomeSlideIndex, setPreviousHomeSlideIndex] = useState<number | null>(null);
   const [hasRestoredView, setHasRestoredView] = useState(false);
 
@@ -412,6 +440,7 @@ export default function Home() {
     setIsGridView(false);
     setCurrentSlideIndex(0);
     setHomeSlideIndex(0);
+    setIsHomeSlideshowPaused(false);
   };
 
   useEffect(() => {
@@ -523,7 +552,7 @@ export default function Home() {
   }, [canUseArrowNavigation]);
 
   useEffect(() => {
-    if (!isHomeView || homeSlideshowImages.length <= 1) {
+    if (!isHomeView || isHomeSlideshowPaused || homeSlideshowImages.length <= 1) {
       return;
     }
 
@@ -532,10 +561,10 @@ export default function Home() {
         setPreviousHomeSlideIndex(index);
         return index + 1;
       });
-    }, 6500);
+    }, 4200);
 
     return () => window.clearInterval(intervalId);
-  }, [isHomeView]);
+  }, [isHomeSlideshowPaused, isHomeView]);
 
   useEffect(() => {
     if (previousHomeSlideIndex === null) {
@@ -729,7 +758,8 @@ export default function Home() {
         <main className="flex-1">
           {isHomeView ? (
             <section className="flex h-full items-center justify-center">
-              <div className="relative min-h-[74vh] w-full overflow-hidden">
+              <div className="flex w-full flex-col items-center gap-4">
+                <div className="relative min-h-[74vh] w-full overflow-hidden">
                 {previousHomeImage ? (
                   <div className="home-slide-layer home-slide-exit absolute inset-0 flex items-center justify-center">
                     <img
@@ -754,6 +784,30 @@ export default function Home() {
                       loading="lazy"
                       decoding="async"
                     />
+                  </div>
+                ) : null}
+                </div>
+                {homeCurrentImage ? (
+                  <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setIsHomeSlideshowPaused((current) => !current)
+                      }
+                      className="border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent"
+                    >
+                      {isHomeSlideshowPaused ? "Play slideshow" : "Pause slideshow"}
+                    </button>
+                    <span className="text-muted" aria-hidden="true">
+                      /
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => openGallery(homeCurrentImage.gallery)}
+                      className="border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent"
+                    >
+                      View {homeCurrentImage.albumLabel}
+                    </button>
                   </div>
                 ) : null}
               </div>
