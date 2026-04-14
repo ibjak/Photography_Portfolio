@@ -656,9 +656,18 @@ export default function Home() {
             >
 
             <nav className="mt-6 grid gap-4 text-sm">
-              <div className="grid gap-2">
-                <div className="text-sm font-semibold text-ink">Events</div>
-                <div className="grid gap-2 pl-4">
+              <details
+                className="group"
+                open={
+                  activeGallery === "protests" ||
+                  activeGallery === "qatar-prix" ||
+                  activeGallery === "paris-fashion-week-2025"
+                }
+              >
+                <summary className="summary-clean text-sm font-semibold text-ink transition-colors hover:text-[#0B2A6F] group-open:text-accent">
+                  Events
+                </summary>
+                <div className="mt-2 grid gap-2 pl-4">
                   <button
                     type="button"
                     onClick={() => openGallery("protests")}
@@ -693,10 +702,15 @@ export default function Home() {
                     Paris Fashion Week 2025
                   </button>
                 </div>
-              </div>
-              <div className="grid gap-2">
-                <div className="text-sm font-semibold text-ink">Street Photography</div>
-                <div className="grid gap-2 pl-4">
+              </details>
+              <details
+                className="group"
+                open={activeGallery === "ssd-neon" || activeGallery === "dogs"}
+              >
+                <summary className="summary-clean text-sm font-semibold text-ink transition-colors hover:text-[#0B2A6F] group-open:text-accent">
+                  Street Photography
+                </summary>
+                <div className="mt-2 grid gap-2 pl-4">
                   <button
                     type="button"
                     onClick={() => openGallery("ssd-neon")}
@@ -720,7 +734,7 @@ export default function Home() {
                     Dogs
                   </button>
                 </div>
-              </div>
+              </details>
               <button
                 type="button"
                 onClick={openAbout}
