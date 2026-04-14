@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const aboutParagraphs = [
   "Ivan Badanjak is a documentary photographer and researcher whose work explores themes of migration, identity, and cultural preservation. He holds a Master's degree in Migration, Mobility and Development from SOAS University of London, where he developed a strong interest in the everyday experiences of diaspora communities and the ways cultural identity is maintained far from home.",
@@ -359,7 +359,7 @@ export default function Home() {
   const [isGridView, setIsGridView] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [homeSlideIndex, setHomeSlideIndex] = useState(0);
-  const [isHomeSlideshowPaused, setIsHomeSlideshowPaused] = useState(false);
+  const [isHomeSlideshowHovered, setIsHomeSlideshowHovered] = useState(false);
   const [previousHomeSlideIndex, setPreviousHomeSlideIndex] = useState<number | null>(null);
   const [hasRestoredView, setHasRestoredView] = useState(false);
 
@@ -440,8 +440,15 @@ export default function Home() {
     setIsGridView(false);
     setCurrentSlideIndex(0);
     setHomeSlideIndex(0);
-    setIsHomeSlideshowPaused(false);
+    setIsHomeSlideshowHovered(false);
   };
+
+  const stepHomeSlide = useCallback((delta: number) => {
+    setHomeSlideIndex((index) => {
+      setPreviousHomeSlideIndex(index);
+      return index + delta;
+    });
+  }, []);
 
   useEffect(() => {
     try {
@@ -519,11 +526,13 @@ export default function Home() {
     isHomeView,
   ]);
 
-  const canUseArrowNavigation =
-    !isHomeView && !isAboutView && !isGridView && activeGalleryImages.length > 0;
-
   useEffect(() => {
-    if (!canUseArrowNavigation) {
+    const canUseGalleryArrowNavigation =
+      !isHomeView && !isAboutView && !isGridView && activeGalleryImages.length > 0;
+    const canUseHomeArrowNavigation =
+      isHomeView && homeSlideshowImages.length > 1;
+
+    if (!canUseGalleryArrowNavigation && !canUseHomeArrowNavigation) {
       return;
     }
 
@@ -540,31 +549,36 @@ export default function Home() {
 
       if (event.key === "ArrowLeft") {
         event.preventDefault();
-        setCurrentSlideIndex((index) => index - 1);
+        if (canUseHomeArrowNavigation) {
+          stepHomeSlide(-1);
+        } else {
+          setCurrentSlideIndex((index) => index - 1);
+        }
       } else if (event.key === "ArrowRight") {
         event.preventDefault();
-        setCurrentSlideIndex((index) => index + 1);
+        if (canUseHomeArrowNavigation) {
+          stepHomeSlide(1);
+        } else {
+          setCurrentSlideIndex((index) => index + 1);
+        }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [canUseArrowNavigation]);
+  }, [activeGalleryImages.length, isAboutView, isGridView, isHomeView, stepHomeSlide]);
 
   useEffect(() => {
-    if (!isHomeView || isHomeSlideshowPaused || homeSlideshowImages.length <= 1) {
+    if (!isHomeView || isHomeSlideshowHovered || homeSlideshowImages.length <= 1) {
       return;
     }
 
     const intervalId = window.setInterval(() => {
-      setHomeSlideIndex((index) => {
-        setPreviousHomeSlideIndex(index);
-        return index + 1;
-      });
+      stepHomeSlide(1);
     }, 4200);
 
     return () => window.clearInterval(intervalId);
-  }, [isHomeSlideshowPaused, isHomeView]);
+  }, [isHomeSlideshowHovered, isHomeView, stepHomeSlide]);
 
   useEffect(() => {
     if (previousHomeSlideIndex === null) {
@@ -758,56 +772,75 @@ export default function Home() {
         <main className="flex-1">
           {isHomeView ? (
             <section className="flex h-full items-center justify-center">
-              <div className="flex w-full flex-col items-center gap-4">
-                <div className="relative min-h-[74vh] w-full overflow-hidden">
-                {previousHomeImage ? (
-                  <div className="home-slide-layer home-slide-exit absolute inset-0 flex items-center justify-center">
-                    <img
-                      src={previousHomeImage.src}
-                      alt={previousHomeImage.alt}
-                      className="h-auto w-auto max-h-[74vh] max-w-full border border-line bg-paper object-contain"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                ) : null}
+              <div
+                className="flex w-full flex-col items-center gap-4"
+                onMouseEnter={() => setIsHomeSlideshowHovered(true)}
+                onMouseLeave={() => setIsHomeSlideshowHovered(false)}
+              >
                 {homeCurrentImage ? (
-                  <div
-                    className={`home-slide-layer absolute inset-0 flex items-center justify-center ${
-                      previousHomeImage ? "home-slide-enter" : ""
-                    }`}
-                  >
-                    <img
-                      src={homeCurrentImage.src}
-                      alt={homeCurrentImage.alt}
-                      className="h-auto w-auto max-h-[74vh] max-w-full border border-line bg-paper object-contain"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                ) : null}
-                </div>
-                {homeCurrentImage ? (
-                  <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setIsHomeSlideshowPaused((current) => !current)
-                      }
-                      className="border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent"
-                    >
-                      {isHomeSlideshowPaused ? "Play slideshow" : "Pause slideshow"}
-                    </button>
-                    <span className="text-muted" aria-hidden="true">
-                      /
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => openGallery(homeCurrentImage.gallery)}
-                      className="border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent"
-                    >
-                      View {homeCurrentImage.albumLabel}
-                    </button>
+                  <div className="inline-flex max-w-full flex-col gap-4">
+                    <div className="relative inline-block max-w-full overflow-hidden">
+                      <img
+                        src={homeCurrentImage.src}
+                        alt=""
+                        aria-hidden="true"
+                        className="invisible block h-auto w-auto max-h-[74vh] max-w-full border border-line bg-paper object-contain"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      {previousHomeImage ? (
+                        <div className="home-slide-layer home-slide-exit absolute inset-0 flex items-center justify-center">
+                          <img
+                            src={previousHomeImage.src}
+                            alt={previousHomeImage.alt}
+                            className="h-auto w-auto max-h-[74vh] max-w-full border border-line bg-paper object-contain"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                      ) : null}
+                      <div
+                        className={`home-slide-layer absolute inset-0 flex items-center justify-center ${
+                          previousHomeImage ? "home-slide-enter" : ""
+                        }`}
+                      >
+                        <img
+                          src={homeCurrentImage.src}
+                          alt={homeCurrentImage.alt}
+                          className="h-auto w-auto max-h-[74vh] max-w-full border border-line bg-paper object-contain"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex w-full flex-wrap items-center justify-between gap-4 text-sm">
+                      <button
+                        type="button"
+                        onClick={() => openGallery(homeCurrentImage.gallery)}
+                        className="border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent"
+                      >
+                        {homeCurrentImage.albumLabel}
+                      </button>
+                      <div className="flex items-center gap-2 text-muted">
+                        <button
+                          type="button"
+                          onClick={() => stepHomeSlide(-1)}
+                          className="border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent"
+                          aria-label="Previous homepage image"
+                        >
+                          Previous
+                        </button>
+                        <span aria-hidden="true">/</span>
+                        <button
+                          type="button"
+                          onClick={() => stepHomeSlide(1)}
+                          className="border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent"
+                          aria-label="Next homepage image"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 ) : null}
               </div>
