@@ -416,6 +416,18 @@ const homeSlideshowImages: HomeSlide[] = [
     "protests",
     "Protests",
   ),
+  createHomeSlide(
+  ssdNeonImages,
+  "IAB_20251119_00206.jpg",
+  "ssd-neon",
+  "SSD Neon",
+  ),
+  createHomeSlide(
+  ssdNeonImages,
+  "IAB_20251119_00132.jpg",
+  "ssd-neon",
+  "SSD Neon",
+  ),
 ];
 
 export default function Home() {
