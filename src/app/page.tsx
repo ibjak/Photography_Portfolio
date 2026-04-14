@@ -394,7 +394,7 @@ const homeSlideshowImages: HomeSlide[] = [
   createHomeSlide(dogsImages, "IAB_20260104_00030.jpg", "dogs", "Dogs"),
   createHomeSlide(
     qatarPrixImages,
-    "IAB_20251005_03921.jpg",
+    "IAB_20251005_03918.jpg",
     "qatar-prix",
     "Qatar Prix De L'Arc De Triomphe 2025",
   ),
