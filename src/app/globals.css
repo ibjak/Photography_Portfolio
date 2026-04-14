@@ -101,9 +101,45 @@ a {
   animation-delay: var(--delay, 0s);
 }
 
+.home-slide-layer {
+  will-change: opacity, transform;
+}
+
+.home-slide-enter {
+  animation: homeSlideEnter 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.home-slide-exit {
+  animation: homeSlideExit 0.85s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
 @keyframes fadeUp {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes homeSlideEnter {
+  from {
+    opacity: 0;
+    transform: scale(1.015);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes homeSlideExit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.985);
   }
 }

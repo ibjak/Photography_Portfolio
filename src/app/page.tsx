@@ -109,7 +109,23 @@ const eliminationViolenceWomenImages = [
   },
 ];
 
+const frenchDelegationReturnsImages = [
+  "IAB_20251008_00037.jpg",
+  "IAB_20251008_00041.jpg",
+  "IAB_20251008_00058.jpg",
+  "IAB_20251008_00064.jpg",
+  "IAB_20251008_00069.jpg",
+  "IAB_20251008_00076.jpg",
+  "IAB_20251008_00106.jpg",
+  "IAB_20251008_00109.jpg",
+  "IAB_20251008_00123.jpg",
+].map((fileName, index) => ({
+  src: `/Photo%20Gallery/French%20Delegation%20returns%20-%20Global%20Sumud%20Flotilla%20(October%202025)/${fileName}`,
+  alt: `French Delegation returns - Global Sumud Flotilla (October 2025) photo ${index + 1}`,
+}));
+
 const protestsImages = [
+  ...frenchDelegationReturnsImages,
   ...bataclanImages,
   ...internationalSolidarityPalestineImages,
   ...eliminationViolenceWomenImages,
@@ -258,6 +274,14 @@ const dogsImages = [
   alt: `Dogs photo ${index + 1}`,
 }));
 
+const homeSlideshowImages = [
+  frenchDelegationReturnsImages[0],
+  qatarPrixImages[0],
+  parisFashionWeekImages[0],
+  ssdNeonImages[0],
+  dogsImages[0],
+].filter((image): image is { src: string; alt: string } => Boolean(image));
+
 const presences = [
   {
     name: "Instagram",
@@ -312,6 +336,8 @@ export default function Home() {
   const [isAboutView, setIsAboutView] = useState(false);
   const [isGridView, setIsGridView] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [homeSlideIndex, setHomeSlideIndex] = useState(0);
+  const [previousHomeSlideIndex, setPreviousHomeSlideIndex] = useState<number | null>(null);
   const [hasRestoredView, setHasRestoredView] = useState(false);
 
   const activeGalleryTitle =
@@ -348,6 +374,22 @@ export default function Home() {
             activeGalleryImages.length
         ]
       : null;
+  const homeCurrentImage =
+    homeSlideshowImages.length > 0
+      ? homeSlideshowImages[
+          ((homeSlideIndex % homeSlideshowImages.length) +
+            homeSlideshowImages.length) %
+            homeSlideshowImages.length
+        ]
+      : null;
+  const previousHomeImage =
+    previousHomeSlideIndex !== null && homeSlideshowImages.length > 0
+      ? homeSlideshowImages[
+          ((previousHomeSlideIndex % homeSlideshowImages.length) +
+            homeSlideshowImages.length) %
+            homeSlideshowImages.length
+        ]
+      : null;
   const isStrictGridGallery =
     activeGallery === "ssd-neon" || activeGallery === "protests";
 
@@ -374,6 +416,7 @@ export default function Home() {
     setActiveGallery(null);
     setIsGridView(false);
     setCurrentSlideIndex(0);
+    setHomeSlideIndex(0);
   };
 
   useEffect(() => {
@@ -484,65 +527,80 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [canUseArrowNavigation]);
 
+  useEffect(() => {
+    if (!isHomeView || homeSlideshowImages.length <= 1) {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setHomeSlideIndex((index) => {
+        setPreviousHomeSlideIndex(index);
+        return index + 1;
+      });
+    }, 4200);
+
+    return () => window.clearInterval(intervalId);
+  }, [isHomeView]);
+
+  useEffect(() => {
+    if (previousHomeSlideIndex === null) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setPreviousHomeSlideIndex(null);
+    }, 850);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [previousHomeSlideIndex]);
+
   return (
     <div className="page-shell" onContextMenu={(e) => e.preventDefault()}>
-      <div
-        className={
-          isHomeView
-            ? "flex w-full flex-1 items-center justify-center px-6 pb-10 pt-6 md:px-10"
-            : "flex w-full flex-1 flex-col gap-10 px-6 pb-10 pt-6 md:flex-row md:px-10 lg:gap-16"
-        }
-      >
+      <div className="flex w-full flex-1 flex-col gap-10 px-6 pb-10 pt-6 md:flex-row md:px-10 lg:gap-16">
         <aside
-          className={
-            isHomeView
-              ? "w-full max-w-md"
-              : "w-full md:w-1/8 md:flex-none md:self-start md:sticky md:top-6 md:h-fit"
-          }
+          className="w-full md:w-1/8 md:flex-none md:self-start md:sticky md:top-6 md:h-fit"
         >
-          <div className={isHomeView ? "mt-0" : "mt-4 md:mt-0"}>
-            {!isHomeView ? (
-              <div className="mb-4 flex items-center justify-between md:hidden">
-                <Link
-                  href="/"
-                  onClick={openHome}
-                  className="font-display text-3xl leading-none font-bold text-ink"
-                >
-                  Ivan Badanjak
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setIsMobileNavOpen((current) => !current)}
-                  className="inline-flex h-10 w-10 items-center justify-center border border-line text-ink transition-colors hover:text-[#0B2A6F]"
-                  aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
-                >
-                  {isMobileNavOpen ? (
-                    <svg
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M6 6l12 12M18 6L6 18" />
-                    </svg>
-                  ) : (
-                    <svg
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M4 7h16M4 12h16M4 17h16" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-            ) : null}
-            <div className={`mb-4 pt-2 ${!isHomeView ? "hidden md:block" : ""}`}>
+          <div className="mt-4 md:mt-0">
+            <div className="mb-4 flex items-center justify-between md:hidden">
+              <Link
+                href="/"
+                onClick={openHome}
+                className="font-display text-3xl leading-none font-bold text-ink"
+              >
+                Ivan Badanjak
+              </Link>
+              <button
+                type="button"
+                onClick={() => setIsMobileNavOpen((current) => !current)}
+                className="inline-flex h-10 w-10 items-center justify-center border border-line text-ink transition-colors hover:text-[#0B2A6F]"
+                aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
+              >
+                {isMobileNavOpen ? (
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M6 6l12 12M18 6L6 18" />
+                  </svg>
+                ) : (
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M4 7h16M4 12h16M4 17h16" />
+                  </svg>
+                )}
+              </button>
+            </div>
+            <div className="mb-4 pt-2 hidden md:block">
               <div className="flex items-center">
                 <Link
                   href="/"
@@ -555,7 +613,7 @@ export default function Home() {
             </div>
             <div
               className={
-                !isHomeView && !isMobileNavOpen ? "hidden md:block" : ""
+                !isMobileNavOpen ? "hidden md:block" : ""
               }
             >
 
@@ -673,8 +731,39 @@ export default function Home() {
           </div>
         </aside>
 
-        {!isHomeView ? <main className="flex-1">
-          {isAboutView ? (
+        <main className="flex-1">
+          {isHomeView ? (
+            <section className="flex h-full items-center justify-center">
+              <div className="relative min-h-[74vh] w-full overflow-hidden">
+                {previousHomeImage ? (
+                  <div className="home-slide-layer home-slide-exit absolute inset-0 flex items-center justify-center">
+                    <img
+                      src={previousHomeImage.src}
+                      alt={previousHomeImage.alt}
+                      className="h-auto w-auto max-h-[74vh] max-w-full border border-line bg-paper object-contain"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                ) : null}
+                {homeCurrentImage ? (
+                  <div
+                    className={`home-slide-layer absolute inset-0 flex items-center justify-center ${
+                      previousHomeImage ? "home-slide-enter" : ""
+                    }`}
+                  >
+                    <img
+                      src={homeCurrentImage.src}
+                      alt={homeCurrentImage.alt}
+                      className="h-auto w-auto max-h-[74vh] max-w-full border border-line bg-paper object-contain"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                ) : null}
+              </div>
+            </section>
+          ) : isAboutView ? (
             <section className="max-w-4xl">
               <h3 className="font-display text-3xl text-ink">About</h3>
               <div className="mt-6 grid gap-5 text-base leading-relaxed text-muted">
@@ -782,7 +871,7 @@ export default function Home() {
               Select a subheading to load photos.
             </section>
           )}
-        </main> : null}
+        </main>
       </div>
     </div>
   );
