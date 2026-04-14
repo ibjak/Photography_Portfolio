@@ -906,7 +906,7 @@ export default function Home() {
                       <button
                         type="button"
                         onClick={() => openGallery(homeCurrentImage.gallery)}
-                        className="border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent"
+                        className="border-0 bg-transparent p-0 text-ink font-semibold underline underline-offset-4 transition-colors hover:text-accent"
                       >
                         {homeCurrentImage.albumLabel}
                       </button>
