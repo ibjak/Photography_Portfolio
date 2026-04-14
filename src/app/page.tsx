@@ -323,32 +323,99 @@ const GALLERY_KEYS: GalleryKey[] = [
 ];
 const VIEW_STATE_STORAGE_KEY = "ivan-portfolio-view-state-v1";
 
+const findImageByFileName = (
+  images: { src: string; alt: string }[],
+  fileName: string,
+) => images.find((image) => image.src.endsWith(`/${fileName}`));
+
+const createHomeSlide = (
+  images: { src: string; alt: string }[],
+  fileName: string,
+  gallery: GalleryKey,
+  albumLabel: string,
+): HomeSlide => {
+  const image = findImageByFileName(images, fileName);
+
+  if (!image) {
+    throw new Error(`Missing homepage slideshow image: ${fileName}`);
+  }
+
+  return {
+    ...image,
+    gallery,
+    albumLabel,
+  };
+};
+
 const homeSlideshowImages: HomeSlide[] = [
-  ...frenchDelegationReturnsImages.slice(0, 3).map((image) => ({
-    ...image,
-    gallery: "protests" as const,
-    albumLabel: "Protests",
-  })),
-  ...qatarPrixImages.slice(0, 3).map((image) => ({
-    ...image,
-    gallery: "qatar-prix" as const,
-    albumLabel: "Qatar Prix De L'Arc De Triomphe 2025",
-  })),
-  ...parisFashionWeekImages.slice(0, 3).map((image) => ({
-    ...image,
-    gallery: "paris-fashion-week-2025" as const,
-    albumLabel: "Paris Fashion Week 2025",
-  })),
-  ...ssdNeonImages.slice(0, 3).map((image) => ({
-    ...image,
-    gallery: "ssd-neon" as const,
-    albumLabel: "SSD Neon",
-  })),
-  ...dogsImages.slice(0, 3).map((image) => ({
-    ...image,
-    gallery: "dogs" as const,
-    albumLabel: "Dogs",
-  })),
+  createHomeSlide(
+    protestsImages,
+    "IAB_20251113_00058.jpg",
+    "protests",
+    "Protests",
+  ),
+  createHomeSlide(
+    protestsImages,
+    "IAB_20251122_00387.jpg",
+    "protests",
+    "Protests",
+  ),
+  createHomeSlide(
+    protestsImages,
+    "IAB_20251122_00384.jpg",
+    "protests",
+    "Protests",
+  ),
+  createHomeSlide(
+    parisFashionWeekImages,
+    "IAB_20251003_02394.jpg",
+    "paris-fashion-week-2025",
+    "Paris Fashion Week 2025",
+  ),
+  createHomeSlide(
+    parisFashionWeekImages,
+    "IAB_20251003_02422.jpg",
+    "paris-fashion-week-2025",
+    "Paris Fashion Week 2025",
+  ),
+  createHomeSlide(
+    parisFashionWeekImages,
+    "IAB_20251003_02365.jpg",
+    "paris-fashion-week-2025",
+    "Paris Fashion Week 2025",
+  ),
+  createHomeSlide(
+    protestsImages,
+    "IAB_20251129_00085.jpg",
+    "protests",
+    "Protests",
+  ),
+  createHomeSlide(dogsImages, "IAB_20250322_00203.jpg", "dogs", "Dogs"),
+  createHomeSlide(dogsImages, "IAB_20260104_00030.jpg", "dogs", "Dogs"),
+  createHomeSlide(
+    qatarPrixImages,
+    "IAB_20251005_03921.jpg",
+    "qatar-prix",
+    "Qatar Prix De L'Arc De Triomphe 2025",
+  ),
+  createHomeSlide(
+    qatarPrixImages,
+    "IAB_20251005_03773.jpg",
+    "qatar-prix",
+    "Qatar Prix De L'Arc De Triomphe 2025",
+  ),
+  createHomeSlide(
+    protestsImages,
+    "IAB_20251008_00106.jpg",
+    "protests",
+    "Protests",
+  ),
+  createHomeSlide(
+    protestsImages,
+    "IAB_20251008_00037.jpg",
+    "protests",
+    "Protests",
+  ),
 ];
 
 export default function Home() {
