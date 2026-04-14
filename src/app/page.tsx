@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 const aboutParagraphs = [
-  "Ivan Badanjak is a documentary photographer and researcher whose work explores themes of migration, identity, and cultural preservation. He holds a Master's degree in Migration, Mobility and Development from SOAS University of London, where he developed a strong interest in the everyday experiences of diaspora communities and the ways cultural identity is maintained far from home.",
+  "Ivan Badanjak is a documentary photographer and aspiring researcher whose work explores themes of migration, identity, and cultural preservation. He holds a Master's degree in Migration, Mobility and Development from SOAS University of London, where he developed a strong interest in the everyday experiences of diaspora communities and the ways cultural identity is maintained far from home.",
   "Currently based in Paris, he is studying documentary photography while developing long-term visual projects that examine belonging, integration, and memory within migrant communities. Alongside his documentary work, he practices street photography as a way of exploring the city and its rhythms. He is also known for stopping to greet nearly every dog he encounters and take fabulous pictures of them. He attends protests to photograph and convey the intensity of collective movements.",
   "Ivan's work is informed by his background in humanitarian organizations and reflects an ongoing interest in the intersection of visual storytelling, social inquiry, and contemporary migration narratives.",
 ];
@@ -844,7 +844,7 @@ export default function Home() {
           ) : isAboutView ? (
             <section className="max-w-4xl">
               <h3 className="font-display text-3xl text-ink">About</h3>
-              <div className="mt-6 grid gap-5 text-base leading-relaxed text-muted">
+              <div className="mt-6 grid gap-5 text-base leading-relaxed text-muted [text-align:justify]">
                 {aboutParagraphs.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
