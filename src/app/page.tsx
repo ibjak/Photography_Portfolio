@@ -289,11 +289,6 @@ const presences = [
     iconSrc: "/social-icons/instagram.png",
   },
   {
-    name: "Behance",
-    href: "https://www.behance.net/ivanbadanjak",
-    iconSrc: "/social-icons/behance.png",
-  },
-  {
     name: "LinkedIn",
     href: "https://www.linkedin.com/in/ivan-alexios-badanjak/",
     iconSrc: "/social-icons/linkedin.png",
