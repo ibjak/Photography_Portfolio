@@ -384,12 +384,6 @@ const homeSlideshowImages: HomeSlide[] = [
     "paris-fashion-week-2025",
     "Paris Fashion Week 2025",
   ),
-  createHomeSlide(
-    protestsImages,
-    "IAB_20251129_00085.jpg",
-    "protests",
-    "Protests",
-  ),
   createHomeSlide(dogsImages, "IAB_20250322_00203.jpg", "dogs", "Dogs"),
   createHomeSlide(dogsImages, "IAB_20260104_00030.jpg", "dogs", "Dogs"),
   createHomeSlide(
@@ -403,6 +397,12 @@ const homeSlideshowImages: HomeSlide[] = [
     "IAB_20251005_03773.jpg",
     "qatar-prix",
     "Qatar Prix De L'Arc De Triomphe 2025",
+  ),
+  createHomeSlide(
+    protestsImages,
+    "IAB_20251129_00085.jpg",
+    "protests",
+    "Protests",
   ),
   createHomeSlide(
     protestsImages,
