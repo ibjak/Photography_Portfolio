@@ -115,7 +115,6 @@ const frenchDelegationReturnsImages = [
   "IAB_20251008_00058.jpg",
   "IAB_20251008_00064.jpg",
   "IAB_20251008_00069.jpg",
-  "IAB_20251008_00076.jpg",
   "IAB_20251008_00106.jpg",
   "IAB_20251008_00109.jpg",
   "IAB_20251008_00123.jpg",
