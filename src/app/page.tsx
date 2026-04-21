@@ -34,78 +34,82 @@ const qatarPrixImages = [
     src: "/Photo%20Gallery/qatar%20GP%20longchamp/IAB_20251005_03921.jpg",
     alt: "Qatar Prix De L'Arc De Triomphe 2025 photo 6",
   },
+  {
+    src: "/Photo%20Gallery/qatar%20GP%20longchamp/IAB_20251005_03801.jpg",
+    alt: "Qatar Prix De L'Arc De Triomphe 2025 photo 6",
+  },
 ];
 
 const bataclanImages = [
   {
     src: "/Photo%20Gallery/Bataclan%2010%20year%20anniversary/IAB_20251113_00055.jpg",
-    alt: "Bataclan 10 Year Anniversary Commemoration photo 1",
+    alt: "Commemoration marking the 10th anniversary of the November 2015 Paris attacks, Place de la République, Paris, November 2025.",
   },
   {
     src: "/Photo%20Gallery/Bataclan%2010%20year%20anniversary/IAB_20251113_00058.jpg",
-    alt: "Bataclan 10 Year Anniversary Commemoration photo 2",
+    alt: "Commemoration marking the 10th anniversary of the November 2015 Paris attacks, Place de la République, Paris, November 2025.",
   },
   {
     src: "/Photo%20Gallery/Bataclan%2010%20year%20anniversary/IAB_20251113_00063.jpg",
-    alt: "Bataclan 10 Year Anniversary Commemoration photo 3",
+    alt: "Commemoration marking the 10th anniversary of the November 2015 Paris attacks, Place de la République, Paris, November 2025.",
   },
   {
     src: "/Photo%20Gallery/Bataclan%2010%20year%20anniversary/IAB_20251113_00078.jpg",
-    alt: "Bataclan 10 Year Anniversary Commemoration photo 4",
+    alt: "Commemoration marking the 10th anniversary of the November 2015 Paris attacks, Place de la République, Paris, November 2025.",
   },
   {
     src: "/Photo%20Gallery/Bataclan%2010%20year%20anniversary/IAB_20251113_00106.jpg",
-    alt: "Bataclan 10 Year Anniversary Commemoration photo 5",
+    alt: "Commemoration marking the 10th anniversary of the November 2015 Paris attacks, Place de la République, Paris, November 2025.",
   },
 ];
 
 const internationalSolidarityPalestineImages = [
   {
     src: "/Photo%20Gallery/International%20Day%20of%20Solidarity%20with%20Palestine%20Nov%202025/IAB_20251129_00040.jpg",
-    alt: "International Day of Solidarity with Palestine 2025 photo 1",
+    alt: "Demonstration marking the International Day of Solidarity with the Palestinian people, Paris, November 29, 2025.",
   },
   {
     src: "/Photo%20Gallery/International%20Day%20of%20Solidarity%20with%20Palestine%20Nov%202025/IAB_20251129_00085.jpg",
-    alt: "International Day of Solidarity with Palestine 2025 photo 2",
+    alt: "Demonstration marking the International Day of Solidarity with the Palestinian people, Paris, November 29, 2025.",
   },
   {
     src: "/Photo%20Gallery/International%20Day%20of%20Solidarity%20with%20Palestine%20Nov%202025/IAB_20251129_00140.jpg",
-    alt: "International Day of Solidarity with Palestine 2025 photo 3",
+    alt: "Demonstration marking the International Day of Solidarity with the Palestinian people, Paris, November 29, 2025.",
   },
   {
     src: "/Photo%20Gallery/International%20Day%20of%20Solidarity%20with%20Palestine%20Nov%202025/IAB_20251129_00156.jpg",
-    alt: "International Day of Solidarity with Palestine 2025 photo 4",
+    alt: "Demonstration marking the International Day of Solidarity with the Palestinian people, Paris, November 29, 2025.",
   },
   {
     src: "/Photo%20Gallery/International%20Day%20of%20Solidarity%20with%20Palestine%20Nov%202025/IAB_20251129_00187.jpg",
-    alt: "International Day of Solidarity with Palestine 2025 photo 5",
+    alt: "Demonstration marking the International Day of Solidarity with the Palestinian people, Paris, November 29, 2025.",
   },
 ];
 
 const eliminationViolenceWomenImages = [
   {
     src: "/Photo%20Gallery/Elimination%20of%20Violence%20against%20Women%20Day%202025/IAB_20251122_00014.jpg",
-    alt: "Elimination of Violence against Women Day 2025 photo 1",
+    alt: "Demonstration marking the International Day for the Elimination of Violence against Women, Paris, November 2025.",
   },
   {
     src: "/Photo%20Gallery/Elimination%20of%20Violence%20against%20Women%20Day%202025/IAB_20251122_00209.jpg",
-    alt: "Elimination of Violence against Women Day 2025 photo 2",
+    alt: "Demonstration marking the International Day for the Elimination of Violence against Women, Paris, November 2025.",
   },
   {
     src: "/Photo%20Gallery/Elimination%20of%20Violence%20against%20Women%20Day%202025/IAB_20251122_00285.jpg",
-    alt: "Elimination of Violence against Women Day 2025 photo 3",
+    alt: "Demonstration marking the International Day for the Elimination of Violence against Women, Paris, November 2025.",
   },
   {
     src: "/Photo%20Gallery/Elimination%20of%20Violence%20against%20Women%20Day%202025/IAB_20251122_00342.jpg",
-    alt: "Elimination of Violence against Women Day 2025 photo 4",
+    alt: "Demonstration marking the International Day for the Elimination of Violence against Women, Paris, November 2025.",
   },
   {
     src: "/Photo%20Gallery/Elimination%20of%20Violence%20against%20Women%20Day%202025/IAB_20251122_00384.jpg",
-    alt: "Elimination of Violence against Women Day 2025 photo 5",
+    alt: "Demonstration marking the International Day for the Elimination of Violence against Women, Paris, November 2025.",
   },
   {
     src: "/Photo%20Gallery/Elimination%20of%20Violence%20against%20Women%20Day%202025/IAB_20251122_00387.jpg",
-    alt: "Elimination of Violence against Women Day 2025 photo 6",
+    alt: "Demonstration marking the International Day for the Elimination of Violence against Women, Paris, November 2025.",
   },
 ];
 
@@ -120,7 +124,7 @@ const frenchDelegationReturnsImages = [
   "IAB_20251008_00123.jpg",
 ].map((fileName, index) => ({
   src: `/Photo%20Gallery/French%20Delegation%20returns%20-%20Global%20Sumud%20Flotilla%20(October%202025)/${fileName}`,
-  alt: `French Delegation returns - Global Sumud Flotilla (October 2025) photo ${index + 1}`,
+  alt: `Return of the French delegation from the Global Sumud Flotilla, Paris, October 2025.`,
 }));
 
 const protestsImages = [
@@ -845,8 +849,9 @@ export default function Home() {
                   </a>
                 ))}
               </div>
-              <div className="mt-1 grid gap-2 text-sm">
+              <div className="mt-1 grid gap-0.5 text-sm">
                 <span className="text-sm text-muted">ivanb.jpg@gmail.com</span>
+                 <span className="text-sm text-muted">Based in <b>Paris, France</b></span>
               </div>
               <div className="mt-8 text-xs text-muted">
                 © {new Date().getFullYear()} Ivan Badanjak. All rights reserved.
@@ -1005,13 +1010,20 @@ export default function Home() {
                 <div className="mt-6 flex justify-center">
                   <div className="inline-flex max-w-full flex-col items-end gap-3">
                     {currentImage ? (
-                      <img
-                        src={currentImage.src}
-                        alt={currentImage.alt}
-                        className="h-auto w-auto max-h-[68vh] max-w-full border border-line bg-paper"
-                        loading="lazy"
-                        decoding="async"
-                      />
+                      <figure className="flex flex-col items-center">
+                        <img
+                          src={currentImage.src}
+                          alt={currentImage.alt}
+                          className="h-auto w-auto max-h-[68vh] max-w-full border border-line bg-paper"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        {activeGallery === "protests" && (
+                          <figcaption className="mt-2 text-center text-sm text-muted">
+                            {currentImage.alt}
+                          </figcaption>
+                        )}
+                      </figure>
                     ) : null}
                     <div className="flex items-center gap-2 text-sm text-muted">
                       <button
