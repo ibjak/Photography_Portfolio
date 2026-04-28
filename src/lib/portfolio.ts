@@ -20,6 +20,13 @@ export type Gallery = {
   navLabel: string;
   images: ImageItem[];
   isStrictGrid: boolean;
+  presentation?: "gallery" | "story";
+  story?: {
+    location: string;
+    standfirst: string;
+    paragraphs: string[];
+    textPlacement?: "top" | "after-first-image";
+  };
 };
 
 export type HomeSlide = ImageItem & {
@@ -35,6 +42,10 @@ export const aboutParagraphs = [
 
 const qatarPrixImages: ImageItem[] = [
   {
+    src: "/Photo%20Gallery/qatar%20GP%20longchamp/IAB_20251005_03897.jpg",
+    alt: "Qatar Prix De L'Arc De Triomphe 2025 photo 4",
+  },
+  {
     src: "/Photo%20Gallery/qatar%20GP%20longchamp/IAB_20251005_03756.jpg",
     alt: "Qatar Prix De L'Arc De Triomphe 2025 photo 1",
   },
@@ -43,13 +54,14 @@ const qatarPrixImages: ImageItem[] = [
     alt: "Qatar Prix De L'Arc De Triomphe 2025 photo 2",
   },
   {
+    src: "/Photo%20Gallery/qatar%20GP%20longchamp/IAB_20251005_03801.jpg",
+    alt: "Qatar Prix De L'Arc De Triomphe 2025 photo 7",
+  },
+  {
     src: "/Photo%20Gallery/qatar%20GP%20longchamp/IAB_20251005_03787.jpg",
     alt: "Qatar Prix De L'Arc De Triomphe 2025 photo 3",
   },
-  {
-    src: "/Photo%20Gallery/qatar%20GP%20longchamp/IAB_20251005_03897.jpg",
-    alt: "Qatar Prix De L'Arc De Triomphe 2025 photo 4",
-  },
+  
   {
     src: "/Photo%20Gallery/qatar%20GP%20longchamp/IAB_20251005_03918.jpg",
     alt: "Qatar Prix De L'Arc De Triomphe 2025 photo 5",
@@ -58,10 +70,7 @@ const qatarPrixImages: ImageItem[] = [
     src: "/Photo%20Gallery/qatar%20GP%20longchamp/IAB_20251005_03921.jpg",
     alt: "Qatar Prix De L'Arc De Triomphe 2025 photo 6",
   },
-  {
-    src: "/Photo%20Gallery/qatar%20GP%20longchamp/IAB_20251005_03801.jpg",
-    alt: "Qatar Prix De L'Arc De Triomphe 2025 photo 7",
-  },
+  
 ];
 
 const bataclanImages: ImageItem[] = [
@@ -324,19 +333,40 @@ export const galleries: Record<GalleryKey, Gallery> = {
     key: "protests",
     section: "events",
     slug: "protests",
-    title: "Protests",
-    navLabel: "Protests",
+    title: "Place de la Republique",
+    navLabel: "Place de la Republique",
     images: protestsImages,
     isStrictGrid: true,
+    presentation: "story",
+    story: {
+      location: "Paris, 3rd / 10th / 11th arrondissements",
+      standfirst:
+        "At the broad hinge where three arrondissements meet, Place de la Republique works as both crossroads and civic stage: a square of marches, vigils, metro exits, cafe terraces, and long pauses between one gathering and the next.",
+      paragraphs: [
+        "The monument to Marianne rises from the center of the square with the boulevards fanning out around it, carrying traffic, pedestrians, and the daily spill of people arriving from the Republique station beneath. To one side, families and groups settle into the open pedestrian space; to another, banners, placards, and improvised conversations gather near the statue before drifting toward Boulevard du Temple or Boulevard Saint-Martin.",
+        "What makes the square compelling is not only the scale of public assembly, but the way ordinary city life keeps pressing against it. Bakery lines form a block away. Scooters clip past the curb. Cafe chairs fill in the late afternoon. The square holds remembrance, protest, and routine in the same frame, which is what gives these photographs their tension and their calm.",
+      ],
+    },
   },
   "qatar-prix": {
     key: "qatar-prix",
     section: "events",
     slug: "qatar-prix-2025",
-    title: "Qatar Prix De L'Arc De Triomphe 2025",
-    navLabel: "Qatar Prix De L'Arc De Triomphe 2025",
+    title: "Qatar Longchamp Prix",
+    navLabel: "Qatar Longchamp Prix",
     images: qatarPrixImages,
     isStrictGrid: false,
+    presentation: "story",
+    story: {
+      location: "Paris, Hippodrome de Longchamp",
+      standfirst:
+        "The Qatar Longchamp Prix is defined by the moments before the race begins.",
+      paragraphs: [
+        "Horses circle the track, jockeys focused, crowds suspended in expectation.",
+        "This series concentrates on moments of pause, relaxation before the crescendo of a race unfolds, ending in seconds.",
+      ],
+      textPlacement: "after-first-image",
+    },
   },
   "paris-fashion-week-2025": {
     key: "paris-fashion-week-2025",
@@ -409,9 +439,24 @@ const createHomeSlide = (
 };
 
 export const homeSlideshowImages: HomeSlide[] = [
-  createHomeSlide(protestsImages, "IAB_20251113_00058.jpg", "protests", "Protests"),
-  createHomeSlide(protestsImages, "IAB_20251122_00285.jpg", "protests", "Protests"),
-  createHomeSlide(protestsImages, "IAB_20251122_00384.jpg", "protests", "Protests"),
+  createHomeSlide(
+    protestsImages,
+    "IAB_20251113_00058.jpg",
+    "protests",
+    "Place de la Republique",
+  ),
+  createHomeSlide(
+    protestsImages,
+    "IAB_20251122_00285.jpg",
+    "protests",
+    "Place de la Republique",
+  ),
+  createHomeSlide(
+    protestsImages,
+    "IAB_20251122_00384.jpg",
+    "protests",
+    "Place de la Republique",
+  ),
   createHomeSlide(
     parisFashionWeekImages,
     "IAB_20251003_02394.jpg",
@@ -436,17 +481,32 @@ export const homeSlideshowImages: HomeSlide[] = [
     qatarPrixImages,
     "IAB_20251005_03918.jpg",
     "qatar-prix",
-    "Qatar Prix De L'Arc De Triomphe 2025",
+    "Qatar Longchamp Prix",
   ),
   createHomeSlide(
     qatarPrixImages,
     "IAB_20251005_03773.jpg",
     "qatar-prix",
-    "Qatar Prix De L'Arc De Triomphe 2025",
+    "Qatar Longchamp Prix",
   ),
-  createHomeSlide(protestsImages, "IAB_20251129_00085.jpg", "protests", "Protests"),
-  createHomeSlide(protestsImages, "IAB_20251008_00106.jpg", "protests", "Protests"),
-  createHomeSlide(protestsImages, "IAB_20251008_00037.jpg", "protests", "Protests"),
+  createHomeSlide(
+    protestsImages,
+    "IAB_20251129_00085.jpg",
+    "protests",
+    "Place de la Republique",
+  ),
+  createHomeSlide(
+    protestsImages,
+    "IAB_20251008_00106.jpg",
+    "protests",
+    "Place de la Republique",
+  ),
+  createHomeSlide(
+    protestsImages,
+    "IAB_20251008_00037.jpg",
+    "protests",
+    "Place de la Republique",
+  ),
   createHomeSlide(ssdNeonImages, "IAB_20251119_00206.jpg", "ssd-neon", "SSD Neon"),
   createHomeSlide(ssdNeonImages, "IAB_20251119_00132.jpg", "ssd-neon", "SSD Neon"),
 ];

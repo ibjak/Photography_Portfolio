@@ -28,6 +28,10 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   const activeGalleryImages = activeGallery?.images ?? [];
   const activeGalleryTitle = activeGallery?.title ?? null;
   const isStrictGridGallery = activeGallery?.isStrictGrid ?? false;
+  const isStoryGallery = activeGallery?.presentation === "story";
+  const activeStory = activeGallery?.story;
+  const storyTextPlacement = activeStory?.textPlacement ?? "top";
+  const [firstStoryImage, ...remainingStoryImages] = activeGalleryImages;
 
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isGridView, setIsGridView] = useState(view.type === "gallery");
@@ -35,6 +39,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   const [homeSlideIndex, setHomeSlideIndex] = useState(0);
   const [isHomeSlideshowHovered, setIsHomeSlideshowHovered] = useState(false);
   const [previousHomeSlideIndex, setPreviousHomeSlideIndex] = useState<number | null>(null);
+  const [isStoryLightboxOpen, setIsStoryLightboxOpen] = useState(false);
 
   const currentImage =
     activeGalleryImages.length > 0
@@ -71,11 +76,17 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   }, []);
 
   useEffect(() => {
+    const canUseStoryLightboxNavigation =
+      isStoryGallery && isStoryLightboxOpen && activeGalleryImages.length > 0;
     const canUseGalleryArrowNavigation =
       view.type === "gallery" && !isGridView && activeGalleryImages.length > 0;
     const canUseHomeArrowNavigation = isHomeView && homeSlideshowImages.length > 1;
 
-    if (!canUseGalleryArrowNavigation && !canUseHomeArrowNavigation) {
+    if (
+      !canUseStoryLightboxNavigation &&
+      !canUseGalleryArrowNavigation &&
+      !canUseHomeArrowNavigation
+    ) {
       return;
     }
 
@@ -90,26 +101,50 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
         return;
       }
 
-      if (event.key === "ArrowLeft") {
+      if (event.key === "Escape" && canUseStoryLightboxNavigation) {
         event.preventDefault();
-        if (canUseHomeArrowNavigation) {
-          stepHomeSlide(-1);
-        } else {
+        setIsStoryLightboxOpen(false);
+      } else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        if (canUseStoryLightboxNavigation || canUseGalleryArrowNavigation) {
           setCurrentSlideIndex((index) => index - 1);
+        } else if (canUseHomeArrowNavigation) {
+          stepHomeSlide(-1);
         }
       } else if (event.key === "ArrowRight") {
         event.preventDefault();
-        if (canUseHomeArrowNavigation) {
-          stepHomeSlide(1);
-        } else {
+        if (canUseStoryLightboxNavigation || canUseGalleryArrowNavigation) {
           setCurrentSlideIndex((index) => index + 1);
+        } else if (canUseHomeArrowNavigation) {
+          stepHomeSlide(1);
         }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeGalleryImages.length, isGridView, isHomeView, stepHomeSlide, view.type]);
+  }, [
+    activeGalleryImages.length,
+    isGridView,
+    isHomeView,
+    isStoryGallery,
+    isStoryLightboxOpen,
+    stepHomeSlide,
+    view.type,
+  ]);
+
+  useEffect(() => {
+    if (!isStoryLightboxOpen) {
+      return;
+    }
+
+    const { overflow } = document.body.style;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = overflow;
+    };
+  }, [isStoryLightboxOpen]);
 
   useEffect(() => {
     if (!isHomeView || isHomeSlideshowHovered || homeSlideshowImages.length <= 1) {
@@ -342,8 +377,8 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
               </div>
             </section>
           ) : isAboutView ? (
-            <section className="max-w-4xl">
-              <h3 className="font-display text-3xl text-ink">About</h3>
+            <section className="mx-auto max-w-4xl">
+              <h3 className="text-center font-display text-3xl text-ink">About</h3>
               <div className="mt-6 grid gap-5 text-base leading-relaxed text-muted [text-align:justify]">
                 {aboutParagraphs.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
@@ -351,102 +386,228 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
               </div>
             </section>
           ) : activeGallery ? (
-            <section>
-              <div className="flex flex-wrap items-center gap-3">
-                <h3 className="font-display text-3xl text-ink">{activeGalleryTitle}</h3>
-                <button
-                  type="button"
-                  onClick={() => setIsGridView((current) => !current)}
-                  className="ml-auto bg-white p-1 text-gray-900 transition-colors hover:text-accent"
-                >
-                  {isGridView ? (
-                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
-                      <rect x="4" y="6" width="18" height="18" rx="1" />
-                    </svg>
-                  ) : (
-                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
-                      <rect x="3" y="3" width="9" height="9" />
-                      <rect x="14" y="3" width="9" height="9" />
-                      <rect x="3" y="14" width="9" height="9" />
-                      <rect x="14" y="14" width="9" height="9" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-              {isGridView ? (
-                <div
-                  className={
-                    isStrictGridGallery
-                      ? "mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"
-                      : "mt-6 columns-1 gap-6 md:columns-2 xl:columns-3"
-                  }
-                >
-                  {activeGalleryImages.map((image, index) => (
-                    <figure
-                      key={image.src}
-                      className={
-                        isStrictGridGallery
-                          ? "w-full overflow-hidden border border-line bg-glass"
-                          : "mb-6 inline-block w-full overflow-hidden border border-line bg-glass [break-inside:avoid]"
-                      }
-                    >
+            isStoryGallery && activeStory ? (
+              <section className="mx-auto max-w-5xl">
+                <div className="mx-auto max-w-[60rem] text-center">
+                  <p className="text-xs uppercase tracking-[0.18em] text-muted">
+                    {activeStory.location}
+                  </p>
+                  <h3 className="mt-3 font-display text-4xl text-ink md:text-5xl">
+                    {activeGalleryTitle}
+                  </h3>
+                  {storyTextPlacement === "top" ? (
+                    <>
+                      <p className="mt-5 text-lg leading-relaxed text-ink">
+                        {activeStory.standfirst}
+                      </p>
+                      <div className="mt-6 grid gap-5 text-base leading-relaxed text-muted [text-align:justify]">
+                        {activeStory.paragraphs.map((paragraph) => (
+                          <p key={paragraph}>{paragraph}</p>
+                        ))}
+                      </div>
+                    </>
+                  ) : null}
+                </div>
+                <div className="mx-auto mt-12 flex max-w-4xl flex-col gap-10">
+                  {firstStoryImage ? (
+                    <figure className="grid gap-3">
                       <button
                         type="button"
                         onClick={() => {
-                          setCurrentSlideIndex(index);
-                          setIsGridView(false);
+                          setCurrentSlideIndex(0);
+                          setIsStoryLightboxOpen(true);
                         }}
-                        className="block w-full border-0 bg-transparent p-0"
+                        className="group relative block cursor-pointer border-0 bg-transparent p-0 text-left"
+                      >
+                        <img
+                          src={firstStoryImage.src}
+                          alt={firstStoryImage.alt}
+                          className="h-auto w-full border border-line bg-paper transition-opacity duration-300 group-hover:opacity-90"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <span className="pointer-events-none absolute bottom-4 left-4 text-[11px] uppercase tracking-[0.18em] text-black/0 transition duration-300 group-hover:text-black/78">
+                          View fullscreen
+                        </span>
+                      </button>
+                    </figure>
+                  ) : null}
+                  {storyTextPlacement === "after-first-image" ? (
+                    <div className="mx-auto max-w-[60rem] text-sm leading-relaxed text-muted [text-align:justify]">
+                      <p>
+                        {activeStory.standfirst} {activeStory.paragraphs.join(" ")}
+                      </p>
+                    </div>
+                  ) : null}
+                  {remainingStoryImages.map((image, index) => (
+                    <figure key={image.src} className="grid gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCurrentSlideIndex(index + 1);
+                          setIsStoryLightboxOpen(true);
+                        }}
+                        className="group relative block cursor-pointer border-0 bg-transparent p-0 text-left"
                       >
                         <img
                           src={image.src}
                           alt={image.alt}
-                          className="h-auto w-full"
+                          className="h-auto w-full border border-line bg-paper transition-opacity duration-300 group-hover:opacity-90"
                           loading="lazy"
                           decoding="async"
                         />
+                        <span className="pointer-events-none absolute bottom-4 left-4 text-[11px] uppercase tracking-[0.18em] text-black/0 transition duration-300 group-hover:text-black/78">
+                          View fullscreen
+                        </span>
                       </button>
                     </figure>
                   ))}
                 </div>
-              ) : (
-                <div className="mt-6 flex justify-center">
-                  <div className="inline-flex max-w-full flex-col items-end gap-3">
-                    {currentImage ? (
-                      <img
-                        src={currentImage.src}
-                        alt={currentImage.alt}
-                        className="h-auto w-auto max-h-[68vh] max-w-full border border-line bg-paper"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    ) : null}
-                    <div className="flex items-center gap-2 text-sm text-muted">
-                      <button
-                        type="button"
-                        onClick={() => setCurrentSlideIndex((index) => index - 1)}
-                        className="border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent"
-                        aria-label="Previous photo"
+              </section>
+            ) : (
+              <section>
+                <div className="flex flex-wrap items-center gap-3">
+                  <h3 className="font-display text-3xl text-ink">{activeGalleryTitle}</h3>
+                  <button
+                    type="button"
+                    onClick={() => setIsGridView((current) => !current)}
+                    className="ml-auto bg-white p-1 text-gray-900 transition-colors hover:text-accent"
+                  >
+                    {isGridView ? (
+                      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+                        <rect x="4" y="6" width="18" height="18" rx="1" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+                        <rect x="3" y="3" width="9" height="9" />
+                        <rect x="14" y="3" width="9" height="9" />
+                        <rect x="3" y="14" width="9" height="9" />
+                        <rect x="14" y="14" width="9" height="9" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                {isGridView ? (
+                  <div
+                    className={
+                      isStrictGridGallery
+                        ? "mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"
+                        : "mt-6 columns-1 gap-6 md:columns-2 xl:columns-3"
+                    }
+                  >
+                    {activeGalleryImages.map((image, index) => (
+                      <figure
+                        key={image.src}
+                        className={
+                          isStrictGridGallery
+                            ? "w-full overflow-hidden border border-line bg-glass"
+                            : "mb-6 inline-block w-full overflow-hidden border border-line bg-glass [break-inside:avoid]"
+                        }
                       >
-                        Previous
-                      </button>
-                      <span aria-hidden="true">/</span>
-                      <button
-                        type="button"
-                        onClick={() => setCurrentSlideIndex((index) => index + 1)}
-                        className="border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent"
-                        aria-label="Next photo"
-                      >
-                        Next
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCurrentSlideIndex(index);
+                            setIsGridView(false);
+                          }}
+                          className="block w-full border-0 bg-transparent p-0"
+                        >
+                          <img
+                            src={image.src}
+                            alt={image.alt}
+                            className="h-auto w-full"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </button>
+                      </figure>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="mt-6 flex justify-center">
+                    <div className="inline-flex max-w-full flex-col items-end gap-3">
+                      {currentImage ? (
+                        <img
+                          src={currentImage.src}
+                          alt={currentImage.alt}
+                          className="h-auto w-auto max-h-[68vh] max-w-full border border-line bg-paper"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      ) : null}
+                      <div className="flex items-center gap-2 text-sm text-muted">
+                        <button
+                          type="button"
+                          onClick={() => setCurrentSlideIndex((index) => index - 1)}
+                          className="border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent"
+                          aria-label="Previous photo"
+                        >
+                          Previous
+                        </button>
+                        <span aria-hidden="true">/</span>
+                        <button
+                          type="button"
+                          onClick={() => setCurrentSlideIndex((index) => index + 1)}
+                          className="border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent"
+                          aria-label="Next photo"
+                        >
+                          Next
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </section>
+                )}
+              </section>
+            )
           ) : null}
         </main>
       </div>
+      {isStoryGallery && isStoryLightboxOpen && currentImage ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-white/95 px-6 py-8"
+          onClick={() => setIsStoryLightboxOpen(false)}
+        >
+          <div
+            className="flex max-h-full max-w-5xl flex-col items-center gap-4"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setIsStoryLightboxOpen(false)}
+              className="self-end border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent"
+              aria-label="Close lightbox"
+            >
+              Close
+            </button>
+            <img
+              src={currentImage.src}
+              alt={currentImage.alt}
+              className="h-auto max-h-[78vh] w-auto max-w-full border border-line bg-paper"
+              loading="lazy"
+              decoding="async"
+            />
+            <div className="flex items-center gap-2 text-sm text-muted">
+              <button
+                type="button"
+                onClick={() => setCurrentSlideIndex((index) => index - 1)}
+                className="border-0 bg-transparent p-0 transition-colors hover:text-accent"
+                aria-label="Previous photo"
+              >
+                Previous
+              </button>
+              <span aria-hidden="true">/</span>
+              <button
+                type="button"
+                onClick={() => setCurrentSlideIndex((index) => index + 1)}
+                className="border-0 bg-transparent p-0 transition-colors hover:text-accent"
+                aria-label="Next photo"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
