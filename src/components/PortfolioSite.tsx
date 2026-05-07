@@ -136,9 +136,11 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   }, [previousHomeSlideIndex]);
 
   const navLinkClass = (active: boolean) =>
-    `border-0 bg-transparent p-0 text-left text-sm transition-colors hover:text-[#0B2A6F] ${
+    `border-0 bg-transparent p-0 text-left text-sm font-semibold transition-colors hover:text-[#0B2A6F] ${
       active ? "text-accent underline underline-offset-4" : "text-ink"
     }`;
+
+  const navigationGalleryKeys = gallerySections.flatMap((section) => section.galleryKeys);
 
   return (
     <div className="page-shell" onContextMenu={(event) => event.preventDefault()}>
@@ -196,33 +198,20 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
             </div>
             <div className={!isMobileNavOpen ? "hidden md:block" : "md:block"}>
               <nav className="mt-6 grid gap-4 text-sm">
-                {gallerySections.map((section) => {
-                  const isSectionOpen = activeGallery?.section === section.key;
+                {navigationGalleryKeys.map((galleryKey) => {
+                  const gallery = galleries[galleryKey];
+                  const isActive = activeGallery?.key === galleryKey;
 
                   return (
-                    <details key={section.key} className="group" open={isSectionOpen}>
-                      <summary className="summary-clean text-sm font-semibold text-ink transition-colors hover:text-[#0B2A6F] group-open:text-accent">
-                        {section.title}
-                      </summary>
-                      <div className="mt-2 grid gap-2 pl-4">
-                        {section.galleryKeys.map((galleryKey) => {
-                          const gallery = galleries[galleryKey];
-                          const isActive = activeGallery?.key === galleryKey;
-
-                          return (
-                            <Link
-                              key={gallery.key}
-                              href={getGalleryHref(gallery.key)}
-                              className={navLinkClass(isActive)}
-                              aria-current={isActive ? "page" : undefined}
-                              onClick={() => setIsMobileNavOpen(false)}
-                            >
-                              {gallery.navLabel}
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </details>
+                    <Link
+                      key={gallery.key}
+                      href={getGalleryHref(gallery.key)}
+                      className={navLinkClass(isActive)}
+                      aria-current={isActive ? "page" : undefined}
+                      onClick={() => setIsMobileNavOpen(false)}
+                    >
+                      {gallery.navLabel}
+                    </Link>
                   );
                 })}
                 <Link
