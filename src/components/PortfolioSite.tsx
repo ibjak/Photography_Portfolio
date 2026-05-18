@@ -136,7 +136,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   }, [previousHomeSlideIndex]);
 
   const navLinkClass = (active: boolean) =>
-    `border-0 bg-transparent p-0 text-left text-sm font-medium transition-colors hover:text-[#0B2A6F] ${
+    `border-0 bg-transparent p-0 text-left font-sans text-sm leading-6 font-medium tracking-[0.01em] transition-colors hover:text-[#0B2A6F] ${
       active ? "text-accent underline underline-offset-4" : "text-[#534941]"
     }`;
 
@@ -197,8 +197,13 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
               </div>
             </div>
             <div className={!isMobileNavOpen ? "hidden md:block" : "md:block"}>
-              <nav className="mt-6 text-sm">
-                <div className="grid gap-1">
+              <div className="mt-6 grid gap-1 text-sm">
+                <span className="text-sm text-black">ivanb.jpg@gmail.com</span>
+                <span className="text-sm text-black">Currently based in Paris</span>
+              </div>
+
+              <nav className="mt-7 text-sm">
+                <div className="grid gap-2">
                   {navigationGalleryKeys.map((galleryKey) => {
                     const gallery = galleries[galleryKey];
                     const isActive = activeGallery?.key === galleryKey;
@@ -218,7 +223,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                 </div>
                 <Link
                   href="/about"
-                  className={`mt-5 block border-0 bg-transparent p-0 text-left text-sm font-medium transition-colors hover:text-[#0B2A6F] ${
+                  className={`mt-2 block border-0 bg-transparent p-0 text-left font-sans text-sm leading-6 font-medium tracking-[0.01em] transition-colors hover:text-[#0B2A6F] ${
                     isAboutView ? "text-accent underline underline-offset-4" : "text-[#534941]"
                   }`}
                   aria-current={isAboutView ? "page" : undefined}
@@ -228,31 +233,29 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                 </Link>
               </nav>
 
-              <div className="mt-10 flex items-center gap-3">
-                {presences.map((presence) => (
-                  <a
-                    key={presence.name}
-                    href={presence.href}
-                    aria-label={presence.name}
-                    className="group flex h-8 w-7 items-center justify-left"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <span className="sr-only">{presence.name}</span>
-                    <img
-                      src={presence.iconSrc}
-                      alt={presence.name}
-                      className="h-5 w-5 object-contain transition-[filter] duration-200 group-hover:[filter:sepia(1)_saturate(6)_hue-rotate(346deg)_brightness(0.9)]"
-                    />
-                  </a>
-                ))}
-              </div>
-              <div className="mt-1 grid gap-2 text-sm">
-                <span className="text-sm text-muted">ivanb.jpg@gmail.com</span>
-                <span className="text-sm text-muted">Currently based in Paris</span>
-              </div>
-              <div className="mt-8 text-xs text-muted">
-                © {new Date().getFullYear()} Ivan Badanjak. All rights reserved.
+              <div className="mt-10">
+                <div className="flex items-center gap-3">
+                  {presences.map((presence) => (
+                    <a
+                      key={presence.name}
+                      href={presence.href}
+                      aria-label={presence.name}
+                      className="group flex h-8 w-7 items-center justify-left"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <span className="sr-only">{presence.name}</span>
+                      <img
+                        src={presence.iconSrc}
+                        alt={presence.name}
+                        className="h-5 w-5 object-contain transition-[filter] duration-200 group-hover:[filter:sepia(1)_saturate(6)_hue-rotate(346deg)_brightness(0.9)]"
+                      />
+                    </a>
+                  ))}
+                </div>
+                <div className="mt-3 text-xs text-muted">
+                  © {new Date().getFullYear()} Ivan Badanjak. All rights reserved.
+                </div>
               </div>
             </div>
           </div>
