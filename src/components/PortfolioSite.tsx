@@ -136,7 +136,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   }, [previousHomeSlideIndex]);
 
   const navLinkClass = (active: boolean) =>
-    `border-0 bg-transparent p-0 text-left text-sm font-normal transition-colors hover:text-[#0B2A6F] ${
+    `border-0 bg-transparent p-0 text-left text-sm font-medium transition-colors hover:text-[#0B2A6F] ${
       active ? "text-accent underline underline-offset-4" : "text-[#534941]"
     }`;
 
@@ -218,7 +218,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                 </div>
                 <Link
                   href="/about"
-                  className={`mt-5 block border-0 bg-transparent p-0 text-left text-sm font-normal transition-colors hover:text-[#0B2A6F] ${
+                  className={`mt-5 block border-0 bg-transparent p-0 text-left text-sm font-medium transition-colors hover:text-[#0B2A6F] ${
                     isAboutView ? "text-accent underline underline-offset-4" : "text-[#534941]"
                   }`}
                   aria-current={isAboutView ? "page" : undefined}
@@ -249,6 +249,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
               </div>
               <div className="mt-1 grid gap-2 text-sm">
                 <span className="text-sm text-muted">ivanb.jpg@gmail.com</span>
+                <span className="text-sm text-muted">Currently based in Paris</span>
               </div>
               <div className="mt-8 text-xs text-muted">
                 © {new Date().getFullYear()} Ivan Badanjak. All rights reserved.
@@ -334,8 +335,8 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
             </section>
           ) : isAboutView ? (
             <section className="max-w-4xl">
-              <h3 className="font-display text-3xl text-ink">About</h3>
-              <div className="mt-6 grid gap-5 text-base leading-relaxed text-muted [text-align:justify]">
+              <h3 className="font-sans text-3xl font-semibold text-black">About</h3>
+              <div className="mt-6 grid gap-5 font-sans text-base leading-relaxed text-black [text-align:justify]">
                 {aboutParagraphs.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
@@ -344,7 +345,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
           ) : activeGallery ? (
             <section>
               <div className="flex flex-wrap items-center gap-3">
-                <h3 className="font-display text-3xl text-ink">{activeGalleryTitle}</h3>
+                <h3 className="font-sans text-3xl font-semibold text-black">{activeGalleryTitle}</h3>
                 <button
                   type="button"
                   onClick={() => setIsGridView((current) => !current)}
