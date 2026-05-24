@@ -150,10 +150,10 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
             <div className="mb-4 flex items-center justify-between md:hidden">
               <Link
                 href="/"
-                className="font-display text-3xl leading-none font-bold text-ink"
+                className="font-display text-[1.75rem] leading-none font-bold tracking-[0.02em] text-ink"
                 onClick={() => setIsMobileNavOpen(false)}
               >
-                Ivan Badanjak
+                IVAN BADANJAK
               </Link>
               <button
                 type="button"
@@ -190,20 +190,15 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
               <div className="flex items-center">
                 <Link
                   href="/"
-                  className="font-display text-4xl leading-none font-bold text-ink md:text-5xl"
+                  className="font-display text-[2.35rem] leading-[0.92] font-bold tracking-[0.02em] text-ink lg:text-[2.65rem]"
                 >
-                  Ivan Badanjak
+                  IVAN BADANJAK
                 </Link>
               </div>
             </div>
             <div className={!isMobileNavOpen ? "hidden md:block" : "md:block"}>
-              <div className="mt-6 grid gap-1 text-sm">
-                <span className="text-sm text-black">ivanb.jpg@gmail.com</span>
-                <span className="text-sm text-black">Currently based in Paris</span>
-              </div>
-
               <nav className="mt-7 text-sm">
-                <div className="grid gap-2">
+                <div className="grid gap-1">
                   {navigationGalleryKeys.map((galleryKey) => {
                     const gallery = galleries[galleryKey];
                     const isActive = activeGallery?.key === galleryKey;
@@ -223,7 +218,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                 </div>
                 <Link
                   href="/about"
-                  className={`mt-2 block border-0 bg-transparent p-0 text-left font-sans text-sm leading-6 font-medium tracking-[0.01em] transition-colors hover:text-[#0B2A6F] ${
+                  className={`mt-1 block border-0 bg-transparent p-0 text-left font-sans text-sm leading-6 font-medium tracking-[0.01em] transition-colors hover:text-[#0B2A6F] ${
                     isAboutView ? "text-accent underline underline-offset-4" : "text-[#534941]"
                   }`}
                   aria-current={isAboutView ? "page" : undefined}
@@ -253,7 +248,10 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                     </a>
                   ))}
                 </div>
-                <div className="mt-3 text-xs text-muted">
+                <div className="mt-1 grid gap-1 text-sm">
+                  <span className="text-sm text-black">ivanb.jpg@gmail.com</span>
+                </div>
+                <div className="mt-4 text-xs text-muted">
                   © {new Date().getFullYear()} Ivan Badanjak. All rights reserved.
                 </div>
               </div>
@@ -337,7 +335,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
               </div>
             </section>
           ) : isAboutView ? (
-            <section className="max-w-4xl">
+            <section className="mx-auto w-full max-w-[42rem]">
               <h3 className="font-sans text-3xl font-semibold text-black">About</h3>
               <div className="mt-6 grid gap-5 font-sans text-base leading-relaxed text-black [text-align:justify]">
                 {aboutParagraphs.map((paragraph) => (
@@ -347,7 +345,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
             </section>
           ) : activeGallery ? (
             <section>
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-3">
                 <h3 className="font-sans text-3xl font-semibold text-black">{activeGalleryTitle}</h3>
                 <button
                   type="button"
@@ -372,8 +370,8 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                 <div
                   className={
                     isStrictGridGallery
-                      ? "mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"
-                      : "mt-6 columns-1 gap-6 md:columns-2 xl:columns-3"
+                      ? "mx-auto mt-6 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2"
+                      : "mx-auto mt-6 max-w-5xl columns-1 gap-6 md:columns-2"
                   }
                 >
                   {activeGalleryImages.map((image, index) => (
