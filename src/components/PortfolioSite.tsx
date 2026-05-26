@@ -243,7 +243,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                       <img
                         src={presence.iconSrc}
                         alt={presence.name}
-                        className="h-5 w-5 object-contain transition-[filter] duration-200 group-hover:[filter:sepia(1)_saturate(6)_hue-rotate(346deg)_brightness(0.9)]"
+                        className="h-5 w-5 object-contain"
                       />
                     </a>
                   ))}
