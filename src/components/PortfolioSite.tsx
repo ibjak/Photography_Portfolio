@@ -370,8 +370,8 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                 <div
                   className={
                     isStrictGridGallery
-                      ? "mx-auto mt-6 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2"
-                      : "mx-auto mt-6 max-w-5xl columns-1 gap-6 md:columns-2"
+                      ? "mx-auto mt-6 grid max-w-5xl grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3"
+                      : "mx-auto mt-6 max-w-5xl columns-1 gap-2 md:columns-2 xl:columns-3"
                   }
                 >
                   {activeGalleryImages.map((image, index) => (
@@ -380,7 +380,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                       className={
                         isStrictGridGallery
                           ? "w-full overflow-hidden border border-line bg-glass"
-                          : "mb-6 inline-block w-full overflow-hidden border border-line bg-glass [break-inside:avoid]"
+                          : "mb-2 inline-block w-full overflow-hidden border border-line bg-glass [break-inside:avoid]"
                       }
                     >
                       <button
