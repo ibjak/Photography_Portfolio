@@ -10,8 +10,7 @@ export type GalleryKey =
   | "qatar-prix"
   | "paris-fashion-week-2025"
   | "ssd-neon"
-  | "dogs"
-  | "uefa-champions-league-winners-2026-psg";
+  | "dogs";
 
 export type Gallery = {
   key: GalleryKey;
@@ -65,8 +64,6 @@ const qatarPrixImages: ImageItem[] = [
     alt: "Qatar Prix De L'Arc De Triomphe 2025 photo 7",
   },
 ];
-
-const uefaChampionsLeagueWinners2026PsgImages: ImageItem[] = [];
 
 const bataclanImages: ImageItem[] = [
   {
@@ -369,15 +366,6 @@ export const galleries: Record<GalleryKey, Gallery> = {
     images: dogsImages,
     isStrictGrid: false,
   },
-  "uefa-champions-league-winners-2026-psg": {
-    key: "uefa-champions-league-winners-2026-psg",
-    section: "events",
-    slug: "winners-in-paris",
-    title: "Winners in Paris",
-    navLabel: "Winners in Paris",
-    images: uefaChampionsLeagueWinners2026PsgImages,
-    isStrictGrid: false,
-  },
 };
 
 export const galleryKeys = Object.keys(galleries) as GalleryKey[];
@@ -390,7 +378,6 @@ export const gallerySections = [
       "protests",
       "qatar-prix",
       "paris-fashion-week-2025",
-      "uefa-champions-league-winners-2026-psg",
     ] as GalleryKey[],
   },
   {
@@ -497,17 +484,11 @@ export const homeSlideshowImages: HomeSlide[] = [
 
 export function getGalleryHref(galleryKey: GalleryKey) {
   const gallery = galleries[galleryKey];
-  return `/${gallery.slug}`;
+  return `/${gallery.section}/${gallery.slug}`;
 }
 
 export function getGalleryByRoute(section: string, slug: string) {
   return galleryKeys
     .map((key) => galleries[key])
     .find((gallery) => gallery.section === section && gallery.slug === slug) ?? null;
-}
-
-export function getGalleryBySlug(slug: string) {
-  return galleryKeys
-    .map((key) => galleries[key])
-    .find((gallery) => gallery.slug === slug) ?? null;
 }
