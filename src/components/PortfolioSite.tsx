@@ -347,26 +347,32 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
             <section>
               <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-3">
                 <h3 className="font-sans text-3xl font-semibold text-black">{activeGalleryTitle}</h3>
-                <button
-                  type="button"
-                  onClick={() => setIsGridView((current) => !current)}
-                  className="ml-auto bg-white p-1 text-gray-900 transition-colors hover:text-accent"
-                >
-                  {isGridView ? (
-                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
-                      <rect x="4" y="6" width="18" height="18" rx="1" />
-                    </svg>
-                  ) : (
-                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
-                      <rect x="3" y="3" width="9" height="9" />
-                      <rect x="14" y="3" width="9" height="9" />
-                      <rect x="3" y="14" width="9" height="9" />
-                      <rect x="14" y="14" width="9" height="9" />
-                    </svg>
-                  )}
-                </button>
+                {activeGalleryImages.length > 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => setIsGridView((current) => !current)}
+                    className="ml-auto bg-white p-1 text-gray-900 transition-colors hover:text-accent"
+                  >
+                    {isGridView ? (
+                      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+                        <rect x="4" y="6" width="18" height="18" rx="1" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+                        <rect x="3" y="3" width="9" height="9" />
+                        <rect x="14" y="3" width="9" height="9" />
+                        <rect x="3" y="14" width="9" height="9" />
+                        <rect x="14" y="14" width="9" height="9" />
+                      </svg>
+                    )}
+                  </button>
+                ) : null}
               </div>
-              {isGridView ? (
+              {activeGalleryImages.length === 0 ? (
+                <div className="mx-auto mt-8 max-w-5xl text-sm text-muted">
+                  Photos coming soon.
+                </div>
+              ) : isGridView ? (
                 <div
                   className={
                     isStrictGridGallery
