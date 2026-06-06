@@ -457,6 +457,24 @@ const createHomeSlide = (
 
 export const homeSlideshowImages: HomeSlide[] = [
   createHomeSlide(
+    winnersInParisImages,
+    "IAB-PSG_Celebration_Paris_Republique-1.jpg",
+    "uefa-champions-league-winners-2026-psg",
+    "Winners in Paris",
+  ),
+  createHomeSlide(
+    winnersInParisImages,
+    "IAB-PSG_Celebration_Paris_Republique-2.jpg",
+    "uefa-champions-league-winners-2026-psg",
+    "Winners in Paris",
+  ),
+  createHomeSlide(
+    winnersInParisImages,
+    "IAB-PSG_Celebration_Paris_Republique-3.jpg",
+    "uefa-champions-league-winners-2026-psg",
+    "Winners in Paris",
+  ),
+  createHomeSlide(
     protestsImages,
     "IAB_20251113_00058.jpg",
     "protests",
