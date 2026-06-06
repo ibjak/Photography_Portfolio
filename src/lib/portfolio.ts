@@ -9,6 +9,7 @@ export type GalleryKey =
   | "protests"
   | "qatar-prix"
   | "paris-fashion-week-2025"
+  | "uefa-champions-league-winners-2026-psg"
   | "ssd-neon"
   | "dogs";
 
@@ -198,6 +199,41 @@ const parisFashionWeekImages: ImageItem[] = [
   },
 ];
 
+const winnersInParisImages: ImageItem[] = [
+  {
+    src: "/Photo%20Gallery/UEFA%20CHAMPS%20PSG%20CELEBRATIONS%202026/IAB-PSG_Celebration_Paris_Republique-1.jpg",
+    alt: "PSG supporters celebrating the UEFA Champions League win in Paris, June 2026.",
+  },
+  {
+    src: "/Photo%20Gallery/UEFA%20CHAMPS%20PSG%20CELEBRATIONS%202026/IAB-PSG_Celebration_Paris_Republique-2.jpg",
+    alt: "PSG supporters celebrating the UEFA Champions League win in Paris, June 2026.",
+  },
+  {
+    src: "/Photo%20Gallery/UEFA%20CHAMPS%20PSG%20CELEBRATIONS%202026/IAB-PSG_Celebration_Paris_Republique-3.jpg",
+    alt: "PSG supporters celebrating the UEFA Champions League win in Paris, June 2026.",
+  },
+  {
+    src: "/Photo%20Gallery/UEFA%20CHAMPS%20PSG%20CELEBRATIONS%202026/IAB-PSG_Celebration_Paris_Republique-4.jpg",
+    alt: "PSG supporters celebrating the UEFA Champions League win in Paris, June 2026.",
+  },
+  {
+    src: "/Photo%20Gallery/UEFA%20CHAMPS%20PSG%20CELEBRATIONS%202026/IAB-PSG_Celebration_Paris_Republique-12.jpg",
+    alt: "PSG supporters celebrating the UEFA Champions League win in Paris, June 2026.",
+  },
+  {
+    src: "/Photo%20Gallery/UEFA%20CHAMPS%20PSG%20CELEBRATIONS%202026/IAB-PSG_Celebration_Paris_Republique-13.jpg",
+    alt: "PSG supporters celebrating the UEFA Champions League win in Paris, June 2026.",
+  },
+  {
+    src: "/Photo%20Gallery/UEFA%20CHAMPS%20PSG%20CELEBRATIONS%202026/IAB-PSG_Celebration_Paris_Republique-14.jpg",
+    alt: "PSG supporters celebrating the UEFA Champions League win in Paris, June 2026.",
+  },
+  {
+    src: "/Photo%20Gallery/UEFA%20CHAMPS%20PSG%20CELEBRATIONS%202026/IAB-PSG_Celebration_Paris_Republique-15.jpg",
+    alt: "PSG supporters celebrating the UEFA Champions League win in Paris, June 2026.",
+  },
+];
+
 const ssdNeonImages: ImageItem[] = [
   {
     src: "/Photo%20Gallery/SSD%20Neon%20/IAB_20251119_00063.jpg",
@@ -348,6 +384,15 @@ export const galleries: Record<GalleryKey, Gallery> = {
     images: parisFashionWeekImages,
     isStrictGrid: false,
   },
+  "uefa-champions-league-winners-2026-psg": {
+    key: "uefa-champions-league-winners-2026-psg",
+    section: "events",
+    slug: "winners-in-paris",
+    title: "Winners in Paris",
+    navLabel: "Winners in Paris",
+    images: winnersInParisImages,
+    isStrictGrid: false,
+  },
   "ssd-neon": {
     key: "ssd-neon",
     section: "street-photography",
@@ -378,6 +423,7 @@ export const gallerySections = [
       "protests",
       "qatar-prix",
       "paris-fashion-week-2025",
+      "uefa-champions-league-winners-2026-psg",
     ] as GalleryKey[],
   },
   {
