@@ -374,6 +374,9 @@ export const galleries: Record<GalleryKey, Gallery> = {
     slug: "protests",
     title: "Place de la Republique",
     navLabel: "Place de la Republique",
+    introParagraphs: [
+      "Place de la République has become a regular site for public assembly in Paris, where protests, vigils, and demonstrations reflect the city's social fault lines. Five metro lines intersect beneath the square, and eight avenues converge on it. Its scale and central position make it a lasting gathering place for collective expression. This album is a diary of protests that have helped shape French society's collective consciousness.",
+    ],
     images: protestsImages,
     isStrictGrid: true,
   },
