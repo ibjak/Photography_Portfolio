@@ -271,11 +271,11 @@ const ssdNeonImages: ImageItem[] = [
     alt: "SSD Neon photo 7",
   },
   {
-    src: "/Photo%20Gallery/SSD%20Neon%20/IAB_20251119_00206.jpg",
+    src: "/Photo%20Gallery/SSD%20Neon%20/IAB_20251119_00206-1.jpg",
     alt: "SSD Neon photo 8",
   },
   {
-    src: "/Photo%20Gallery/SSD%20Neon%20/IAB_20251119_00213.jpg",
+    src: "/Photo%20Gallery/SSD%20Neon%20/IAB_20251119_00061-1.jpg",
     alt: "SSD Neon photo 9",
   },
   {
@@ -562,7 +562,7 @@ export const homeSlideshowImages: HomeSlide[] = [
     "protests",
     "Place de la Republique",
   ),
-  createHomeSlide(ssdNeonImages, "IAB_20251119_00206.jpg", "ssd-neon", "SSD Neon"),
+  createHomeSlide(ssdNeonImages, "IAB_20251119_00206-1.jpg", "ssd-neon", "SSD Neon"),
   createHomeSlide(ssdNeonImages, "IAB_20251119_00132.jpg", "ssd-neon", "SSD Neon"),
 ];
 
