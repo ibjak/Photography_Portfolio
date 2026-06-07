@@ -436,6 +436,15 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                   </div>
                 </div>
               )}
+              {activeGallery.introParagraphs?.length ? (
+                <div className="mx-auto mt-6 w-full max-w-5xl bg-glass p-5 md:p-7">
+                  <div className="grid gap-4 font-sans text-[15px] leading-7 text-black md:text-base">
+                    {activeGallery.introParagraphs.map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
             </section>
           ) : null}
         </main>

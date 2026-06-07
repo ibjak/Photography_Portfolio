@@ -19,6 +19,7 @@ export type Gallery = {
   slug: string;
   title: string;
   navLabel: string;
+  introParagraphs?: string[];
   images: ImageItem[];
   isStrictGrid: boolean;
 };
@@ -68,11 +69,11 @@ const qatarPrixImages: ImageItem[] = [
 
 const bataclanImages: ImageItem[] = [
   {
-    src: "/Photo%20Gallery/Bataclan%2010%20year%20anniversary/IAB_20251113_00055.jpg",
+    src: "/Photo%20Gallery/Bataclan%2010%20year%20anniversary/IAB_20251113_00055-1.jpg",
     alt: "Commemoration marking the 10th anniversary of the November 2015 Paris attacks, Place de la Republique, Paris, November 2025.",
   },
   {
-    src: "/Photo%20Gallery/Bataclan%2010%20year%20anniversary/IAB_20251113_00058.jpg",
+    src: "/Photo%20Gallery/Bataclan%2010%20year%20anniversary/IAB_20251113_00058-2.jpg",
     alt: "Commemoration marking the 10th anniversary of the November 2015 Paris attacks, Place de la Republique, Paris, November 2025.",
   },
   {
@@ -80,11 +81,11 @@ const bataclanImages: ImageItem[] = [
     alt: "Commemoration marking the 10th anniversary of the November 2015 Paris attacks, Place de la Republique, Paris, November 2025.",
   },
   {
-    src: "/Photo%20Gallery/Bataclan%2010%20year%20anniversary/IAB_20251113_00078.jpg",
+    src: "/Photo%20Gallery/Bataclan%2010%20year%20anniversary/IAB_20251113_00078-3.jpg",
     alt: "Commemoration marking the 10th anniversary of the November 2015 Paris attacks, Place de la Republique, Paris, November 2025.",
   },
   {
-    src: "/Photo%20Gallery/Bataclan%2010%20year%20anniversary/IAB_20251113_00106.jpg",
+    src: "/Photo%20Gallery/Bataclan%2010%20year%20anniversary/IAB_20251113_00106-4.jpg",
     alt: "Commemoration marking the 10th anniversary of the November 2015 Paris attacks, Place de la Republique, Paris, November 2025.",
   },
 ];
@@ -143,21 +144,31 @@ const frenchDelegationReturnsImages: ImageItem[] = [
   "IAB_20251008_00037.jpg",
   "IAB_20251008_00041.jpg",
   "IAB_20251008_00058.jpg",
-  "IAB_20251008_00064.jpg",
-  "IAB_20251008_00069.jpg",
+  "IAB_20251008_00064-1.jpg",
+  "IAB_20251008_00069-1.jpg",
   "IAB_20251008_00106.jpg",
-  "IAB_20251008_00109.jpg",
-  "IAB_20251008_00123.jpg",
 ].map((fileName) => ({
   src: `/Photo%20Gallery/French%20Delegation%20returns%20-%20Global%20Sumud%20Flotilla%20(October%202025)/${fileName}`,
   alt: "Return of the French delegation from the Global Sumud Flotilla, Paris, October 2025.",
 }));
+
+const prisonerSolidarityProtestImages: ImageItem[] = [
+  {
+    src: "/Photo%20Gallery/prisoner%20solidarity%20protest/IAB_20260321_00237-1.jpg",
+    alt: "Prisoner solidarity protest at Place de la Republique, Paris, March 2026.",
+  },
+  {
+    src: "/Photo%20Gallery/prisoner%20solidarity%20protest/IAB_20260321_00243-2.jpg",
+    alt: "Prisoner solidarity protest at Place de la Republique, Paris, March 2026.",
+  },
+];
 
 const protestsImages: ImageItem[] = [
   ...frenchDelegationReturnsImages,
   ...bataclanImages,
   ...internationalSolidarityPalestineImages,
   ...eliminationViolenceWomenImages,
+  ...prisonerSolidarityProtestImages,
 ];
 
 const parisFashionWeekImages: ImageItem[] = [
@@ -372,6 +383,9 @@ export const galleries: Record<GalleryKey, Gallery> = {
     slug: "qatar-prix-2025",
     title: "Qatar Longchamp Prix 2025",
     navLabel: "Qatar Longchamp Prix",
+    introParagraphs: [
+      "The Qatar Longchamp Prix is defined by the moments before the race begins. Horses circle the track, jockeys focused, crowds suspended in expectation. This series concentrates on moments of pause, relaxation before the crescendo of a race unfolds, ending in seconds.",
+    ],
     images: qatarPrixImages,
     isStrictGrid: false,
   },
@@ -390,6 +404,9 @@ export const galleries: Record<GalleryKey, Gallery> = {
     slug: "winners-in-paris",
     title: "Winners in Paris",
     navLabel: "Winners in Paris",
+    introParagraphs: [
+      "On May 30th 2026, a grueling football match took place at Puskas Arena in Budapest, Hungary between Paris Saint-Germain and Arsenal. PSG successfully defended their title, winning 4-3 on penalties after 120 minutes of regulation time failed to separate the sides at 1-1. After the final whistle, crowds formed at various public squares in Paris. The following is an album documenting those celebrations at Place de la Republique.",
+    ],
     images: winnersInParisImages,
     isStrictGrid: false,
   },
@@ -476,7 +493,7 @@ export const homeSlideshowImages: HomeSlide[] = [
   ),
   createHomeSlide(
     protestsImages,
-    "IAB_20251113_00058.jpg",
+    "IAB_20251113_00058-2.jpg",
     "protests",
     "Place de la Republique",
   ),
