@@ -408,7 +408,7 @@ export const galleries: Record<GalleryKey, Gallery> = {
     title: "Winners in Paris",
     navLabel: "Winners in Paris",
     introParagraphs: [
-      "On May 30th 2026, a grueling football match took place at Puskas Arena in Budapest, Hungary between Paris Saint-Germain and Arsenal. PSG successfully defended their title, winning 4-3 on penalties after 120 minutes of regulation time failed to separate the sides at 1-1. After the final whistle, crowds formed at various public squares in Paris. The following is an album documenting those celebrations at Place de la Republique.",
+      "On May 30th 2026, a grueling UEFA Champions League final took place at Puskas Arena in Budapest, Hungary between Paris Saint-Germain and Arsenal. PSG successfully defended their title, winning 4-3 on penalties after 120 minutes of regulation time failed to separate the sides at 1-1. After the final whistle, crowds formed at various public squares in Paris. The following is an album documenting those celebrations at Place de la Republique.",
     ],
     images: winnersInParisImages,
     isStrictGrid: false,
