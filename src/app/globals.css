@@ -116,8 +116,8 @@ a {
 
 .exhibition-wall {
   position: relative;
-  min-width: 920px;
-  aspect-ratio: 320 / 170;
+  min-width: 1380px;
+  aspect-ratio: 640 / 340;
   background: var(--paper);
 }
 
