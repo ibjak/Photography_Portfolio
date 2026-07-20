@@ -475,16 +475,40 @@ export const presences = [
 ] as const;
 
 export const galleries: Record<GalleryKey, Gallery> = {
-  jaima: {
-    key: "jaima",
-    section: "projects",
-    slug: "jaima",
-    title: "Jaima",
-    navLabel: "Jaima",
-    images: jaimaImages,
-    isStrictGrid: false,
-    layout: "exhibition-wall",
-  },
+jaima: {
+  key: "jaima",
+  section: "projects",
+  slug: "jaima",
+  title: "Jaima",
+  navLabel: "Jaima",
+  introParagraphs: [
+    `Jaima chronicles the experiences of the Western Saharan Diaspora living in
+France. Following Spain's incomplete decolonization of the territory in 1975
+and the unfulfilled promise of a UN referendum in 1991, many Sahrawis were
+displaced, fleeing conflict and the Moroccan occupation of their territory.
+France has become home to a sizable number of the diaspora community.
+Today, the struggle for self determination for many Sahrawis continues from afar
+over a territory they call home, but Morocco administratively controls.
+The project explores how cultural identity is sustained and reshaped in
+displacement, and how a sense of home persists across distance. Developed
+over sustained access to families and community gatherings, the photographs
+move between interior and exterior spaces.
+At home, the photographs attend to intimate moments, routines and gatherings.
+Outside, portraits situate Sahrawi subjects in French public places, tracing a
+physical presence of home, while holding another one elsewhere. Community
+images anchor these personal narratives within an ongoing political reality,
+where identity is not only lived, but continually asserted as a shared
+responsibility.
+At the centre of the project is a question that is perhaps most acute for the
+younger generation — those who grew up here, for whom France is simply home,
+and yet who carry another place inside them that they have never, or barely,
+lived in. Jaima is an attempt to honour that tension: to sit with what we carry
+when we cannot go back, and what we become when we stay.`
+  ],
+  images: jaimaImages,
+  isStrictGrid: false,
+  layout: "exhibition-wall",
+},
   protests: {
     key: "protests",
     section: "events",
