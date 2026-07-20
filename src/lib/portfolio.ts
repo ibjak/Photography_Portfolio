@@ -266,7 +266,7 @@ const jaimaImages: ImageItem[] = [
   }),
   createJaimaImage("website.jaima-14.jpg", "People seated with a Western Sahara flag indoors.", {
     x: 199,
-    y: 120,
+    y: 122,
     width: 40,
     height: 28,
   }),
