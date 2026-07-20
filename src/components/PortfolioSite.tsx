@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import {
   aboutParagraphs,
   galleries,
@@ -9,6 +9,7 @@ import {
   getGalleryHref,
   homeSlideshowImages,
   presences,
+  type ImageItem,
   type GalleryKey,
 } from "../lib/portfolio";
 
@@ -28,6 +29,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   const activeGalleryImages = activeGallery?.images ?? [];
   const activeGalleryTitle = activeGallery?.title ?? null;
   const isStrictGridGallery = activeGallery?.isStrictGrid ?? false;
+  const isExhibitionWallGallery = activeGallery?.layout === "exhibition-wall";
 
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isGridView, setIsGridView] = useState(view.type === "gallery");
@@ -367,41 +369,51 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                 </button>
               </div>
               {isGridView ? (
-                <div
-                  className={
-                    isStrictGridGallery
-                      ? "mx-auto mt-6 grid max-w-5xl grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3"
-                      : "mx-auto mt-6 max-w-5xl columns-1 gap-2 md:columns-2 xl:columns-3"
-                  }
-                >
-                  {activeGalleryImages.map((image, index) => (
-                    <figure
-                      key={image.src}
-                      className={
-                        isStrictGridGallery
-                          ? "w-full overflow-hidden border border-line bg-glass"
-                          : "mb-2 inline-block w-full overflow-hidden border border-line bg-glass [break-inside:avoid]"
-                      }
-                    >
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setCurrentSlideIndex(index);
-                          setIsGridView(false);
-                        }}
-                        className="block w-full border-0 bg-transparent p-0"
+                isExhibitionWallGallery ? (
+                  <ExhibitionWallGrid
+                    images={activeGalleryImages}
+                    onSelect={(index) => {
+                      setCurrentSlideIndex(index);
+                      setIsGridView(false);
+                    }}
+                  />
+                ) : (
+                  <div
+                    className={
+                      isStrictGridGallery
+                        ? "mx-auto mt-6 grid max-w-5xl grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3"
+                        : "mx-auto mt-6 max-w-5xl columns-1 gap-2 md:columns-2 xl:columns-3"
+                    }
+                  >
+                    {activeGalleryImages.map((image, index) => (
+                      <figure
+                        key={image.src}
+                        className={
+                          isStrictGridGallery
+                            ? "w-full overflow-hidden border border-line bg-glass"
+                            : "mb-2 inline-block w-full overflow-hidden border border-line bg-glass [break-inside:avoid]"
+                        }
                       >
-                        <img
-                          src={image.src}
-                          alt={image.alt}
-                          className="h-auto w-full"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      </button>
-                    </figure>
-                  ))}
-                </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCurrentSlideIndex(index);
+                            setIsGridView(false);
+                          }}
+                          className="block w-full border-0 bg-transparent p-0"
+                        >
+                          <img
+                            src={image.src}
+                            alt={image.alt}
+                            className="h-auto w-full"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </button>
+                      </figure>
+                    ))}
+                  </div>
+                )
               ) : (
                 <div className="mt-6 flex justify-center">
                   <div className="inline-flex max-w-full flex-col items-end gap-3">
@@ -448,6 +460,55 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
             </section>
           ) : null}
         </main>
+      </div>
+    </div>
+  );
+}
+
+const EXHIBITION_WALL_WIDTH = 320;
+const EXHIBITION_WALL_HEIGHT = 170;
+
+function ExhibitionWallGrid({
+  images,
+  onSelect,
+}: {
+  images: ImageItem[];
+  onSelect: (index: number) => void;
+}) {
+  return (
+    <div className="mx-auto mt-6 max-w-[82rem] overflow-x-auto pb-4">
+      <div className="exhibition-wall" aria-label="Jaima exhibition wall layout">
+        {images.map((image, index) => {
+          if (!image.wallPlacement) {
+            return null;
+          }
+
+          const { x, y, width, height } = image.wallPlacement;
+          const style = {
+            "--x": `${(x / EXHIBITION_WALL_WIDTH) * 100}%`,
+            "--y": `${(y / EXHIBITION_WALL_HEIGHT) * 100}%`,
+            "--w": `${(width / EXHIBITION_WALL_WIDTH) * 100}%`,
+            "--h": `${(height / EXHIBITION_WALL_HEIGHT) * 100}%`,
+          } as CSSProperties;
+
+          return (
+            <figure key={image.src} className="exhibition-wall-print" style={style}>
+              <button
+                type="button"
+                onClick={() => onSelect(index)}
+                className="block h-full w-full border-0 bg-transparent p-0"
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </button>
+            </figure>
+          );
+        })}
       </div>
     </div>
   );

@@ -1,11 +1,18 @@
 export type ImageItem = {
   src: string;
   alt: string;
+  wallPlacement?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
 };
 
-export type GallerySectionKey = "events" | "street-photography";
+export type GallerySectionKey = "projects" | "events" | "street-photography";
 
 export type GalleryKey =
+  | "jaima"
   | "protests"
   | "qatar-prix"
   | "paris-fashion-week-2025"
@@ -22,6 +29,7 @@ export type Gallery = {
   introParagraphs?: string[];
   images: ImageItem[];
   isStrictGrid: boolean;
+  layout?: "exhibition-wall";
 };
 
 export type HomeSlide = ImageItem & {
@@ -169,6 +177,103 @@ const protestsImages: ImageItem[] = [
   ...internationalSolidarityPalestineImages,
   ...eliminationViolenceWomenImages,
   ...prisonerSolidarityProtestImages,
+];
+
+const createJaimaImage = (
+  fileName: string,
+  alt: string,
+  wallPlacement: NonNullable<ImageItem["wallPlacement"]>,
+): ImageItem => ({
+  src: `/Photo%20Gallery/Jaima%20Photos/${fileName}`,
+  alt,
+  wallPlacement,
+});
+
+const jaimaImages: ImageItem[] = [
+  createJaimaImage("website.jaima-2.jpg", "Residential street in a housing estate.", {
+    x: 110,
+    y: 14,
+    width: 42,
+    height: 29,
+  }),
+  createJaimaImage("website.jaima-3.jpg", "Portrait beside a stone wall in dappled light.", {
+    x: 156,
+    y: 14,
+    width: 42,
+    height: 29,
+  }),
+  createJaimaImage("website.jaima-8.jpg", "People seated on outdoor steps in sunlight.", {
+    x: 52,
+    y: 58,
+    width: 42,
+    height: 29,
+  }),
+  createJaimaImage("website.jaima-9.jpg", "Window with laundry drying in the foreground.", {
+    x: 101,
+    y: 62,
+    width: 32,
+    height: 22,
+  }),
+  createJaimaImage("website.jaima-10.jpg", "Hands preparing food at a kitchen counter.", {
+    x: 139,
+    y: 62,
+    width: 32,
+    height: 22,
+  }),
+  createJaimaImage("website.jaima-11.jpg", "Person washing dishes beside an open window.", {
+    x: 177,
+    y: 62,
+    width: 32,
+    height: 22,
+  }),
+  createJaimaImage("website.jaima-4.jpg", "Interior detail with refreshments beneath a screen.", {
+    x: 90,
+    y: 96,
+    width: 32,
+    height: 22,
+  }),
+  createJaimaImage("website.jaima-5.jpg", "Two paintings displayed on a wall.", {
+    x: 128,
+    y: 96,
+    width: 32,
+    height: 22,
+  }),
+  createJaimaImage("website.jaima-7.jpg", "Women and children gathered on a sofa.", {
+    x: 165,
+    y: 96,
+    width: 42,
+    height: 29,
+  }),
+  createJaimaImage("website.jaima-6.jpg", "Musical instrument and wooden sticks on a carpet.", {
+    x: 181,
+    y: 134,
+    width: 32,
+    height: 22,
+  }),
+  createJaimaImage("website.jaima-1.jpg", "Audience gathered inside an auditorium.", {
+    x: 221,
+    y: 62,
+    width: 32,
+    height: 22,
+  }),
+  createJaimaImage("website.jaima-12.jpg", "Hand placing a Sahrawi solidarity sticker on glass.", {
+    x: 221,
+    y: 91,
+    width: 32,
+    height: 22,
+  }),
+  createJaimaImage("website.jaima-14.jpg", "People seated with a Western Sahara flag indoors.", {
+    x: 221,
+    y: 120,
+    width: 32,
+    height: 22,
+  }),
+  createJaimaImage("website.jaima-13.jpg", "Protester holding a lit flare in a smoky street.", {
+    x: 262,
+    y: 84,
+    width: 29,
+    height: 42,
+  }),
 ];
 
 const parisFashionWeekImages: ImageItem[] = [
@@ -368,6 +473,16 @@ export const presences = [
 ] as const;
 
 export const galleries: Record<GalleryKey, Gallery> = {
+  jaima: {
+    key: "jaima",
+    section: "projects",
+    slug: "jaima",
+    title: "Jaima",
+    navLabel: "Jaima",
+    images: jaimaImages,
+    isStrictGrid: false,
+    layout: "exhibition-wall",
+  },
   protests: {
     key: "protests",
     section: "events",
@@ -436,6 +551,11 @@ export const galleries: Record<GalleryKey, Gallery> = {
 export const galleryKeys = Object.keys(galleries) as GalleryKey[];
 
 export const gallerySections = [
+  {
+    key: "projects" as const,
+    title: "Projects",
+    galleryKeys: ["jaima"] as GalleryKey[],
+  },
   {
     key: "events" as const,
     title: "Events",
