@@ -30,6 +30,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   const activeGalleryTitle = activeGallery?.title ?? null;
   const isStrictGridGallery = activeGallery?.isStrictGrid ?? false;
   const isExhibitionWallGallery = activeGallery?.layout === "exhibition-wall";
+  const galleryToggleLabel = isGridView ? "Switch to slideshow view" : "Switch to grid view";
 
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isGridView, setIsGridView] = useState(view.type === "gallery");
@@ -359,17 +360,22 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                   type="button"
                   onClick={() => setIsGridView((current) => !current)}
                   className="ml-auto bg-white p-1 text-gray-900 transition-colors hover:text-accent"
+                  aria-label={galleryToggleLabel}
+                  title={galleryToggleLabel}
                 >
                   {isGridView ? (
-                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
-                      <rect x="4" y="6" width="18" height="18" rx="1" />
+                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <rect x="3" y="4" width="8" height="8" rx="0.5" />
+                      <rect x="13" y="4" width="8" height="8" rx="0.5" />
+                      <rect x="3" y="14" width="8" height="8" rx="0.5" />
+                      <rect x="13" y="14" width="8" height="8" rx="0.5" />
+                      <path d="M12 3v18" />
                     </svg>
                   ) : (
-                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
-                      <rect x="3" y="3" width="9" height="9" />
-                      <rect x="14" y="3" width="9" height="9" />
-                      <rect x="3" y="14" width="9" height="9" />
-                      <rect x="14" y="14" width="9" height="9" />
+                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <rect x="3" y="4" width="8" height="16" rx="0.5" />
+                      <rect x="13" y="4" width="8" height="16" rx="0.5" />
+                      <path d="M12 4v16" />
                     </svg>
                   )}
                 </button>
