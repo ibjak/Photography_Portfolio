@@ -364,18 +364,15 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                   title={galleryToggleLabel}
                 >
                   {isGridView ? (
-                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <rect x="3" y="4" width="8" height="8" rx="0.5" />
-                      <rect x="13" y="4" width="8" height="8" rx="0.5" />
-                      <rect x="3" y="14" width="8" height="8" rx="0.5" />
-                      <rect x="13" y="14" width="8" height="8" rx="0.5" />
-                      <path d="M12 3v18" />
+                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden="true">
+                      <rect x="3" y="3" width="8" height="8" />
+                      <rect x="13" y="3" width="8" height="8" />
+                      <rect x="3" y="13" width="8" height="8" />
+                      <rect x="13" y="13" width="8" height="8" />
                     </svg>
                   ) : (
-                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <rect x="3" y="4" width="8" height="16" rx="0.5" />
-                      <rect x="13" y="4" width="8" height="16" rx="0.5" />
-                      <path d="M12 4v16" />
+                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden="true">
+                      <rect x="4" y="4" width="16" height="16" />
                     </svg>
                   )}
                 </button>
