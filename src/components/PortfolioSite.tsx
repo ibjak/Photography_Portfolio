@@ -30,7 +30,6 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   const activeGalleryTitle = activeGallery?.title ?? null;
   const isStrictGridGallery = activeGallery?.isStrictGrid ?? false;
   const isExhibitionWallGallery = activeGallery?.layout === "exhibition-wall";
-  const galleryToggleLabel = isGridView ? "Switch to slideshow view" : "Switch to grid view";
 
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isGridView, setIsGridView] = useState(view.type === "gallery");
@@ -38,6 +37,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   const [homeSlideIndex, setHomeSlideIndex] = useState(0);
   const [isHomeSlideshowHovered, setIsHomeSlideshowHovered] = useState(false);
   const [previousHomeSlideIndex, setPreviousHomeSlideIndex] = useState<number | null>(null);
+  const galleryToggleLabel = isGridView ? "Switch to slideshow view" : "Switch to grid view";
 
   const currentImage =
     activeGalleryImages.length > 0
