@@ -251,6 +251,12 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                   ))}
                 </div>
                 <div className="mt-1 grid gap-1 text-sm">
+                  <a
+                    href="tel:+306943216408"
+                    className="text-sm text-black transition-colors hover:text-accent"
+                  >
+                    +306943216408
+                  </a>
                   <span className="text-sm text-black">ivanb.jpg@gmail.com</span>
                 </div>
                 <div className="mt-4 text-xs text-muted">
