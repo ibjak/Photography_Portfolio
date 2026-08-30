@@ -7,6 +7,10 @@ import {
   getGalleryByRoute,
   getGalleryHref,
 } from "../../../lib/portfolio";
+import {
+  galleryDescription,
+  pageMetadata,
+} from "../../../lib/siteMetadata";
 
 type RoutePageProps = {
   params: Promise<{
@@ -39,12 +43,13 @@ export async function generateMetadata({
     return {};
   }
 
-  return {
+  const pathname = getGalleryHref(gallery.key);
+
+  return pageMetadata({
     title: gallery.title,
-    alternates: {
-      canonical: getGalleryHref(gallery.key),
-    },
-  };
+    description: galleryDescription(gallery.title),
+    pathname,
+  });
 }
 
 export default async function GalleryPage({ params }: RoutePageProps) {
