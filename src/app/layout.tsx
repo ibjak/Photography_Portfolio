@@ -1,24 +1,25 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import {
+  siteDescription,
+  siteName,
+  siteTitle,
+  siteUrl,
+} from "../lib/siteMetadata";
 import "./globals.css";
+import "./accessibility.css";
 
-// ✅ Viewport (important for responsiveness)
-export const viewport = {
+export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
 };
 
-// ✅ Global metadata
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ivanbjak.com"), // FIXED
-
+  metadataBase: siteUrl,
   title: {
-    default: "Ivan Badanjak | Photography",
-    template: "%s | Ivan Badanjak",
+    default: siteTitle,
+    template: `%s | ${siteName}`,
   },
-
-  description:
-    "Documentary photography exploring identity, diaspora, and everyday life.",
-
+  description: siteDescription,
   keywords: [
     "photography",
     "documentary photography",
@@ -26,47 +27,31 @@ export const metadata: Metadata = {
     "portrait photography",
     "Ivan Badanjak",
   ],
-
-  authors: [{ name: "Ivan Badanjak" }],
-  creator: "Ivan Badanjak",
-
-  // ✅ Canonical URL (SEO boost)
-  alternates: {
-    canonical: "https://ivanbjak.com",
-  },
-
-  // ✅ Open Graph (for social previews)
+  authors: [{ name: siteName }],
+  creator: siteName,
+  publisher: siteName,
   openGraph: {
-    title: "Ivan Badanjak | Photography",
-    description:
-      "Documentary photography exploring identity and diaspora.",
-    url: "https://ivanbjak.com",
-    siteName: "Ivan Badanjak",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Photography by Ivan Badanjak",
-      },
-    ],
+    title: siteTitle,
+    description: siteDescription,
+    url: "/",
+    siteName,
     locale: "en_US",
     type: "website",
   },
-
-  // ✅ Crawling rules
+  twitter: {
+    card: "summary",
+    title: siteTitle,
+    description: siteDescription,
+  },
   robots: {
     index: true,
     follow: true,
   },
-
-  // ✅ Favicon
   icons: {
     icon: "/favicon.ico",
   },
 };
 
-// ✅ Root layout component (don’t forget this part)
 export default function RootLayout({
   children,
 }: {
