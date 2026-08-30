@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   aboutParagraphs,
   galleries,
@@ -29,7 +29,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   const activeGalleryImages = activeGallery?.images ?? [];
   const activeGalleryTitle = activeGallery?.title ?? null;
   const isStrictGridGallery = activeGallery?.isStrictGrid ?? false;
-  const isExhibitionWallGallery = activeGallery?.layout === "exhibition-wall";
+  const isEditorialGridGallery = activeGallery?.layout === "editorial-grid";
 
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isGridView, setIsGridView] = useState(view.type === "gallery");
@@ -409,8 +409,8 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                 </div>
               </div>
               {isGridView ? (
-                isExhibitionWallGallery ? (
-                  <ExhibitionWallGrid
+                isEditorialGridGallery ? (
+                  <JaimaEditorialGrid
                     images={activeGalleryImages}
                     onSelect={(index) => {
                       setCurrentSlideIndex(index);
@@ -491,16 +491,6 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                           Next <span aria-hidden="true">→</span>
                         </button>
                       </div>
-                      <p className="mt-1 flex items-center justify-center gap-1.5 text-[11px] tracking-[0.02em] text-muted">
-                        Use
-                        <kbd className="inline-flex h-6 min-w-6 items-center justify-center border border-line bg-white px-1 font-sans text-[11px] text-ink">
-                          ←
-                        </kbd>
-                        <kbd className="inline-flex h-6 min-w-6 items-center justify-center border border-line bg-white px-1 font-sans text-[11px] text-ink">
-                          →
-                        </kbd>
-                        keys to browse
-                      </p>
                     </div>
                   </div>
                 </div>
@@ -522,10 +512,24 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   );
 }
 
-const EXHIBITION_WALL_WIDTH = 320;
-const EXHIBITION_WALL_HEIGHT = 170;
+const JAIMA_EDITORIAL_PLACEMENTS = [
+  "md:col-span-10 md:col-start-2",
+  "md:col-span-6",
+  "md:col-span-6",
+  "md:col-span-6",
+  "md:col-span-6",
+  "md:col-span-6",
+  "md:col-span-6",
+  "md:col-span-6",
+  "md:col-span-6",
+  "md:col-span-6",
+  "md:col-span-6",
+  "md:col-span-6",
+  "md:col-span-6",
+  "md:col-span-6 md:col-start-4",
+] as const;
 
-function ExhibitionWallGrid({
+function JaimaEditorialGrid({
   images,
   onSelect,
 }: {
@@ -534,51 +538,29 @@ function ExhibitionWallGrid({
 }) {
   return (
     <div
-      className="exhibition-wall-scroll mx-auto mt-6 max-w-[82rem] overflow-x-auto pb-4"
-      aria-label="Scrollable Jaima exhibition wall"
-      tabIndex={0}
-      onKeyDown={(event) => {
-        if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-          event.preventDefault();
-          event.currentTarget.scrollBy({
-            left: event.key === "ArrowLeft" ? -96 : 96,
-          });
-        }
-      }}
+      className="mx-auto mt-6 grid max-w-6xl grid-cols-1 gap-x-3 gap-y-6 md:grid-cols-12 md:gap-y-10"
+      aria-label="Jaima editorial photo sequence"
     >
-      <div className="exhibition-wall" aria-label="Jaima exhibition wall layout">
-        {images.map((image, index) => {
-          if (!image.wallPlacement) {
-            return null;
-          }
-
-          const { x, y, width, height } = image.wallPlacement;
-          const style = {
-            "--x": `${(x / EXHIBITION_WALL_WIDTH) * 100}%`,
-            "--y": `${(y / EXHIBITION_WALL_HEIGHT) * 100}%`,
-            "--w": `${(width / EXHIBITION_WALL_WIDTH) * 100}%`,
-            "--h": `${(height / EXHIBITION_WALL_HEIGHT) * 100}%`,
-          } as CSSProperties;
-
-          return (
-            <figure key={image.src} className="exhibition-wall-print" style={style}>
-              <button
-                type="button"
-                onClick={() => onSelect(index)}
-                className="block h-full w-full border-0 bg-transparent p-0"
-              >
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  className="h-full w-full object-cover"
-                  loading="eager"
-                  decoding="async"
-                />
-              </button>
-            </figure>
-          );
-        })}
-      </div>
+      {images.map((image, index) => (
+        <figure
+          key={image.src}
+          className={`m-0 self-start ${JAIMA_EDITORIAL_PLACEMENTS[index] ?? "md:col-span-6"}`}
+        >
+          <button
+            type="button"
+            onClick={() => onSelect(index)}
+            className="block w-full border-0 bg-transparent p-0"
+          >
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="h-auto w-full border border-line bg-paper"
+              loading={index === 0 ? "eager" : "lazy"}
+              decoding="async"
+            />
+          </button>
+        </figure>
+      ))}
     </div>
   );
 }

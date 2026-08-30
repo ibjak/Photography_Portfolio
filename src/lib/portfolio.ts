@@ -29,7 +29,7 @@ export type Gallery = {
   introParagraphs?: string[];
   images: ImageItem[];
   isStrictGrid: boolean;
-  layout?: "exhibition-wall";
+  layout?: "exhibition-wall" | "editorial-grid";
 };
 
 export type HomeSlide = ImageItem & {
@@ -507,7 +507,7 @@ when we cannot go back, and what we become when we stay.`
   ],
   images: jaimaImages,
   isStrictGrid: false,
-  layout: "exhibition-wall",
+  layout: "editorial-grid",
 },
   protests: {
     key: "protests",
