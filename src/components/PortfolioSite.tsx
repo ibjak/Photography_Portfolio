@@ -139,7 +139,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   }, [previousHomeSlideIndex]);
 
   const navLinkClass = (active: boolean) =>
-    `border-0 bg-transparent p-0 text-left font-sans text-sm leading-6 font-medium tracking-[0.01em] transition-colors hover:text-[#0B2A6F] ${
+    `flex min-h-11 items-center border-0 bg-transparent p-0 text-left font-sans text-sm leading-6 font-medium tracking-[0.01em] transition-colors hover:text-[#0B2A6F] lg:block lg:min-h-0 ${
       active ? "text-accent underline underline-offset-4" : "text-[#534941]"
     }`;
 
@@ -147,13 +147,13 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
 
   return (
     <div className="page-shell" onContextMenu={(event) => event.preventDefault()}>
-      <div className="flex w-full flex-1 flex-col gap-10 px-6 pb-10 pt-6 md:flex-row md:px-10 lg:gap-16">
-        <aside className="w-full md:w-1/8 md:h-fit md:flex-none md:self-start md:sticky md:top-6">
+      <div className="flex w-full flex-1 flex-col gap-10 px-6 pb-10 pt-6 md:flex-row md:gap-10 md:px-10 lg:gap-16">
+        <aside className="w-full md:sticky md:top-6 md:h-fit md:w-40 md:flex-none md:self-start lg:w-48">
           <div className="mt-4 md:mt-0">
-            <div className="mb-4 flex items-center justify-between md:hidden">
+            <div className="mb-4 flex items-center justify-between gap-3 md:hidden">
               <Link
                 href="/"
-                className="font-display text-[1.75rem] leading-none font-bold tracking-[0.02em] text-ink"
+                className="font-display whitespace-nowrap text-[clamp(1.4rem,7vw,1.75rem)] leading-none font-bold tracking-[0.02em] text-ink"
                 onClick={() => setIsMobileNavOpen(false)}
               >
                 IVAN BADANJAK
@@ -161,8 +161,10 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
               <button
                 type="button"
                 onClick={() => setIsMobileNavOpen((current) => !current)}
-                className="inline-flex h-10 w-10 items-center justify-center border border-line text-ink transition-colors hover:text-[#0B2A6F]"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center border border-line text-ink transition-colors hover:text-[#0B2A6F]"
                 aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMobileNavOpen}
+                aria-controls="portfolio-navigation"
               >
                 {isMobileNavOpen ? (
                   <svg
@@ -193,13 +195,16 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
               <div className="flex items-center">
                 <Link
                   href="/"
-                  className="font-display text-[2.35rem] leading-[0.92] font-bold tracking-[0.02em] text-ink lg:text-[2.65rem]"
+                  className="font-display text-[1.75rem] leading-[0.92] font-bold tracking-[0.02em] text-ink lg:text-[2.15rem]"
                 >
                   IVAN BADANJAK
                 </Link>
               </div>
             </div>
-            <div className={!isMobileNavOpen ? "hidden md:block" : "md:block"}>
+            <div
+              id="portfolio-navigation"
+              className={!isMobileNavOpen ? "hidden md:block" : "md:block"}
+            >
               <nav className="mt-7 text-sm">
                 <div className="grid gap-1">
                   {navigationGalleryKeys.map((galleryKey) => {
@@ -221,7 +226,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                 </div>
                 <Link
                   href="/about"
-                  className={`mt-1 block border-0 bg-transparent p-0 text-left font-sans text-sm leading-6 font-medium tracking-[0.01em] transition-colors hover:text-[#0B2A6F] ${
+                  className={`flex min-h-11 items-center border-0 bg-transparent p-0 text-left font-sans text-sm leading-6 font-medium tracking-[0.01em] transition-colors hover:text-[#0B2A6F] md:mt-1 lg:block lg:min-h-0 ${
                     isAboutView ? "text-accent underline underline-offset-4" : "text-[#534941]"
                   }`}
                   aria-current={isAboutView ? "page" : undefined}
@@ -238,7 +243,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                       key={presence.name}
                       href={presence.href}
                       aria-label={presence.name}
-                      className="group flex h-8 w-7 items-center justify-left"
+                      className="group flex h-11 w-11 items-center justify-start lg:h-8 lg:w-7"
                       target="_blank"
                       rel="noreferrer"
                     >
@@ -254,7 +259,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                 <div className="mt-1 grid gap-1 text-sm">
                   <a
                     href="tel:+306943216408"
-                    className="text-sm text-black transition-colors hover:text-accent"
+                    className="inline-flex min-h-11 items-center text-sm text-black transition-colors hover:text-accent lg:min-h-0"
                   >
                     +306943216408
                   </a>
@@ -268,7 +273,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
           </div>
         </aside>
 
-        <main className="flex-1">
+        <main className="min-w-0 flex-1">
           {isHomeView ? (
             <section className="flex h-full items-center justify-center">
               <div
@@ -315,7 +320,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                     <div className="flex w-full flex-wrap items-center justify-between gap-4 text-sm">
                       <Link
                         href={getGalleryHref(homeCurrentImage.gallery)}
-                        className="border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent"
+                        className="inline-flex min-h-11 items-center border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent lg:min-h-0"
                       >
                         {homeCurrentImage.albumLabel}
                       </Link>
@@ -323,7 +328,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                         <button
                           type="button"
                           onClick={() => stepHomeSlide(-1)}
-                          className="border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent"
+                          className="min-h-11 min-w-11 border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent lg:min-h-0 lg:min-w-0"
                           aria-label="Previous homepage image"
                         >
                           Previous
@@ -332,7 +337,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                         <button
                           type="button"
                           onClick={() => stepHomeSlide(1)}
-                          className="border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent"
+                          className="min-h-11 min-w-11 border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent lg:min-h-0 lg:min-w-0"
                           aria-label="Next homepage image"
                         >
                           Next
@@ -346,7 +351,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
           ) : isAboutView ? (
             <section className="mx-auto w-full max-w-[42rem]">
               <h3 className="font-sans text-3xl font-semibold text-black">About</h3>
-              <div className="mt-6 grid gap-5 font-sans text-base leading-relaxed text-black [text-align:justify]">
+              <div className="mt-6 grid gap-5 text-left font-sans text-base leading-relaxed text-black md:[text-align:justify]">
                 {aboutParagraphs.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
@@ -354,12 +359,14 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
             </section>
           ) : activeGallery ? (
             <section>
-              <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-3">
-                <h3 className="font-sans text-3xl font-semibold text-black">{activeGalleryTitle}</h3>
+              <div className="mx-auto flex max-w-5xl items-start gap-3">
+                <h3 className="min-w-0 flex-1 font-sans text-[1.75rem] leading-tight font-semibold text-black sm:text-3xl">
+                  {activeGalleryTitle}
+                </h3>
                 <button
                   type="button"
                   onClick={() => setIsGridView((current) => !current)}
-                  className="ml-auto bg-white p-1 text-gray-900 transition-colors hover:text-accent"
+                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center bg-white p-0 text-gray-900 transition-colors hover:text-accent lg:h-8 lg:w-8"
                   aria-label={galleryToggleLabel}
                   title={galleryToggleLabel}
                 >
@@ -439,7 +446,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                       <button
                         type="button"
                         onClick={() => setCurrentSlideIndex((index) => index - 1)}
-                        className="border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent"
+                        className="min-h-11 min-w-11 border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent lg:min-h-0 lg:min-w-0"
                         aria-label="Previous photo"
                       >
                         Previous
@@ -448,7 +455,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                       <button
                         type="button"
                         onClick={() => setCurrentSlideIndex((index) => index + 1)}
-                        className="border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent"
+                        className="min-h-11 min-w-11 border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent lg:min-h-0 lg:min-w-0"
                         aria-label="Next photo"
                       >
                         Next
@@ -459,7 +466,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
               )}
               {activeGallery.introParagraphs?.length ? (
                 <div className="mx-auto mt-6 w-full max-w-5xl bg-glass p-5 md:p-7">
-                  <div className="grid gap-4 font-sans text-[15px] leading-7 text-black [text-align:justify] md:text-base">
+                  <div className="grid gap-4 text-left font-sans text-[15px] leading-7 text-black md:text-base md:[text-align:justify]">
                     {activeGallery.introParagraphs.map((paragraph) => (
                       <p key={paragraph}>{paragraph}</p>
                     ))}
@@ -485,7 +492,19 @@ function ExhibitionWallGrid({
   onSelect: (index: number) => void;
 }) {
   return (
-    <div className="mx-auto mt-6 max-w-[82rem] overflow-x-auto pb-4">
+    <div
+      className="exhibition-wall-scroll mx-auto mt-6 max-w-[82rem] overflow-x-auto pb-4"
+      aria-label="Scrollable Jaima exhibition wall"
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+          event.preventDefault();
+          event.currentTarget.scrollBy({
+            left: event.key === "ArrowLeft" ? -96 : 96,
+          });
+        }
+      }}
+    >
       <div className="exhibition-wall" aria-label="Jaima exhibition wall layout">
         {images.map((image, index) => {
           if (!image.wallPlacement) {
@@ -511,7 +530,7 @@ function ExhibitionWallGrid({
                   src={image.src}
                   alt={image.alt}
                   className="h-full w-full object-cover"
-                  loading="lazy"
+                  loading="eager"
                   decoding="async"
                 />
               </button>

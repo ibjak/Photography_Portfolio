@@ -35,6 +35,11 @@ a {
   text-decoration: none;
 }
 
+:where(a, button):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .page-shell {
   position: relative;
   min-height: 100vh;
@@ -119,6 +124,11 @@ a {
   min-width: 1380px;
   aspect-ratio: 640 / 340;
   background: var(--paper);
+}
+
+.exhibition-wall-scroll {
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .exhibition-wall-print {
