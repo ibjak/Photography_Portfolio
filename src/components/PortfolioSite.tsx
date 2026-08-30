@@ -37,16 +37,13 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   const [homeSlideIndex, setHomeSlideIndex] = useState(0);
   const [isHomeSlideshowHovered, setIsHomeSlideshowHovered] = useState(false);
   const [previousHomeSlideIndex, setPreviousHomeSlideIndex] = useState<number | null>(null);
-  const galleryToggleLabel = isGridView ? "Switch to slideshow view" : "Switch to grid view";
-
-  const currentImage =
+  const normalizedCurrentSlideIndex =
     activeGalleryImages.length > 0
-      ? activeGalleryImages[
-          ((currentSlideIndex % activeGalleryImages.length) +
-            activeGalleryImages.length) %
-            activeGalleryImages.length
-        ]
-      : null;
+      ? ((currentSlideIndex % activeGalleryImages.length) +
+          activeGalleryImages.length) %
+        activeGalleryImages.length
+      : 0;
+  const currentImage = activeGalleryImages[normalizedCurrentSlideIndex] ?? null;
 
   const homeCurrentImage =
     homeSlideshowImages.length > 0
@@ -330,8 +327,9 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                           onClick={() => stepHomeSlide(-1)}
                           className="min-h-11 min-w-11 border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent lg:min-h-0 lg:min-w-0"
                           aria-label="Previous homepage image"
+                          aria-keyshortcuts="ArrowLeft"
                         >
-                          Previous
+                          <span aria-hidden="true">←</span> Previous
                         </button>
                         <span aria-hidden="true">/</span>
                         <button
@@ -339,8 +337,9 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                           onClick={() => stepHomeSlide(1)}
                           className="min-h-11 min-w-11 border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent lg:min-h-0 lg:min-w-0"
                           aria-label="Next homepage image"
+                          aria-keyshortcuts="ArrowRight"
                         >
-                          Next
+                          Next <span aria-hidden="true">→</span>
                         </button>
                       </div>
                     </div>
@@ -359,30 +358,55 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
             </section>
           ) : activeGallery ? (
             <section>
-              <div className="mx-auto flex max-w-5xl items-start gap-3">
+              <div className="mx-auto flex max-w-5xl flex-col gap-3 sm:flex-row sm:items-start">
                 <h3 className="min-w-0 flex-1 font-sans text-[1.75rem] leading-tight font-semibold text-black sm:text-3xl">
                   {activeGalleryTitle}
                 </h3>
-                <button
-                  type="button"
-                  onClick={() => setIsGridView((current) => !current)}
-                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center bg-white p-0 text-gray-900 transition-colors hover:text-accent lg:h-8 lg:w-8"
-                  aria-label={galleryToggleLabel}
-                  title={galleryToggleLabel}
-                >
-                  {isGridView ? (
-                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden="true">
-                      <rect x="3" y="3" width="8" height="8" />
-                      <rect x="13" y="3" width="8" height="8" />
-                      <rect x="3" y="13" width="8" height="8" />
-                      <rect x="13" y="13" width="8" height="8" />
-                    </svg>
-                  ) : (
-                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden="true">
-                      <rect x="4" y="4" width="16" height="16" />
-                    </svg>
-                  )}
-                </button>
+                <div className="inline-flex shrink-0 self-end sm:self-auto">
+                  <div className="inline-flex border border-line bg-white" role="group" aria-label="Gallery view">
+                    <button
+                      type="button"
+                      onClick={() => setIsGridView(true)}
+                      className={`inline-flex min-h-14 min-w-[4.75rem] flex-col items-center justify-center gap-1 px-2 py-1.5 text-[11px] leading-none transition-colors ${
+                        isGridView
+                          ? "bg-[#1d1a16] text-white"
+                          : "bg-white text-muted hover:text-accent"
+                      }`}
+                      aria-pressed={isGridView}
+                    >
+                      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+                        <rect x="3" y="3" width="8" height="8" />
+                        <rect x="13" y="3" width="8" height="8" />
+                        <rect x="3" y="13" width="8" height="8" />
+                        <rect x="13" y="13" width="8" height="8" />
+                      </svg>
+                      <span>Grid</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsGridView(false)}
+                      className={`inline-flex min-h-14 min-w-[4.75rem] flex-col items-center justify-center gap-1 border-l border-line px-2 py-1.5 text-[11px] leading-none transition-colors ${
+                        !isGridView
+                          ? "bg-[#1d1a16] text-white"
+                          : "bg-white text-muted hover:text-accent"
+                      }`}
+                      aria-pressed={!isGridView}
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.75"
+                        aria-hidden="true"
+                      >
+                        <rect x="3.5" y="5" width="17" height="14" />
+                        <path d="m6.5 16 4-4 3 3 2-2 2 2" />
+                      </svg>
+                      <span>Slideshow</span>
+                    </button>
+                  </div>
+                </div>
               </div>
               {isGridView ? (
                 isExhibitionWallGallery ? (
@@ -442,24 +466,41 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                         decoding="async"
                       />
                     ) : null}
-                    <div className="flex items-center gap-2 text-sm text-muted">
-                      <button
-                        type="button"
-                        onClick={() => setCurrentSlideIndex((index) => index - 1)}
-                        className="min-h-11 min-w-11 border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent lg:min-h-0 lg:min-w-0"
-                        aria-label="Previous photo"
-                      >
-                        Previous
-                      </button>
-                      <span aria-hidden="true">/</span>
-                      <button
-                        type="button"
-                        onClick={() => setCurrentSlideIndex((index) => index + 1)}
-                        className="min-h-11 min-w-11 border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent lg:min-h-0 lg:min-w-0"
-                        aria-label="Next photo"
-                      >
-                        Next
-                      </button>
+                    <div className="w-full text-sm text-muted">
+                      <div className="flex w-full items-center justify-between gap-4">
+                        <button
+                          type="button"
+                          onClick={() => setCurrentSlideIndex((index) => index - 1)}
+                          className="inline-flex min-h-11 min-w-11 items-center gap-1 border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent lg:min-h-0 lg:min-w-0"
+                          aria-label="Previous photo"
+                          aria-keyshortcuts="ArrowLeft"
+                        >
+                          <span aria-hidden="true">←</span> Previous
+                        </button>
+                        <span className="text-xs tabular-nums" aria-live="polite">
+                          <span className="sr-only">Photo </span>
+                          {normalizedCurrentSlideIndex + 1} / {activeGalleryImages.length}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setCurrentSlideIndex((index) => index + 1)}
+                          className="inline-flex min-h-11 min-w-11 items-center justify-end gap-1 border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent lg:min-h-0 lg:min-w-0"
+                          aria-label="Next photo"
+                          aria-keyshortcuts="ArrowRight"
+                        >
+                          Next <span aria-hidden="true">→</span>
+                        </button>
+                      </div>
+                      <p className="mt-1 flex items-center justify-center gap-1.5 text-[11px] tracking-[0.02em] text-muted">
+                        Use
+                        <kbd className="inline-flex h-6 min-w-6 items-center justify-center border border-line bg-white px-1 font-sans text-[11px] text-ink">
+                          ←
+                        </kbd>
+                        <kbd className="inline-flex h-6 min-w-6 items-center justify-center border border-line bg-white px-1 font-sans text-[11px] text-ink">
+                          →
+                        </kbd>
+                        keys to browse
+                      </p>
                     </div>
                   </div>
                 </div>
