@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import {
   aboutParagraphs,
   galleries,
@@ -22,6 +22,8 @@ type PortfolioSiteProps = {
   view: PortfolioView;
 };
 
+type GalleryViewMode = "wall" | "grid" | "slideshow";
+
 export default function PortfolioSite({ view }: PortfolioSiteProps) {
   const isHomeView = view.type === "home";
   const isAboutView = view.type === "about";
@@ -29,10 +31,12 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   const activeGalleryImages = activeGallery?.images ?? [];
   const activeGalleryTitle = activeGallery?.title ?? null;
   const isStrictGridGallery = activeGallery?.isStrictGrid ?? false;
-  const isEditorialGridGallery = activeGallery?.layout === "editorial-grid";
+  const isJaimaMultiViewGallery = activeGallery?.layout === "exhibition-wall";
 
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  const [isGridView, setIsGridView] = useState(view.type === "gallery");
+  const [galleryViewMode, setGalleryViewMode] = useState<GalleryViewMode>(
+    isJaimaMultiViewGallery ? "wall" : "grid",
+  );
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [homeSlideIndex, setHomeSlideIndex] = useState(0);
   const [isHomeSlideshowHovered, setIsHomeSlideshowHovered] = useState(false);
@@ -72,7 +76,9 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
 
   useEffect(() => {
     const canUseGalleryArrowNavigation =
-      view.type === "gallery" && !isGridView && activeGalleryImages.length > 0;
+      view.type === "gallery" &&
+      galleryViewMode === "slideshow" &&
+      activeGalleryImages.length > 0;
     const canUseHomeArrowNavigation = isHomeView && homeSlideshowImages.length > 1;
 
     if (!canUseGalleryArrowNavigation && !canUseHomeArrowNavigation) {
@@ -109,7 +115,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeGalleryImages.length, isGridView, isHomeView, stepHomeSlide, view.type]);
+  }, [activeGalleryImages.length, galleryViewMode, isHomeView, stepHomeSlide, view.type]);
 
   useEffect(() => {
     if (!isHomeView || isHomeSlideshowHovered || homeSlideshowImages.length <= 1) {
@@ -364,15 +370,43 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                 </h3>
                 <div className="inline-flex shrink-0 self-end sm:self-auto">
                   <div className="inline-flex border border-line bg-white" role="group" aria-label="Gallery view">
+                    {isJaimaMultiViewGallery ? (
+                      <button
+                        type="button"
+                        onClick={() => setGalleryViewMode("wall")}
+                        className={`inline-flex min-h-14 min-w-[4.75rem] flex-col items-center justify-center gap-1 px-2 py-1.5 text-[11px] leading-none transition-colors ${
+                          galleryViewMode === "wall"
+                            ? "bg-[#1d1a16] text-white"
+                            : "bg-white text-muted hover:text-accent"
+                        }`}
+                        aria-pressed={galleryViewMode === "wall"}
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          className="h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          aria-hidden="true"
+                        >
+                          <rect x="2.5" y="5" width="7" height="6" />
+                          <rect x="13" y="3" width="8.5" height="8" />
+                          <rect x="6" y="14" width="10" height="7" />
+                        </svg>
+                        <span>Wall</span>
+                      </button>
+                    ) : null}
                     <button
                       type="button"
-                      onClick={() => setIsGridView(true)}
+                      onClick={() => setGalleryViewMode("grid")}
                       className={`inline-flex min-h-14 min-w-[4.75rem] flex-col items-center justify-center gap-1 px-2 py-1.5 text-[11px] leading-none transition-colors ${
-                        isGridView
+                        isJaimaMultiViewGallery ? "border-l border-line" : ""
+                      } ${
+                        galleryViewMode === "grid"
                           ? "bg-[#1d1a16] text-white"
                           : "bg-white text-muted hover:text-accent"
                       }`}
-                      aria-pressed={isGridView}
+                      aria-pressed={galleryViewMode === "grid"}
                     >
                       <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
                         <rect x="3" y="3" width="8" height="8" />
@@ -384,13 +418,13 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setIsGridView(false)}
+                      onClick={() => setGalleryViewMode("slideshow")}
                       className={`inline-flex min-h-14 min-w-[4.75rem] flex-col items-center justify-center gap-1 border-l border-line px-2 py-1.5 text-[11px] leading-none transition-colors ${
-                        !isGridView
+                        galleryViewMode === "slideshow"
                           ? "bg-[#1d1a16] text-white"
                           : "bg-white text-muted hover:text-accent"
                       }`}
-                      aria-pressed={!isGridView}
+                      aria-pressed={galleryViewMode === "slideshow"}
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -408,13 +442,21 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                   </div>
                 </div>
               </div>
-              {isGridView ? (
-                isEditorialGridGallery ? (
+              {galleryViewMode !== "slideshow" ? (
+                isJaimaMultiViewGallery && galleryViewMode === "wall" ? (
+                  <ExhibitionWallGrid
+                    images={activeGalleryImages}
+                    onSelect={(index) => {
+                      setCurrentSlideIndex(index);
+                      setGalleryViewMode("slideshow");
+                    }}
+                  />
+                ) : isJaimaMultiViewGallery ? (
                   <JaimaEditorialGrid
                     images={activeGalleryImages}
                     onSelect={(index) => {
                       setCurrentSlideIndex(index);
-                      setIsGridView(false);
+                      setGalleryViewMode("slideshow");
                     }}
                   />
                 ) : (
@@ -438,7 +480,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                           type="button"
                           onClick={() => {
                             setCurrentSlideIndex(index);
-                            setIsGridView(false);
+                            setGalleryViewMode("slideshow");
                           }}
                           className="block w-full border-0 bg-transparent p-0"
                         >
@@ -507,6 +549,67 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
             </section>
           ) : null}
         </main>
+      </div>
+    </div>
+  );
+}
+
+const EXHIBITION_WALL_WIDTH = 320;
+const EXHIBITION_WALL_HEIGHT = 170;
+
+function ExhibitionWallGrid({
+  images,
+  onSelect,
+}: {
+  images: ImageItem[];
+  onSelect: (index: number) => void;
+}) {
+  return (
+    <div
+      className="exhibition-wall-scroll mx-auto mt-6 max-w-[82rem] overflow-x-auto pb-4"
+      aria-label="Scrollable Jaima exhibition wall"
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+          event.preventDefault();
+          event.currentTarget.scrollBy({
+            left: event.key === "ArrowLeft" ? -96 : 96,
+          });
+        }
+      }}
+    >
+      <div className="exhibition-wall" aria-label="Jaima exhibition wall layout">
+        {images.map((image, index) => {
+          if (!image.wallPlacement) {
+            return null;
+          }
+
+          const { x, y, width, height } = image.wallPlacement;
+          const style = {
+            "--x": `${(x / EXHIBITION_WALL_WIDTH) * 100}%`,
+            "--y": `${(y / EXHIBITION_WALL_HEIGHT) * 100}%`,
+            "--w": `${(width / EXHIBITION_WALL_WIDTH) * 100}%`,
+            "--h": `${(height / EXHIBITION_WALL_HEIGHT) * 100}%`,
+          } as CSSProperties;
+
+          return (
+            <figure key={image.src} className="exhibition-wall-print" style={style}>
+              <button
+                type="button"
+                onClick={() => onSelect(index)}
+                className="block h-full w-full border-0 bg-transparent p-0"
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="h-full w-full object-cover"
+                  loading="eager"
+                  decoding="async"
+                />
+              </button>
+            </figure>
+          );
+        })}
       </div>
     </div>
   );

@@ -507,7 +507,7 @@ when we cannot go back, and what we become when we stay.`
   ],
   images: jaimaImages,
   isStrictGrid: false,
-  layout: "editorial-grid",
+  layout: "exhibition-wall",
 },
   protests: {
     key: "protests",
