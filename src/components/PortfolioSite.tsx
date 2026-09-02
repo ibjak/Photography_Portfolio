@@ -426,11 +426,11 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
             </section>
           ) : activeGallery ? (
             <section>
-              <div className="mx-auto flex max-w-5xl flex-col gap-3 sm:flex-row sm:items-start">
-                <h3 className="min-w-0 flex-1 font-sans text-[1.75rem] leading-tight font-semibold text-black sm:text-3xl">
+              <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:items-start">
+                <h3 className="min-w-0 text-center font-sans text-[1.75rem] leading-tight font-semibold text-black sm:col-start-2 sm:text-3xl">
                   {activeGalleryTitle}
                 </h3>
-                <div className="inline-flex shrink-0 self-end sm:self-auto">
+                <div className="inline-flex shrink-0 justify-self-center sm:col-start-3 sm:row-start-1 sm:justify-self-end">
                   <div className="inline-flex border border-line bg-white" role="group" aria-label="Gallery view">
                     {isJaimaMultiViewGallery ? (
                       <button
@@ -513,8 +513,8 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
               </div>
               {!isJaimaMultiViewGallery && activeGallery.introParagraphs?.length ? (
                 <div className="mx-auto mt-8 w-full max-w-5xl">
-                  <div className="max-w-[44rem] border-t border-line pt-5">
-                    <div className="grid gap-4 text-left font-sans text-[14px] leading-6 text-black md:text-[15px] md:leading-7">
+                  <div className="mx-auto max-w-[44rem] border-t border-line pt-5">
+                    <div className="grid gap-4 font-sans text-[14px] leading-6 text-black [text-align:justify] md:text-[15px] md:leading-7">
                       {activeGallery.introParagraphs.map((paragraph) => (
                         <p key={paragraph}>{paragraph}</p>
                       ))}
@@ -544,7 +544,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                     {activeGalleryImages.map((image, index) => (
                       <figure
                         key={image.src}
-                        className={`w-full overflow-hidden border border-line bg-glass ${
+                        className={`w-full overflow-hidden ${
                           index === 0 ? "md:col-span-2 md:mx-auto md:max-w-[78%]" : ""
                         }`}
                       >
@@ -575,7 +575,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                       <img
                         src={currentImage.src}
                         alt={currentImage.alt}
-                        className="h-auto w-auto max-h-[68vh] max-w-full border border-line bg-paper"
+                        className="block h-auto w-auto max-h-[68vh] max-w-full"
                         loading="lazy"
                         decoding="async"
                       />
@@ -611,7 +611,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
               )}
               {isJaimaMultiViewGallery && activeGallery.introParagraphs?.length ? (
                 <div className="mx-auto mt-6 w-full max-w-5xl bg-glass p-5 md:p-7">
-                  <div className="grid gap-4 text-left font-sans text-[15px] leading-7 text-black md:text-base md:[text-align:justify]">
+                  <div className="mx-auto grid max-w-[44rem] gap-4 font-sans text-[15px] leading-7 text-black [text-align:justify] md:text-base">
                     {activeGallery.introParagraphs.map((paragraph) => (
                       <p key={paragraph}>{paragraph}</p>
                     ))}
@@ -729,7 +729,7 @@ function JaimaEditorialGrid({
             <img
               src={image.src}
               alt={image.alt}
-              className="h-auto w-full border border-line bg-paper"
+              className="block h-auto w-full"
               loading={index === 0 ? "eager" : "lazy"}
               decoding="async"
             />
