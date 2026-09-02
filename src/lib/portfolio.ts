@@ -576,26 +576,23 @@ when we cannot go back, and what we become when we stay.`
 
 export const galleryKeys = Object.keys(galleries) as GalleryKey[];
 
-export const gallerySections = [
+export const navigationGroups = [
   {
-    key: "projects" as const,
+    key: "long-term-project" as const,
     title: "Projects",
     galleryKeys: ["jaima"] as GalleryKey[],
   },
   {
-    key: "events" as const,
-    title: "Events",
+    key: "short-term-projects" as const,
+    title: "Photographs",
     galleryKeys: [
       "protests",
       "qatar-prix",
       "paris-fashion-week-2025",
       "uefa-champions-league-winners-2026-psg",
+      "dogs",
+      "ssd-neon",
     ] as GalleryKey[],
-  },
-  {
-    key: "street-photography" as const,
-    title: "Street Photography",
-    galleryKeys: ["ssd-neon", "dogs"] as GalleryKey[],
   },
 ] as const;
 

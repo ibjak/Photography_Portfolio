@@ -5,9 +5,9 @@ import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import {
   aboutParagraphs,
   galleries,
-  gallerySections,
   getGalleryHref,
   homeSlideshowImages,
+  navigationGroups,
   presences,
   type ImageItem,
   type GalleryKey,
@@ -30,7 +30,6 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   const activeGallery = view.type === "gallery" ? galleries[view.galleryKey] : null;
   const activeGalleryImages = activeGallery?.images ?? [];
   const activeGalleryTitle = activeGallery?.title ?? null;
-  const isStrictGridGallery = activeGallery?.isStrictGrid ?? false;
   const isJaimaMultiViewGallery = activeGallery?.layout === "exhibition-wall";
 
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -142,24 +141,32 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
   }, [previousHomeSlideIndex]);
 
   const navLinkClass = (active: boolean) =>
-    `flex min-h-11 items-center border-0 bg-transparent p-0 text-left font-sans text-sm leading-6 font-medium tracking-[0.01em] transition-colors hover:text-[#0B2A6F] lg:block lg:min-h-0 ${
+    `flex min-h-11 items-center border-0 bg-transparent p-0 text-left font-sans text-[13px] leading-5 font-normal tracking-[0.015em] transition-colors hover:text-[#0B2A6F] lg:block lg:min-h-0 ${
       active ? "text-accent underline underline-offset-4" : "text-[#534941]"
     }`;
 
-  const navigationGalleryKeys = gallerySections.flatMap((section) => section.galleryKeys);
+  const longTermProjects = navigationGroups.find(
+    (group) => group.key === "long-term-project",
+  );
+  const shortTermProjects = navigationGroups.find(
+    (group) => group.key === "short-term-projects",
+  );
+  const isShortTermProjectActive =
+    activeGallery !== null &&
+    shortTermProjects?.galleryKeys.includes(activeGallery.key);
 
   return (
     <div className="page-shell" onContextMenu={(event) => event.preventDefault()}>
-      <div className="flex w-full flex-1 flex-col gap-10 px-6 pb-10 pt-6 md:flex-row md:gap-10 md:px-10 lg:gap-16">
+      <div className="flex w-full flex-1 flex-col gap-12 px-6 pb-12 pt-6 md:flex-row md:gap-12 md:px-10 lg:gap-16 lg:pb-16">
         <aside className="w-full md:sticky md:top-6 md:h-fit md:w-40 md:flex-none md:self-start lg:w-48">
           <div className="mt-4 md:mt-0">
             <div className="mb-4 flex items-center justify-between gap-3 md:hidden">
               <Link
                 href="/"
-                className="font-display whitespace-nowrap text-[clamp(1.4rem,7vw,1.75rem)] leading-none font-bold tracking-[0.02em] text-ink"
+                className="font-display whitespace-nowrap text-[clamp(1.55rem,7vw,1.9rem)] leading-none font-semibold tracking-[-0.01em] text-ink"
                 onClick={() => setIsMobileNavOpen(false)}
               >
-                IVAN BADANJAK
+                Ivan Badanjak
               </Link>
               <button
                 type="button"
@@ -198,9 +205,9 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
               <div className="flex items-center">
                 <Link
                   href="/"
-                  className="font-display text-[1.75rem] leading-[0.92] font-bold tracking-[0.02em] text-ink lg:text-[2.15rem]"
+                  className="font-display text-[1.9rem] leading-[0.95] font-semibold tracking-[-0.015em] text-ink lg:text-[2.2rem]"
                 >
-                  IVAN BADANJAK
+                  Ivan Badanjak
                 </Link>
               </div>
             </div>
@@ -208,28 +215,83 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
               id="portfolio-navigation"
               className={!isMobileNavOpen ? "hidden md:block" : "md:block"}
             >
-              <nav className="mt-7 text-sm">
-                <div className="grid gap-1">
-                  {navigationGalleryKeys.map((galleryKey) => {
-                    const gallery = galleries[galleryKey];
-                    const isActive = activeGallery?.key === galleryKey;
+              <nav className="mt-7">
+                <details
+                  className="group"
+                  open={activeGallery?.key === "jaima" || undefined}
+                >
+                  <summary className="summary-clean flex min-h-11 items-center justify-between gap-3 font-sans text-[13px] leading-5 font-normal tracking-[0.015em] text-[#534941] transition-colors hover:text-[#0B2A6F] lg:min-h-0">
+                    <span>{longTermProjects?.title}</span>
+                    <svg
+                      viewBox="0 0 12 12"
+                      className="h-3 w-3 shrink-0 transition-transform group-open:rotate-180"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.25"
+                      aria-hidden="true"
+                    >
+                      <path d="m2.5 4.25 3.5 3.5 3.5-3.5" />
+                    </svg>
+                  </summary>
+                  <div className="mt-2 grid gap-2 border-l border-line pl-4">
+                    {longTermProjects?.galleryKeys.map((galleryKey) => {
+                      const gallery = galleries[galleryKey];
+                      const isActive = activeGallery?.key === galleryKey;
 
-                    return (
-                      <Link
-                        key={gallery.key}
-                        href={getGalleryHref(gallery.key)}
-                        className={navLinkClass(isActive)}
-                        aria-current={isActive ? "page" : undefined}
-                        onClick={() => setIsMobileNavOpen(false)}
-                      >
-                        {gallery.navLabel}
-                      </Link>
-                    );
-                  })}
-                </div>
+                      return (
+                        <Link
+                          key={gallery.key}
+                          href={getGalleryHref(gallery.key)}
+                          className={navLinkClass(isActive)}
+                          aria-current={isActive ? "page" : undefined}
+                          onClick={() => setIsMobileNavOpen(false)}
+                        >
+                          {gallery.navLabel}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </details>
+
+                <details
+                  className="group mt-4"
+                  open={isShortTermProjectActive || undefined}
+                >
+                  <summary className="summary-clean flex min-h-11 items-center justify-between gap-3 font-sans text-[13px] leading-5 font-normal tracking-[0.015em] text-[#534941] transition-colors hover:text-[#0B2A6F] lg:min-h-0">
+                    <span>{shortTermProjects?.title}</span>
+                    <svg
+                      viewBox="0 0 12 12"
+                      className="h-3 w-3 shrink-0 transition-transform group-open:rotate-180"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.25"
+                      aria-hidden="true"
+                    >
+                      <path d="m2.5 4.25 3.5 3.5 3.5-3.5" />
+                    </svg>
+                  </summary>
+                  <div className="mt-3 grid gap-2 border-l border-line pl-4">
+                    {shortTermProjects?.galleryKeys.map((galleryKey) => {
+                      const gallery = galleries[galleryKey];
+                      const isActive = activeGallery?.key === galleryKey;
+
+                      return (
+                        <Link
+                          key={gallery.key}
+                          href={getGalleryHref(gallery.key)}
+                          className={navLinkClass(isActive)}
+                          aria-current={isActive ? "page" : undefined}
+                          onClick={() => setIsMobileNavOpen(false)}
+                        >
+                          {gallery.navLabel}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </details>
                 <Link
                   href="/about"
-                  className={`flex min-h-11 items-center border-0 bg-transparent p-0 text-left font-sans text-sm leading-6 font-medium tracking-[0.01em] transition-colors hover:text-[#0B2A6F] md:mt-1 lg:block lg:min-h-0 ${
+                  className={`mt-4 flex min-h-11 items-center border-0 bg-transparent p-0 text-left font-sans text-[13px] leading-5 font-normal tracking-[0.015em] transition-colors hover:text-[#0B2A6F] lg:block lg:min-h-0 ${
                     isAboutView ? "text-accent underline underline-offset-4" : "text-[#534941]"
                   }`}
                   aria-current={isAboutView ? "page" : undefined}
@@ -239,7 +301,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                 </Link>
               </nav>
 
-              <div className="mt-10">
+              <div className="mt-14">
                 <div className="flex items-center gap-3">
                   {presences.map((presence) => (
                     <a
@@ -259,14 +321,14 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                     </a>
                   ))}
                 </div>
-                <div className="mt-1 grid gap-1 text-sm">
+                <div className="mt-2 grid gap-1 font-sans text-[12px] leading-[1.45]">
                   <a
                     href="tel:+306943216408"
-                    className="inline-flex min-h-11 items-center text-sm text-black transition-colors hover:text-accent lg:min-h-0"
+                    className="inline-flex min-h-11 items-center text-black transition-colors hover:text-accent lg:min-h-0"
                   >
                     +306943216408
                   </a>
-                  <span className="text-sm text-black">ivanb.jpg@gmail.com</span>
+                  <span className="text-black">ivanb.jpg@gmail.com</span>
                 </div>
                 <div className="mt-4 text-xs text-muted">
                   © {new Date().getFullYear()} Ivan Badanjak. All rights reserved.
@@ -408,13 +470,20 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                       }`}
                       aria-pressed={galleryViewMode === "grid"}
                     >
-                      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
-                        <rect x="3" y="3" width="8" height="8" />
-                        <rect x="13" y="3" width="8" height="8" />
-                        <rect x="3" y="13" width="8" height="8" />
-                        <rect x="13" y="13" width="8" height="8" />
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        aria-hidden="true"
+                      >
+                        <rect x="3" y="3" width="8" height="6" />
+                        <rect x="13" y="3" width="8" height="10" />
+                        <rect x="3" y="11" width="8" height="10" />
+                        <rect x="13" y="15" width="8" height="6" />
                       </svg>
-                      <span>Grid</span>
+                      <span>{isJaimaMultiViewGallery ? "Grid" : "Sequence"}</span>
                     </button>
                     <button
                       type="button"
@@ -442,6 +511,17 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                   </div>
                 </div>
               </div>
+              {!isJaimaMultiViewGallery && activeGallery.introParagraphs?.length ? (
+                <div className="mx-auto mt-8 w-full max-w-5xl">
+                  <div className="max-w-[44rem] border-t border-line pt-5">
+                    <div className="grid gap-4 text-left font-sans text-[14px] leading-6 text-black md:text-[15px] md:leading-7">
+                      {activeGallery.introParagraphs.map((paragraph) => (
+                        <p key={paragraph}>{paragraph}</p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
               {galleryViewMode !== "slideshow" ? (
                 isJaimaMultiViewGallery && galleryViewMode === "wall" ? (
                   <ExhibitionWallGrid
@@ -460,21 +540,13 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                     }}
                   />
                 ) : (
-                  <div
-                    className={
-                      isStrictGridGallery
-                        ? "mx-auto mt-6 grid max-w-5xl grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3"
-                        : "mx-auto mt-6 max-w-5xl columns-1 gap-2 md:columns-2 xl:columns-3"
-                    }
-                  >
+                  <div className="mx-auto mt-8 grid max-w-5xl grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 md:gap-x-10 md:gap-y-16">
                     {activeGalleryImages.map((image, index) => (
                       <figure
                         key={image.src}
-                        className={
-                          isStrictGridGallery
-                            ? "w-full overflow-hidden border border-line bg-glass"
-                            : "mb-2 inline-block w-full overflow-hidden border border-line bg-glass [break-inside:avoid]"
-                        }
+                        className={`w-full overflow-hidden border border-line bg-glass ${
+                          index === 0 ? "md:col-span-2 md:mx-auto md:max-w-[78%]" : ""
+                        }`}
                       >
                         <button
                           type="button"
@@ -537,7 +609,7 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
                   </div>
                 </div>
               )}
-              {activeGallery.introParagraphs?.length ? (
+              {isJaimaMultiViewGallery && activeGallery.introParagraphs?.length ? (
                 <div className="mx-auto mt-6 w-full max-w-5xl bg-glass p-5 md:p-7">
                   <div className="grid gap-4 text-left font-sans text-[15px] leading-7 text-black md:text-base md:[text-align:justify]">
                     {activeGallery.introParagraphs.map((paragraph) => (
@@ -641,7 +713,7 @@ function JaimaEditorialGrid({
 }) {
   return (
     <div
-      className="mx-auto mt-6 grid max-w-6xl grid-cols-1 gap-x-3 gap-y-6 md:grid-cols-12 md:gap-y-10"
+      className="mx-auto mt-8 grid max-w-6xl grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-12 md:gap-x-10 md:gap-y-16"
       aria-label="Jaima editorial photo sequence"
     >
       {images.map((image, index) => (
