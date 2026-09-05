@@ -25,8 +25,12 @@ Preserve the existing visual identity unless the user explicitly approves a rede
 
 ## Repository map
 
-- `src/components/PortfolioSite.tsx`: shared navigation, homepage slideshow, gallery grid/slideshow, and Jaima exhibition-wall renderer.
+- `src/components/PortfolioSite.tsx`: server-rendered route composition and shared content selection.
+- `src/components/PortfolioShell.tsx`: responsive navigation, contact details, and page landmarks.
+- `src/components/HomeSlideshow.tsx`: homepage slideshow interactions and keyboard controls.
+- `src/components/GalleryViewer.tsx`: sequence, slideshow, and Jaima exhibition-wall presentation.
 - `src/lib/portfolio.ts`: canonical gallery metadata, photograph order, project text, routes, home-slide selection, and Jaima wall coordinates.
+- `src/lib/imageDimensions.ts`: intrinsic source dimensions used by responsive image delivery.
 - `src/app/globals.css`: global design tokens, transitions, and exhibition-wall styling.
 - `src/app/[section]/[slug]/page.tsx`: gallery routes and route metadata.
 - `src/app/layout.tsx`: global metadata and root layout.
@@ -97,3 +101,13 @@ Every agent should report:
 4. Screenshots or measurements relevant to the task.
 5. Risks, unresolved questions, and any user approval still needed.
 6. A clear recommendation: ready for review, needs revision, or analysis only.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

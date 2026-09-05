@@ -4,9 +4,8 @@ import {
   siteName,
   siteTitle,
   siteUrl,
-} from "../lib/siteMetadata";
+} from "@/lib/siteMetadata";
 import "./globals.css";
-import "./accessibility.css";
 
 export const viewport: Viewport = {
   width: "device-width",

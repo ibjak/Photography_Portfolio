@@ -1,9 +1,6 @@
 import type { MetadataRoute } from "next";
-import {
-  galleryKeys,
-  getGalleryHref,
-} from "../lib/portfolio";
-import { absoluteUrl } from "../lib/siteMetadata";
+import { galleryKeys, getGalleryHref } from "@/lib/portfolio";
+import { absoluteUrl } from "@/lib/siteMetadata";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

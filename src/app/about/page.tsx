@@ -1,5 +1,5 @@
-import PortfolioSite from "../../components/PortfolioSite";
-import { pageMetadata } from "../../lib/siteMetadata";
+import PortfolioSite from "@/components/PortfolioSite";
+import { pageMetadata } from "@/lib/siteMetadata";
 
 export const metadata = pageMetadata({
   title: "About",
@@ -9,5 +9,5 @@ export const metadata = pageMetadata({
 });
 
 export default function AboutPage() {
-  return <PortfolioSite key="about" view={{ type: "about" }} />;
+  return <PortfolioSite view={{ type: "about" }} />;
 }

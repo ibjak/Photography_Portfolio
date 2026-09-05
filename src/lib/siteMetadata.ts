@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { Gallery, ImageItem } from "@/lib/portfolio";
 
 export const siteName = "Ivan Badanjak";
 export const siteTitle = `${siteName} | Photography`;
@@ -10,8 +11,26 @@ export function absoluteUrl(pathname: string) {
   return new URL(pathname, siteUrl).toString();
 }
 
-export function galleryDescription(title: string) {
-  return `View ${title}, a photography gallery by Ivan Badanjak.`;
+const META_DESCRIPTION_MAX_LENGTH = 160;
+
+function conciseDescription(value: string) {
+  const normalized = value.replace(/\s+/g, " ").trim();
+
+  if (normalized.length <= META_DESCRIPTION_MAX_LENGTH) {
+    return normalized;
+  }
+
+  const shortened = normalized.slice(0, META_DESCRIPTION_MAX_LENGTH - 1);
+  return `${shortened.replace(/\s+\S*$/, "")}…`;
+}
+
+export function galleryDescription(
+  gallery: Pick<Gallery, "title" | "introParagraphs">,
+) {
+  const introduction = gallery.introParagraphs?.[0];
+  return introduction
+    ? conciseDescription(introduction)
+    : `View ${gallery.title}, a photography gallery by Ivan Badanjak.`;
 }
 
 export function pageMetadata({
@@ -19,13 +38,25 @@ export function pageMetadata({
   description,
   pathname,
   isHome = false,
+  image,
 }: {
   title: string;
   description: string;
   pathname: string;
   isHome?: boolean;
+  image?: Pick<ImageItem, "src" | "alt" | "width" | "height">;
 }): Metadata {
   const fullTitle = isHome ? siteTitle : `${title} | ${siteName}`;
+  const socialImages = image
+    ? [
+        {
+          url: image.src,
+          alt: image.alt,
+          width: image.width,
+          height: image.height,
+        },
+      ]
+    : undefined;
 
   return {
     title: isHome ? { absolute: fullTitle } : title,
@@ -40,11 +71,13 @@ export function pageMetadata({
       siteName,
       locale: "en_US",
       type: "website",
+      images: socialImages,
     },
     twitter: {
-      card: "summary",
+      card: image ? "summary_large_image" : "summary",
       title: fullTitle,
       description,
+      images: image ? [image.src] : undefined,
     },
   };
 }

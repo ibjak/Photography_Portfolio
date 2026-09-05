@@ -1,17 +1,15 @@
-import PortfolioSite from "../components/PortfolioSite";
-import {
-  pageMetadata,
-  siteDescription,
-  siteTitle,
-} from "../lib/siteMetadata";
+import PortfolioSite from "@/components/PortfolioSite";
+import { homeSlideshowImages } from "@/lib/portfolio";
+import { pageMetadata, siteDescription, siteTitle } from "@/lib/siteMetadata";
 
 export const metadata = pageMetadata({
   title: siteTitle,
   description: siteDescription,
   pathname: "/",
   isHome: true,
+  image: homeSlideshowImages[0],
 });
 
 export default function HomePage() {
-  return <PortfolioSite key="home" view={{ type: "home" }} />;
+  return <PortfolioSite view={{ type: "home" }} />;
 }

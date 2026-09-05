@@ -1,16 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import PortfolioSite from "../../../components/PortfolioSite";
+import PortfolioSite from "@/components/PortfolioSite";
 import {
   galleries,
   galleryKeys,
   getGalleryByRoute,
   getGalleryHref,
-} from "../../../lib/portfolio";
-import {
-  galleryDescription,
-  pageMetadata,
-} from "../../../lib/siteMetadata";
+} from "@/lib/portfolio";
+import { galleryDescription, pageMetadata } from "@/lib/siteMetadata";
 
 type RoutePageProps = {
   params: Promise<{
@@ -34,10 +31,7 @@ export async function generateMetadata({
   params,
 }: RoutePageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const gallery = getGalleryByRoute(
-    resolvedParams.section,
-    resolvedParams.slug,
-  );
+  const gallery = getGalleryByRoute(resolvedParams.section, resolvedParams.slug);
 
   if (!gallery) {
     return {};
@@ -47,26 +41,19 @@ export async function generateMetadata({
 
   return pageMetadata({
     title: gallery.title,
-    description: galleryDescription(gallery.title),
+    description: galleryDescription(gallery),
     pathname,
+    image: gallery.images[0],
   });
 }
 
 export default async function GalleryPage({ params }: RoutePageProps) {
   const resolvedParams = await params;
-  const gallery = getGalleryByRoute(
-    resolvedParams.section,
-    resolvedParams.slug,
-  );
+  const gallery = getGalleryByRoute(resolvedParams.section, resolvedParams.slug);
 
   if (!gallery) {
     notFound();
   }
 
-  return (
-    <PortfolioSite
-      key={gallery.key}
-      view={{ type: "gallery", galleryKey: gallery.key }}
-    />
-  );
+  return <PortfolioSite view={{ type: "gallery", galleryKey: gallery.key }} />;
 }
