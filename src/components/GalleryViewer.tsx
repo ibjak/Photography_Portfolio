@@ -62,7 +62,7 @@ function ProjectStatement({
         withRule ? "border-t border-line pt-5" : ""
       }`}
     >
-      <div className="grid gap-4 font-sans text-[14px] leading-6 text-pretty md:text-[15px] md:leading-7">
+      <div className="grid gap-4 font-sans text-[14px] leading-6 text-justify text-pretty hyphens-auto [text-align-last:center] md:text-[15px] md:leading-7">
         {paragraphs.map((paragraph) => (
           <p key={paragraph}>{paragraph}</p>
         ))}
