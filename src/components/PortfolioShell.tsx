@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
-import type { GalleryKey } from "@/lib/portfolio";
+import type { contact, GalleryKey, presences } from "@/lib/portfolio";
 
 export type NavigationItem = {
   galleryKey: GalleryKey;
@@ -17,26 +17,17 @@ export type NavigationGroupView = {
   items: readonly NavigationItem[];
 };
 
-type Presence = {
-  name: string;
-  href: string;
-  iconSrc: string;
+type ContactDetails = {
+  contact: typeof contact;
+  currentYear: number;
+  presences: typeof presences;
 };
 
-type Contact = {
-  phoneHref: string;
-  phoneLabel: string;
-  email: string;
-};
-
-type PortfolioShellProps = {
+type PortfolioShellProps = ContactDetails & {
   activeGalleryKey: GalleryKey | null;
   children: ReactNode;
-  contact: Contact;
-  currentYear: number;
   isAboutView: boolean;
   navigationGroups: readonly NavigationGroupView[];
-  presences: readonly Presence[];
 };
 
 const navLinkClass = (active: boolean) =>
@@ -59,30 +50,77 @@ function DisclosureIcon() {
   );
 }
 
+function ContactFooter({
+  className,
+  contact,
+  currentYear,
+  presences,
+}: ContactDetails & { className: string }) {
+  return (
+    <footer className={className}>
+      <div className="flex items-center gap-3">
+        {presences.map((presence) => (
+          <a
+            key={presence.name}
+            href={presence.href}
+            aria-label={presence.name}
+            className="flex h-11 w-11 items-center justify-start lg:h-8 lg:w-7"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Image
+              src={presence.iconSrc}
+              alt=""
+              width={20}
+              height={20}
+              className="h-5 w-5 object-contain"
+            />
+          </a>
+        ))}
+      </div>
+      <address className="mt-2 grid gap-1 font-sans text-[12px] leading-[1.45] not-italic">
+        <a
+          href={contact.phoneHref}
+          className="inline-flex min-h-11 items-center text-black transition-colors hover:text-accent lg:min-h-0"
+        >
+          {contact.phoneLabel}
+        </a>
+        <a
+          href={`mailto:${contact.email}`}
+          className="inline-flex min-h-11 items-center text-black transition-colors hover:text-accent lg:min-h-0"
+        >
+          {contact.email}
+        </a>
+      </address>
+      <div className="mt-4 text-xs text-muted">
+        © {currentYear} Ivan Badanjak. All rights reserved.
+      </div>
+    </footer>
+  );
+}
+
 export default function PortfolioShell({
   activeGalleryKey,
   children,
-  contact,
-  currentYear,
   isAboutView,
   navigationGroups,
-  presences,
+  ...contactDetails
 }: PortfolioShellProps) {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const closeMobileNav = () => setIsMobileNavOpen(false);
 
   return (
-    <div className="page-shell">
+    <div className="flex min-h-screen flex-col">
       <a href="#main-content" className="skip-link">
         Skip to content
       </a>
       <div className="flex w-full flex-1 flex-col gap-12 px-6 pb-12 pt-6 md:flex-row md:gap-12 md:px-10 lg:gap-16 lg:pb-16">
         <aside className="w-full md:sticky md:top-6 md:h-fit md:w-40 md:flex-none md:self-start lg:w-48">
           <div className="mt-4 md:mt-0">
-            <div className="mb-4 flex items-center justify-between gap-3 md:hidden">
+            <div className="mb-4 flex items-center justify-between gap-3 md:block md:pt-2">
               <Link
                 href="/"
-                className="font-display whitespace-nowrap text-[clamp(1.55rem,7vw,1.9rem)] leading-none font-semibold tracking-[-0.01em] text-ink"
+                className="font-display text-[clamp(1.55rem,7vw,1.9rem)] leading-none font-semibold tracking-[-0.01em] whitespace-nowrap text-ink md:text-[1.9rem] md:leading-[0.95] md:tracking-[-0.015em] md:whitespace-normal lg:text-[2.2rem]"
                 onClick={closeMobileNav}
               >
                 Ivan Badanjak
@@ -90,44 +128,28 @@ export default function PortfolioShell({
               <button
                 type="button"
                 onClick={() => setIsMobileNavOpen((open) => !open)}
-                className="inline-flex h-11 w-11 shrink-0 items-center justify-center border border-line text-ink transition-colors hover:text-[#0B2A6F]"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center border border-line text-ink transition-colors hover:text-[#0B2A6F] md:hidden"
                 aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isMobileNavOpen}
                 aria-controls="portfolio-navigation"
               >
-                {isMobileNavOpen ? (
-                  <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    className="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M6 6l12 12M18 6L6 18" />
-                  </svg>
-                ) : (
-                  <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    className="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M4 7h16M4 12h16M4 17h16" />
-                  </svg>
-                )}
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    d={
+                      isMobileNavOpen
+                        ? "M6 6l12 12M18 6L6 18"
+                        : "M4 7h16M4 12h16M4 17h16"
+                    }
+                  />
+                </svg>
               </button>
-            </div>
-
-            <div className="mb-4 hidden pt-2 md:block">
-              <Link
-                href="/"
-                className="font-display text-[1.9rem] leading-[0.95] font-semibold tracking-[-0.015em] text-ink lg:text-[2.2rem]"
-              >
-                Ivan Badanjak
-              </Link>
             </div>
 
             <div
@@ -173,11 +195,7 @@ export default function PortfolioShell({
 
                 <Link
                   href="/about"
-                  className={`mt-4 flex min-h-11 items-center border-0 bg-transparent p-0 text-left font-sans text-[13px] leading-5 font-normal tracking-[0.015em] transition-colors hover:text-[#0B2A6F] lg:block lg:min-h-0 ${
-                    isAboutView
-                      ? "text-accent underline underline-offset-4"
-                      : "text-[#534941]"
-                  }`}
+                  className={`mt-4 ${navLinkClass(isAboutView)}`}
                   aria-current={isAboutView ? "page" : undefined}
                   onClick={closeMobileNav}
                 >
@@ -185,45 +203,7 @@ export default function PortfolioShell({
                 </Link>
               </nav>
 
-              <footer className="mt-14">
-                <div className="flex items-center gap-3">
-                  {presences.map((presence) => (
-                    <a
-                      key={presence.name}
-                      href={presence.href}
-                      aria-label={presence.name}
-                      className="flex h-11 w-11 items-center justify-start lg:h-8 lg:w-7"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <Image
-                        src={presence.iconSrc}
-                        alt=""
-                        width={20}
-                        height={20}
-                        className="h-5 w-5 object-contain"
-                      />
-                    </a>
-                  ))}
-                </div>
-                <address className="mt-2 grid gap-1 font-sans text-[12px] leading-[1.45] not-italic">
-                  <a
-                    href={contact.phoneHref}
-                    className="inline-flex min-h-11 items-center text-black transition-colors hover:text-accent lg:min-h-0"
-                  >
-                    {contact.phoneLabel}
-                  </a>
-                  <a
-                    href={`mailto:${contact.email}`}
-                    className="inline-flex min-h-11 items-center text-black transition-colors hover:text-accent lg:min-h-0"
-                  >
-                    {contact.email}
-                  </a>
-                </address>
-                <div className="mt-4 text-xs text-muted">
-                  © {currentYear} Ivan Badanjak. All rights reserved.
-                </div>
-              </footer>
+              <ContactFooter className="mt-14" {...contactDetails} />
             </div>
           </div>
         </aside>
@@ -243,6 +223,12 @@ export default function PortfolioShell({
         >
           {children}
         </main>
+
+        {/* On phones the sidebar footer only shows inside the open menu. */}
+        <ContactFooter
+          className="border-t border-line pt-8 md:hidden"
+          {...contactDetails}
+        />
       </div>
     </div>
   );

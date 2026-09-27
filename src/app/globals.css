@@ -1,41 +1,26 @@
 @import "tailwindcss";
 
-:root {
+/* Registering tokens here generates utilities such as text-muted, border-line
+   and font-display, and exposes them as CSS variables (--color-ink, …). */
+@theme {
+  --font-sans: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-display: "Iowan Old Style", "Palatino Linotype", Palatino,
     "Times New Roman", serif;
-  --font-text: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --paper: #ffffff;
-  --ink: #1d1a16;
-  --muted: #6e6258;
-  --accent: #ad5f35;
-  --line: rgba(29, 26, 22, 0.18);
-  --glass: rgba(255, 255, 255, 0.6);
-}
-
-@theme inline {
-  --font-sans: var(--font-text);
-}
-
-* {
-  box-sizing: border-box;
+  --color-paper: #ffffff;
+  --color-ink: #1d1a16;
+  --color-muted: #6e6258;
+  --color-accent: #ad5f35;
+  --color-line: rgba(29, 26, 22, 0.18);
 }
 
 body {
-  margin: 0;
-  min-height: 100%;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--font-text), "Helvetica Neue", Arial, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
   letter-spacing: 0.01em;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
 :where(a, button, summary):focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--color-accent);
   outline-offset: 3px;
 }
 
@@ -49,40 +34,15 @@ figure > button:focus-visible {
   left: 1rem;
   z-index: 100;
   padding: 0.65rem 0.85rem;
-  border: 1px solid var(--line);
-  background: var(--paper);
-  color: var(--ink);
+  border: 1px solid var(--color-line);
+  background: var(--color-paper);
+  color: var(--color-ink);
   font-size: 0.875rem;
   transform: translateY(calc(-100% - 1.5rem));
 }
 
 .skip-link:focus {
   transform: translateY(0);
-}
-
-.page-shell {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: var(--paper);
-  isolation: isolate;
-}
-
-.font-display {
-  font-family: var(--font-display), "Times New Roman", serif;
-}
-
-.text-muted {
-  color: var(--muted);
-}
-
-.text-ink {
-  color: var(--ink);
-}
-
-.text-accent {
-  color: var(--accent);
 }
 
 .summary-clean {
@@ -98,15 +58,6 @@ figure > button:focus-visible {
   content: "";
 }
 
-.bg-glass {
-  background-color: var(--glass);
-  backdrop-filter: blur(10px);
-}
-
-.border-line {
-  border-color: var(--line);
-}
-
 .home-slide-layer {
   will-change: opacity, transform;
 }
@@ -120,11 +71,18 @@ figure > button:focus-visible {
   animation: homeSlideExit 0.95s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+/* Fills its column on desktop; the minimum keeps prints legible, and the wall
+   scrolls sideways below it. */
 .exhibition-wall {
   position: relative;
-  min-width: 1380px;
+  min-width: 780px;
   aspect-ratio: 640 / 340;
-  background: var(--paper);
+}
+
+@media (min-width: 768px) {
+  .exhibition-wall {
+    min-width: 640px;
+  }
 }
 
 .exhibition-wall-scroll {
@@ -151,18 +109,12 @@ figure > button:focus-visible {
 
 .exhibition-wall-print img {
   display: block;
-  background: var(--paper);
+  background: var(--color-paper);
 }
 
 .exhibition-wall-print:focus-within {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--color-accent);
   outline-offset: 3px;
-}
-
-@media (max-width: 767px) {
-  .exhibition-wall {
-    min-width: 780px;
-  }
 }
 
 @keyframes homeSlideEnter {

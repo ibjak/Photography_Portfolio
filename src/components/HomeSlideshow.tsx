@@ -3,28 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { getGalleryHref, type HomeSlide } from "@/lib/portfolio";
+import type { HomeSlide } from "@/lib/portfolio";
+import { useArrowKeys, useMediaQuery, useSwipe, wrapIndex } from "./hooks";
 
 const AUTOPLAY_INTERVAL_MS = 4200;
 const TRANSITION_CLEANUP_MS = 1400;
-
-const wrapIndex = (index: number, length: number) =>
-  ((index % length) + length) % length;
-
-function usePrefersReducedMotion() {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
-
-    updatePreference();
-    mediaQuery.addEventListener("change", updatePreference);
-    return () => mediaQuery.removeEventListener("change", updatePreference);
-  }, []);
-
-  return prefersReducedMotion;
-}
 
 type HomeSlideshowProps = {
   slides: readonly HomeSlide[];
@@ -34,7 +17,8 @@ export default function HomeSlideshow({ slides }: HomeSlideshowProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [previousIndex, setPreviousIndex] = useState<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const allowsMotion =
+    useMediaQuery("(prefers-reduced-motion: no-preference)") === true;
 
   const stepSlide = useCallback(
     (delta: number) => {
@@ -46,32 +30,12 @@ export default function HomeSlideshow({ slides }: HomeSlideshowProps) {
     [slides.length],
   );
 
-  useEffect(() => {
-    if (slides.length <= 1) {
-      return;
-    }
+  const swipeHandlers = useSwipe(stepSlide);
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      const isTyping =
-        target?.tagName === "INPUT" ||
-        target?.tagName === "TEXTAREA" ||
-        target?.isContentEditable;
-
-      if (isTyping || (event.key !== "ArrowLeft" && event.key !== "ArrowRight")) {
-        return;
-      }
-
-      event.preventDefault();
-      stepSlide(event.key === "ArrowLeft" ? -1 : 1);
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [slides.length, stepSlide]);
+  useArrowKeys(stepSlide, slides.length > 1);
 
   useEffect(() => {
-    if (isPaused || prefersReducedMotion || slides.length <= 1) {
+    if (isPaused || !allowsMotion || slides.length <= 1) {
       return;
     }
 
@@ -80,7 +44,7 @@ export default function HomeSlideshow({ slides }: HomeSlideshowProps) {
       AUTOPLAY_INTERVAL_MS,
     );
     return () => window.clearInterval(intervalId);
-  }, [isPaused, prefersReducedMotion, slides.length, stepSlide]);
+  }, [allowsMotion, isPaused, slides.length, stepSlide]);
 
   useEffect(() => {
     if (previousIndex === null) {
@@ -99,8 +63,7 @@ export default function HomeSlideshow({ slides }: HomeSlideshowProps) {
   }
 
   const currentSlide = slides[currentIndex];
-  const previousSlide =
-    previousIndex === null ? null : slides[wrapIndex(previousIndex, slides.length)];
+  const previousSlide = previousIndex === null ? null : slides[previousIndex];
 
   return (
     <section
@@ -121,7 +84,10 @@ export default function HomeSlideshow({ slides }: HomeSlideshowProps) {
           }
         }}
       >
-        <div className="relative inline-block max-w-full overflow-hidden">
+        <div
+          className="relative inline-block max-w-full overflow-hidden"
+          {...swipeHandlers}
+        >
           <Image
             src={currentSlide.src}
             alt={currentSlide.alt}
@@ -154,7 +120,7 @@ export default function HomeSlideshow({ slides }: HomeSlideshowProps) {
 
         <figcaption className="flex w-full flex-wrap items-center justify-between gap-4 text-sm">
           <Link
-            href={getGalleryHref(currentSlide.gallery)}
+            href={currentSlide.href}
             className="inline-flex min-h-11 items-center border-0 bg-transparent p-0 text-muted transition-colors hover:text-accent lg:min-h-0"
           >
             {currentSlide.albumLabel}

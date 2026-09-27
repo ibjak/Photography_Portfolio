@@ -1,33 +1,30 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 import type { Gallery, ImageItem } from "@/lib/portfolio";
+import { useArrowKeys, useMediaQuery, useSwipe, wrapIndex } from "./hooks";
 
 type GalleryViewMode = "wall" | "sequence" | "slideshow";
 
 const EXHIBITION_WALL_WIDTH = 320;
 const EXHIBITION_WALL_HEIGHT = 170;
+const PHONE_QUERY = "(max-width: 767px)";
 
-const JAIMA_EDITORIAL_PLACEMENTS = [
-  "md:col-span-10 md:col-start-2",
-  "md:col-span-6",
-  "md:col-span-6",
-  "md:col-span-6",
-  "md:col-span-6",
-  "md:col-span-6",
-  "md:col-span-6",
-  "md:col-span-6",
-  "md:col-span-6",
-  "md:col-span-6",
-  "md:col-span-6",
-  "md:col-span-6",
-  "md:col-span-6",
-  "md:col-span-6 md:col-start-4",
-] as const;
+// Every other Jaima grid photo spans half the row.
+const JAIMA_EDITORIAL_PLACEMENTS: Partial<Record<number, string>> = {
+  0: "md:col-span-10 md:col-start-2",
+  13: "md:col-span-6 md:col-start-4",
+};
 
-const wrapIndex = (index: number, length: number) =>
-  ((index % length) + length) % length;
+// "desktop" and "phone" mark the pressed button before hydration, when
+// Jaima's default view is chosen by CSS breakpoint.
+const viewModeButtonStates = {
+  on: "bg-ink text-white",
+  off: "bg-white text-muted hover:text-accent",
+  desktop: "bg-white text-muted max-md:hover:text-accent md:bg-ink md:text-white",
+  phone: "bg-ink text-white md:bg-white md:text-muted md:hover:text-accent",
+};
 
 function ViewModeButton({
   active,
@@ -36,24 +33,22 @@ function ViewModeButton({
   onClick,
   separated = false,
 }: {
-  active: boolean;
+  active: boolean | "desktop" | "phone";
   children: ReactNode;
   icon: ReactNode;
   onClick: () => void;
   separated?: boolean;
 }) {
+  const state = active === true ? "on" : active === false ? "off" : active;
+
   return (
     <button
       type="button"
       onClick={onClick}
       className={`inline-flex min-h-14 min-w-[4.75rem] flex-col items-center justify-center gap-1 px-2 py-1.5 text-[11px] leading-none transition-colors ${
         separated ? "border-l border-line" : ""
-      } ${
-        active
-          ? "bg-[#1d1a16] text-white"
-          : "bg-white text-muted hover:text-accent"
-      }`}
-      aria-pressed={active}
+      } ${viewModeButtonStates[state]}`}
+      aria-pressed={active === true}
     >
       {icon}
       <span>{children}</span>
@@ -61,56 +56,50 @@ function ViewModeButton({
   );
 }
 
-function WallIcon() {
+function ViewIcon({
+  children,
+  strokeWidth = 1.5,
+}: {
+  children: ReactNode;
+  strokeWidth?: number;
+}) {
   return (
     <svg
       viewBox="0 0 24 24"
       className="h-4 w-4"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth={strokeWidth}
       aria-hidden="true"
     >
-      <rect x="2.5" y="5" width="7" height="6" />
-      <rect x="13" y="3" width="8.5" height="8" />
-      <rect x="6" y="14" width="10" height="7" />
+      {children}
     </svg>
   );
 }
 
-function SequenceIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      aria-hidden="true"
-    >
-      <rect x="3" y="3" width="8" height="6" />
-      <rect x="13" y="3" width="8" height="10" />
-      <rect x="3" y="11" width="8" height="10" />
-      <rect x="13" y="15" width="8" height="6" />
-    </svg>
-  );
-}
+const wallIcon = (
+  <ViewIcon>
+    <rect x="2.5" y="5" width="7" height="6" />
+    <rect x="13" y="3" width="8.5" height="8" />
+    <rect x="6" y="14" width="10" height="7" />
+  </ViewIcon>
+);
 
-function SlideshowIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      aria-hidden="true"
-    >
-      <rect x="3.5" y="5" width="17" height="14" />
-      <path d="m6.5 16 4-4 3 3 2-2 2 2" />
-    </svg>
-  );
-}
+const sequenceIcon = (
+  <ViewIcon>
+    <rect x="3" y="3" width="8" height="6" />
+    <rect x="13" y="3" width="8" height="10" />
+    <rect x="3" y="11" width="8" height="10" />
+    <rect x="13" y="15" width="8" height="6" />
+  </ViewIcon>
+);
+
+const slideshowIcon = (
+  <ViewIcon strokeWidth={1.75}>
+    <rect x="3.5" y="5" width="17" height="14" />
+    <path d="m6.5 16 4-4 3 3 2-2 2 2" />
+  </ViewIcon>
+);
 
 function ProjectStatement({
   paragraphs,
@@ -125,7 +114,7 @@ function ProjectStatement({
         withRule ? "border-t border-line pt-5" : ""
       }`}
     >
-      <div className="grid gap-4 font-sans text-[14px] leading-6 text-black [text-align:justify] md:text-[15px] md:leading-7">
+      <div className="grid gap-4 font-sans text-[14px] leading-6 text-pretty text-black md:text-[15px] md:leading-7">
         {paragraphs.map((paragraph) => (
           <p key={paragraph}>{paragraph}</p>
         ))}
@@ -135,43 +124,29 @@ function ProjectStatement({
 }
 
 export default function GalleryViewer({ gallery }: { gallery: Gallery }) {
+  const { images } = gallery;
   const isExhibitionGallery = gallery.layout === "exhibition-wall";
-  const [viewMode, setViewMode] = useState<GalleryViewMode>(
-    isExhibitionGallery ? "wall" : "sequence",
-  );
+  const [chosenView, setChosenView] = useState<GalleryViewMode | null>(null);
   const [slideIndex, setSlideIndex] = useState(0);
-  const normalizedSlideIndex = gallery.images.length
-    ? wrapIndex(slideIndex, gallery.images.length)
-    : 0;
-  const currentImage = gallery.images[normalizedSlideIndex] ?? null;
+  const isPhone = useMediaQuery(PHONE_QUERY);
+  // Jaima opens on the wall, except on phones where its prints are too small
+  // to read. Until the viewport is known, CSS shows the right one (no flash).
+  const defaultView = !isExhibitionGallery
+    ? "sequence"
+    : isPhone === null
+      ? null
+      : isPhone
+        ? "sequence"
+        : "wall";
+  const viewMode = chosenView ?? defaultView;
+  const isUndecided = viewMode === null;
+  const stepSlide = (delta: number) => setSlideIndex((index) => index + delta);
 
-  useEffect(() => {
-    if (viewMode !== "slideshow" || gallery.images.length === 0) {
-      return;
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      const isTyping =
-        target?.tagName === "INPUT" ||
-        target?.tagName === "TEXTAREA" ||
-        target?.isContentEditable;
-
-      if (isTyping || (event.key !== "ArrowLeft" && event.key !== "ArrowRight")) {
-        return;
-      }
-
-      event.preventDefault();
-      setSlideIndex((index) => index + (event.key === "ArrowLeft" ? -1 : 1));
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [gallery.images.length, viewMode]);
+  useArrowKeys(stepSlide, viewMode === "slideshow");
 
   const selectImage = (index: number) => {
     setSlideIndex(index);
-    setViewMode("slideshow");
+    setChosenView("slideshow");
   };
 
   return (
@@ -191,25 +166,25 @@ export default function GalleryViewer({ gallery }: { gallery: Gallery }) {
           >
             {isExhibitionGallery ? (
               <ViewModeButton
-                active={viewMode === "wall"}
-                icon={<WallIcon />}
-                onClick={() => setViewMode("wall")}
+                active={isUndecided ? "desktop" : viewMode === "wall"}
+                icon={wallIcon}
+                onClick={() => setChosenView("wall")}
               >
                 Wall
               </ViewModeButton>
             ) : null}
             <ViewModeButton
-              active={viewMode === "sequence"}
-              icon={<SequenceIcon />}
-              onClick={() => setViewMode("sequence")}
+              active={isUndecided ? "phone" : viewMode === "sequence"}
+              icon={sequenceIcon}
+              onClick={() => setChosenView("sequence")}
               separated={isExhibitionGallery}
             >
               {isExhibitionGallery ? "Grid" : "Sequence"}
             </ViewModeButton>
             <ViewModeButton
               active={viewMode === "slideshow"}
-              icon={<SlideshowIcon />}
-              onClick={() => setViewMode("slideshow")}
+              icon={slideshowIcon}
+              onClick={() => setChosenView("slideshow")}
               separated
             >
               Slideshow
@@ -224,26 +199,36 @@ export default function GalleryViewer({ gallery }: { gallery: Gallery }) {
         </div>
       ) : null}
 
-      {viewMode === "wall" && isExhibitionGallery ? (
-        <ExhibitionWall images={gallery.images} onSelect={selectImage} />
-      ) : viewMode === "sequence" ? (
-        isExhibitionGallery ? (
-          <JaimaEditorialSequence images={gallery.images} onSelect={selectImage} />
-        ) : (
-          <PhotoSequence images={gallery.images} onSelect={selectImage} />
-        )
-      ) : (
+      {isExhibitionGallery && (isUndecided || viewMode === "wall") ? (
+        <div className={isUndecided ? "max-md:hidden" : undefined}>
+          <ExhibitionWall
+            images={images}
+            onSelect={selectImage}
+            eager={!isUndecided}
+          />
+        </div>
+      ) : null}
+      {isUndecided || viewMode === "sequence" ? (
+        <div className={isUndecided ? "md:hidden" : undefined}>
+          <PhotoSequence
+            images={images}
+            onSelect={selectImage}
+            editorial={isExhibitionGallery}
+            eager={!isUndecided}
+          />
+        </div>
+      ) : null}
+      {viewMode === "slideshow" ? (
         <Slideshow
-          currentImage={currentImage}
-          currentIndex={normalizedSlideIndex}
-          imageCount={gallery.images.length}
-          onNext={() => setSlideIndex((index) => index + 1)}
-          onPrevious={() => setSlideIndex((index) => index - 1)}
+          image={images[wrapIndex(slideIndex, images.length)]}
+          index={wrapIndex(slideIndex, images.length)}
+          count={images.length}
+          onStep={stepSlide}
         />
-      )}
+      ) : null}
 
       {isExhibitionGallery && gallery.introParagraphs?.length ? (
-        <div className="mx-auto mt-6 w-full max-w-5xl bg-glass p-5 md:p-7">
+        <div className="mx-auto mt-6 w-full max-w-5xl p-5 md:p-7">
           <ProjectStatement paragraphs={gallery.introParagraphs} withRule={false} />
         </div>
       ) : null}
@@ -251,80 +236,94 @@ export default function GalleryViewer({ gallery }: { gallery: Gallery }) {
   );
 }
 
+// `editorial` is Jaima's 12-column grid; other galleries lead with one wide
+// photo followed by two columns. `eager` is false while a hidden copy is
+// server-rendered, so its first photo doesn't download for nothing.
 function PhotoSequence({
   images,
   onSelect,
+  editorial,
+  eager,
 }: {
   images: readonly ImageItem[];
   onSelect: (index: number) => void;
+  editorial: boolean;
+  eager: boolean;
 }) {
   return (
     <div
-      className="mx-auto mt-8 grid max-w-5xl grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 md:gap-x-10 md:gap-y-16"
-      aria-label="Photo sequence"
+      className={`mx-auto mt-8 grid grid-cols-1 gap-x-8 gap-y-12 md:gap-x-10 md:gap-y-16 ${
+        editorial ? "max-w-6xl md:grid-cols-12" : "max-w-5xl md:grid-cols-2"
+      }`}
+      aria-label={editorial ? "Jaima editorial photo sequence" : "Photo sequence"}
     >
-      {images.map((image, index) => (
-        <figure
-          key={image.src}
-          className={`w-full overflow-hidden ${
-            index === 0 ? "md:col-span-2 md:mx-auto md:max-w-[78%]" : ""
-          }`}
-        >
-          <button
-            type="button"
-            onClick={() => onSelect(index)}
-            className="block w-full cursor-zoom-in border-0 bg-transparent p-0"
-            aria-label={`Open photo ${index + 1} of ${images.length} in slideshow`}
-          >
-            <Image
-              src={image.src}
-              alt={image.alt}
-              width={image.width}
-              height={image.height}
-              sizes={
-                index === 0
-                  ? "(max-width: 767px) calc(100vw - 3rem), 65vw"
-                  : "(max-width: 767px) calc(100vw - 3rem), 40vw"
-              }
-              className="block h-auto w-full"
-              loading={index === 0 ? "eager" : "lazy"}
-              fetchPriority={index === 0 ? "high" : undefined}
-              decoding="async"
-            />
-          </button>
-        </figure>
-      ))}
+      {images.map((image, index) => {
+        const isLead = index === 0;
+        const placement = editorial
+          ? (JAIMA_EDITORIAL_PLACEMENTS[index] ?? "md:col-span-6")
+          : isLead
+            ? "md:col-span-2 md:mx-auto md:max-w-[78%]"
+            : "";
+        const desktopWidth = editorial ? "45vw" : isLead ? "65vw" : "40vw";
+
+        return (
+          <figure key={image.src} className={`w-full self-start ${placement}`}>
+            <button
+              type="button"
+              onClick={() => onSelect(index)}
+              className="block w-full cursor-zoom-in border-0 bg-transparent p-0"
+              aria-label={`Open photo ${index + 1} of ${images.length} in slideshow`}
+            >
+              <Image
+                src={image.src}
+                alt={image.alt}
+                width={image.width}
+                height={image.height}
+                sizes={`(max-width: 767px) calc(100vw - 3rem), ${desktopWidth}`}
+                className="block h-auto w-full"
+                loading={isLead && eager ? "eager" : "lazy"}
+                fetchPriority={isLead && eager ? "high" : undefined}
+                decoding="async"
+              />
+            </button>
+          </figure>
+        );
+      })}
     </div>
   );
 }
 
 function Slideshow({
-  currentImage,
-  currentIndex,
-  imageCount,
-  onNext,
-  onPrevious,
+  image,
+  index,
+  count,
+  onStep,
 }: {
-  currentImage: ImageItem | null;
-  currentIndex: number;
-  imageCount: number;
-  onNext: () => void;
-  onPrevious: () => void;
+  image: ImageItem;
+  index: number;
+  count: number;
+  onStep: (delta: number) => void;
 }) {
-  if (!currentImage) {
-    return null;
-  }
+  const swipeHandlers = useSwipe(onStep);
 
   return (
-    <div className="mt-6 flex justify-center">
-      <figure className="inline-flex max-w-full flex-col items-end gap-3">
+    <div className="@container mt-6 flex justify-center">
+      <figure
+        className="inline-flex max-w-full flex-col items-end gap-3"
+        {...swipeHandlers}
+      >
         <Image
-          src={currentImage.src}
-          alt={currentImage.alt}
-          width={currentImage.width}
-          height={currentImage.height}
+          src={image.src}
+          alt={image.alt}
+          width={image.width}
+          height={image.height}
           sizes="(max-width: 767px) calc(100vw - 3rem), calc(100vw - 20rem)"
-          className="block h-auto w-auto max-h-[68vh] max-w-full"
+          className="block h-auto"
+          // An explicit width: with w-auto, retina srcset density math can
+          // shrink the photo well below the 80vh it's allowed to fill.
+          style={{
+            width: `min(100cqw, ${((80 * image.width) / image.height).toFixed(2)}vh)`,
+          }}
           loading="eager"
           decoding="async"
         />
@@ -332,7 +331,7 @@ function Slideshow({
           <div className="flex w-full items-center justify-between gap-4">
             <button
               type="button"
-              onClick={onPrevious}
+              onClick={() => onStep(-1)}
               className="inline-flex min-h-11 min-w-11 items-center gap-1 border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent lg:min-h-0 lg:min-w-0"
               aria-label="Previous photo"
               aria-keyshortcuts="ArrowLeft"
@@ -341,11 +340,11 @@ function Slideshow({
             </button>
             <span className="text-xs tabular-nums" aria-live="polite">
               <span className="sr-only">Photo </span>
-              {currentIndex + 1} / {imageCount}
+              {index + 1} / {count}
             </span>
             <button
               type="button"
-              onClick={onNext}
+              onClick={() => onStep(1)}
               className="inline-flex min-h-11 min-w-11 items-center justify-end gap-1 border-0 bg-transparent p-0 text-sm text-muted transition-colors hover:text-accent lg:min-h-0 lg:min-w-0"
               aria-label="Next photo"
               aria-keyshortcuts="ArrowRight"
@@ -362,9 +361,11 @@ function Slideshow({
 function ExhibitionWall({
   images,
   onSelect,
+  eager,
 }: {
   images: readonly ImageItem[];
   onSelect: (index: number) => void;
+  eager: boolean;
 }) {
   return (
     <div
@@ -409,7 +410,7 @@ function ExhibitionWall({
                   height={image.height}
                   sizes="320px"
                   className="h-full w-full object-cover"
-                  loading={index < 4 ? "eager" : "lazy"}
+                  loading={eager && index < 4 ? "eager" : "lazy"}
                   decoding="async"
                 />
               </button>
@@ -417,49 +418,6 @@ function ExhibitionWall({
           );
         })}
       </div>
-    </div>
-  );
-}
-
-function JaimaEditorialSequence({
-  images,
-  onSelect,
-}: {
-  images: readonly ImageItem[];
-  onSelect: (index: number) => void;
-}) {
-  return (
-    <div
-      className="mx-auto mt-8 grid max-w-6xl grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-12 md:gap-x-10 md:gap-y-16"
-      aria-label="Jaima editorial photo sequence"
-    >
-      {images.map((image, index) => (
-        <figure
-          key={image.src}
-          className={`m-0 self-start ${
-            JAIMA_EDITORIAL_PLACEMENTS[index] ?? "md:col-span-6"
-          }`}
-        >
-          <button
-            type="button"
-            onClick={() => onSelect(index)}
-            className="block w-full cursor-zoom-in border-0 bg-transparent p-0"
-            aria-label={`Open photo ${index + 1} of ${images.length} in slideshow`}
-          >
-            <Image
-              src={image.src}
-              alt={image.alt}
-              width={image.width}
-              height={image.height}
-              sizes="(max-width: 767px) calc(100vw - 3rem), 45vw"
-              className="block h-auto w-full"
-              loading={index === 0 ? "eager" : "lazy"}
-              fetchPriority={index === 0 ? "high" : undefined}
-              decoding="async"
-            />
-          </button>
-        </figure>
-      ))}
     </div>
   );
 }
