@@ -56,11 +56,11 @@ export default function PortfolioSite({ view }: PortfolioSiteProps) {
         >
           <h1
             id="about-title"
-            className="font-sans text-3xl font-semibold text-black"
+            className="text-center font-display text-[1.75rem] leading-tight tracking-[-0.01em] sm:text-[2rem]"
           >
             About
           </h1>
-          <div className="mt-6 grid gap-5 font-sans text-base leading-relaxed text-pretty text-black">
+          <div className="mt-6 grid gap-5 font-sans text-base leading-relaxed text-pretty">
             {aboutParagraphs.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}

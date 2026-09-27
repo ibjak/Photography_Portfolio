@@ -31,8 +31,8 @@ type PortfolioShellProps = ContactDetails & {
 };
 
 const navLinkClass = (active: boolean) =>
-  `flex min-h-11 items-center border-0 bg-transparent p-0 text-left font-sans text-[13px] leading-5 font-normal tracking-[0.015em] transition-colors hover:text-[#0B2A6F] lg:block lg:min-h-0 ${
-    active ? "text-accent underline underline-offset-4" : "text-[#534941]"
+  `flex min-h-11 items-center border-0 bg-transparent p-0 text-left font-sans text-[13px] leading-5 font-normal tracking-[0.015em] transition-colors hover:text-accent lg:block lg:min-h-0 ${
+    active ? "text-accent underline underline-offset-4" : "text-ink"
   }`;
 
 function DisclosureIcon() {
@@ -81,13 +81,13 @@ function ContactFooter({
       <address className="mt-2 grid gap-1 font-sans text-[12px] leading-[1.45] not-italic">
         <a
           href={contact.phoneHref}
-          className="inline-flex min-h-11 items-center text-black transition-colors hover:text-accent lg:min-h-0"
+          className="inline-flex min-h-11 items-center text-ink transition-colors hover:text-accent lg:min-h-0"
         >
           {contact.phoneLabel}
         </a>
         <a
           href={`mailto:${contact.email}`}
-          className="inline-flex min-h-11 items-center text-black transition-colors hover:text-accent lg:min-h-0"
+          className="inline-flex min-h-11 items-center text-ink transition-colors hover:text-accent lg:min-h-0"
         >
           {contact.email}
         </a>
@@ -128,7 +128,7 @@ export default function PortfolioShell({
               <button
                 type="button"
                 onClick={() => setIsMobileNavOpen((open) => !open)}
-                className="inline-flex h-11 w-11 shrink-0 items-center justify-center border border-line text-ink transition-colors hover:text-[#0B2A6F] md:hidden"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center border border-line text-ink transition-colors hover:text-accent md:hidden"
                 aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isMobileNavOpen}
                 aria-controls="portfolio-navigation"
@@ -168,7 +168,7 @@ export default function PortfolioShell({
                       className={`group ${index > 0 ? "mt-4" : ""}`}
                       open={isGroupActive || undefined}
                     >
-                      <summary className="summary-clean flex min-h-11 items-center justify-between gap-3 font-sans text-[13px] leading-5 font-normal tracking-[0.015em] text-[#534941] transition-colors hover:text-[#0B2A6F] lg:min-h-0">
+                      <summary className="summary-clean flex min-h-11 items-center justify-between gap-3 font-sans text-[13px] leading-5 font-normal tracking-[0.015em] text-ink transition-colors hover:text-accent lg:min-h-0">
                         <span>{group.title}</span>
                         <DisclosureIcon />
                       </summary>

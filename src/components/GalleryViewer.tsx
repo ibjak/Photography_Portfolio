@@ -17,27 +17,23 @@ const JAIMA_EDITORIAL_PLACEMENTS: Partial<Record<number, string>> = {
   13: "md:col-span-6 md:col-start-4",
 };
 
-// "desktop" and "phone" mark the pressed button before hydration, when
+// "desktop" and "phone" mark the selected view before hydration, when
 // Jaima's default view is chosen by CSS breakpoint.
 const viewModeButtonStates = {
-  on: "bg-ink text-white",
-  off: "bg-white text-muted hover:text-accent",
-  desktop: "bg-white text-muted max-md:hover:text-accent md:bg-ink md:text-white",
-  phone: "bg-ink text-white md:bg-white md:text-muted md:hover:text-accent",
+  on: "text-accent underline",
+  off: "text-muted hover:text-accent",
+  desktop: "text-muted max-md:hover:text-accent md:text-accent md:underline",
+  phone: "text-accent underline md:text-muted md:no-underline md:hover:text-accent",
 };
 
 function ViewModeButton({
   active,
   children,
-  icon,
   onClick,
-  separated = false,
 }: {
   active: boolean | "desktop" | "phone";
   children: ReactNode;
-  icon: ReactNode;
   onClick: () => void;
-  separated?: boolean;
 }) {
   const state = active === true ? "on" : active === false ? "off" : active;
 
@@ -45,61 +41,13 @@ function ViewModeButton({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex min-h-14 min-w-[4.75rem] flex-col items-center justify-center gap-1 px-2 py-1.5 text-[11px] leading-none transition-colors ${
-        separated ? "border-l border-line" : ""
-      } ${viewModeButtonStates[state]}`}
+      className={`inline-flex min-h-11 items-center underline-offset-4 transition-colors lg:min-h-0 ${viewModeButtonStates[state]}`}
       aria-pressed={active === true}
     >
-      {icon}
-      <span>{children}</span>
+      {children}
     </button>
   );
 }
-
-function ViewIcon({
-  children,
-  strokeWidth = 1.5,
-}: {
-  children: ReactNode;
-  strokeWidth?: number;
-}) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={strokeWidth}
-      aria-hidden="true"
-    >
-      {children}
-    </svg>
-  );
-}
-
-const wallIcon = (
-  <ViewIcon>
-    <rect x="2.5" y="5" width="7" height="6" />
-    <rect x="13" y="3" width="8.5" height="8" />
-    <rect x="6" y="14" width="10" height="7" />
-  </ViewIcon>
-);
-
-const sequenceIcon = (
-  <ViewIcon>
-    <rect x="3" y="3" width="8" height="6" />
-    <rect x="13" y="3" width="8" height="10" />
-    <rect x="3" y="11" width="8" height="10" />
-    <rect x="13" y="15" width="8" height="6" />
-  </ViewIcon>
-);
-
-const slideshowIcon = (
-  <ViewIcon strokeWidth={1.75}>
-    <rect x="3.5" y="5" width="17" height="14" />
-    <path d="m6.5 16 4-4 3 3 2-2 2 2" />
-  </ViewIcon>
-);
 
 function ProjectStatement({
   paragraphs,
@@ -114,7 +62,7 @@ function ProjectStatement({
         withRule ? "border-t border-line pt-5" : ""
       }`}
     >
-      <div className="grid gap-4 font-sans text-[14px] leading-6 text-pretty text-black md:text-[15px] md:leading-7">
+      <div className="grid gap-4 font-sans text-[14px] leading-6 text-pretty md:text-[15px] md:leading-7">
         {paragraphs.map((paragraph) => (
           <p key={paragraph}>{paragraph}</p>
         ))}
@@ -151,45 +99,42 @@ export default function GalleryViewer({ gallery }: { gallery: Gallery }) {
 
   return (
     <section aria-labelledby="gallery-title">
-      <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:items-start">
+      <div className="flex flex-col items-center gap-1 text-center lg:gap-2">
         <h1
           id="gallery-title"
-          className="min-w-0 text-center font-sans text-[1.75rem] leading-tight font-semibold text-black sm:col-start-2 sm:text-3xl"
+          className="font-display text-[1.75rem] leading-tight tracking-[-0.01em] sm:text-[2rem]"
         >
           {gallery.title}
         </h1>
-        <div className="inline-flex shrink-0 justify-self-center sm:col-start-3 sm:row-start-1 sm:justify-self-end">
-          <div
-            className="inline-flex border border-line bg-white"
-            role="group"
-            aria-label="Gallery view"
-          >
-            {isExhibitionGallery ? (
+        <div
+          className="flex items-center gap-2 text-[13px] tracking-[0.015em] text-muted"
+          role="group"
+          aria-label="Gallery view"
+        >
+          {isExhibitionGallery ? (
+            <>
               <ViewModeButton
                 active={isUndecided ? "desktop" : viewMode === "wall"}
-                icon={wallIcon}
                 onClick={() => setChosenView("wall")}
               >
                 Wall
               </ViewModeButton>
-            ) : null}
-            <ViewModeButton
-              active={isUndecided ? "phone" : viewMode === "sequence"}
-              icon={sequenceIcon}
-              onClick={() => setChosenView("sequence")}
-              separated={isExhibitionGallery}
-            >
-              {isExhibitionGallery ? "Grid" : "Sequence"}
-            </ViewModeButton>
-            <ViewModeButton
-              active={viewMode === "slideshow"}
-              icon={slideshowIcon}
-              onClick={() => setChosenView("slideshow")}
-              separated
-            >
-              Slideshow
-            </ViewModeButton>
-          </div>
+              <span aria-hidden="true">/</span>
+            </>
+          ) : null}
+          <ViewModeButton
+            active={isUndecided ? "phone" : viewMode === "sequence"}
+            onClick={() => setChosenView("sequence")}
+          >
+            {isExhibitionGallery ? "Grid" : "Sequence"}
+          </ViewModeButton>
+          <span aria-hidden="true">/</span>
+          <ViewModeButton
+            active={viewMode === "slideshow"}
+            onClick={() => setChosenView("slideshow")}
+          >
+            Slideshow
+          </ViewModeButton>
         </div>
       </div>
 
