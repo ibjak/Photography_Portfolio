@@ -14,6 +14,12 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactCompiler: true,
   outputFileTracingRoot: process.cwd(),
+  // The link-preview images (src/app/share) read the photographs only while
+  // the site is built; every one is made then. Without this, Vercel packs the
+  // whole photo folder into that function and rejects it as over 250 MB.
+  outputFileTracingExcludes: {
+    "/share/*": ["./public/Photo Gallery/**/*"],
+  },
   images: {
     qualities: [75],
     // The photographs are exported 2000-2500px wide, so nothing larger than
