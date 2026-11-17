@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import type { contact, GalleryKey, presences } from "@/lib/portfolio";
+import type { contact, presences } from "@/lib/portfolio";
 
 export type NavigationItem = {
-  galleryKey: GalleryKey;
   href: string;
   label: string;
 };
@@ -24,31 +24,18 @@ type ContactDetails = {
 };
 
 type PortfolioShellProps = ContactDetails & {
-  activeGalleryKey: GalleryKey | null;
   children: ReactNode;
-  isAboutView: boolean;
   navigationGroups: readonly NavigationGroupView[];
 };
 
+// Rows grow to a comfortable 44px wherever the pointer is a finger.
 const navLinkClass = (active: boolean) =>
-  `flex min-h-11 items-center border-0 bg-transparent p-0 text-left font-sans text-[13px] leading-5 font-normal tracking-[0.015em] transition-colors hover:text-accent lg:block lg:min-h-0 ${
+  `flex items-center font-sans text-[13px] leading-5 tracking-[0.015em] transition-colors hover:text-accent pointer-coarse:min-h-11 ${
     active ? "text-accent underline underline-offset-4" : "text-ink"
   }`;
 
-function DisclosureIcon() {
-  return (
-    <svg
-      viewBox="0 0 12 12"
-      className="h-3 w-3 shrink-0 transition-transform group-open:rotate-180"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.25"
-      aria-hidden="true"
-    >
-      <path d="m2.5 4.25 3.5 3.5 3.5-3.5" />
-    </svg>
-  );
-}
+const contactLinkClass =
+  "inline-flex items-center text-ink transition-colors hover:text-accent pointer-coarse:min-h-11";
 
 function ContactFooter({
   className,
@@ -64,7 +51,7 @@ function ContactFooter({
             key={presence.name}
             href={presence.href}
             aria-label={presence.name}
-            className="flex h-11 w-11 items-center justify-start lg:h-8 lg:w-7"
+            className="flex h-8 w-7 items-center justify-start transition-opacity hover:opacity-60 pointer-coarse:h-11 pointer-coarse:w-11"
             target="_blank"
             rel="noreferrer"
           >
@@ -79,16 +66,10 @@ function ContactFooter({
         ))}
       </div>
       <address className="mt-2 grid gap-1 font-sans text-[12px] leading-[1.45] not-italic">
-        <a
-          href={contact.phoneHref}
-          className="inline-flex min-h-11 items-center text-ink transition-colors hover:text-accent lg:min-h-0"
-        >
+        <a href={contact.phoneHref} className={contactLinkClass}>
           {contact.phoneLabel}
         </a>
-        <a
-          href={`mailto:${contact.email}`}
-          className="inline-flex min-h-11 items-center text-ink transition-colors hover:text-accent lg:min-h-0"
-        >
+        <a href={`mailto:${contact.email}`} className={contactLinkClass}>
           {contact.email}
         </a>
       </address>
@@ -99,15 +80,17 @@ function ContactFooter({
   );
 }
 
+// Rendered once by the root layout, so it stays in place while pages change.
 export default function PortfolioShell({
-  activeGalleryKey,
   children,
-  isAboutView,
   navigationGroups,
   ...contactDetails
 }: PortfolioShellProps) {
-  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  const closeMobileNav = () => setIsMobileNavOpen(false);
+  const pathname = usePathname();
+  // Remembering the page the phone menu was opened on closes it on navigation.
+  const [menuOpenedOn, setMenuOpenedOn] = useState<string | null>(null);
+  const isMobileNavOpen = menuOpenedOn === pathname;
+  const closeMobileNav = () => setMenuOpenedOn(null);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -115,7 +98,10 @@ export default function PortfolioShell({
         Skip to content
       </a>
       <div className="flex w-full flex-1 flex-col gap-12 px-6 pb-12 pt-6 md:flex-row md:gap-12 md:px-10 lg:gap-16 lg:pb-16">
-        <aside className="w-full md:sticky md:top-6 md:h-fit md:w-40 md:flex-none md:self-start lg:w-48">
+        {/* When the screen is shorter than the sidebar (a phone held sideways),
+            the sidebar scrolls on its own. The padding and matching negative
+            margin leave room for focus outlines inside the scrolling box. */}
+        <aside className="w-full md:sticky md:top-6 md:-m-2 md:h-fit md:max-h-[calc(100dvh-2rem)] md:w-44 md:flex-none md:self-start md:overflow-y-auto md:p-2 md:[scrollbar-width:thin] lg:w-52">
           <div className="mt-4 md:mt-0">
             <div className="mb-4 flex items-center justify-between gap-3 md:block md:pt-2">
               <Link
@@ -127,7 +113,7 @@ export default function PortfolioShell({
               </Link>
               <button
                 type="button"
-                onClick={() => setIsMobileNavOpen((open) => !open)}
+                onClick={() => setMenuOpenedOn(isMobileNavOpen ? null : pathname)}
                 className="inline-flex h-11 w-11 shrink-0 items-center justify-center border border-line text-ink transition-colors hover:text-accent md:hidden"
                 aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isMobileNavOpen}
@@ -156,29 +142,25 @@ export default function PortfolioShell({
               id="portfolio-navigation"
               className={isMobileNavOpen ? "md:block" : "hidden md:block"}
             >
-              <nav className="mt-7" aria-label="Portfolio">
-                {navigationGroups.map((group, index) => {
-                  const isGroupActive = group.items.some(
-                    (item) => item.galleryKey === activeGalleryKey,
-                  );
-
-                  return (
-                    <details
-                      key={group.key}
-                      className={`group ${index > 0 ? "mt-4" : ""}`}
-                      open={isGroupActive || undefined}
+              <nav className="mt-7 grid gap-6" aria-label="Portfolio">
+                {navigationGroups.map((group) => (
+                  <div key={group.key}>
+                    <p
+                      id={`nav-${group.key}`}
+                      className="font-sans text-[11px] leading-5 tracking-[0.14em] text-muted uppercase"
                     >
-                      <summary className="summary-clean flex min-h-11 items-center justify-between gap-3 font-sans text-[13px] leading-5 font-normal tracking-[0.015em] text-ink transition-colors hover:text-accent lg:min-h-0">
-                        <span>{group.title}</span>
-                        <DisclosureIcon />
-                      </summary>
-                      <div className="mt-2 grid gap-2 border-l border-line pl-4">
-                        {group.items.map((item) => {
-                          const isActive = item.galleryKey === activeGalleryKey;
+                      {group.title}
+                    </p>
+                    <ul
+                      className="mt-1.5 grid gap-1.5 pointer-coarse:mt-0 pointer-coarse:gap-0"
+                      aria-labelledby={`nav-${group.key}`}
+                    >
+                      {group.items.map((item) => {
+                        const isActive = item.href === pathname;
 
-                          return (
+                        return (
+                          <li key={item.href}>
                             <Link
-                              key={item.galleryKey}
                               href={item.href}
                               className={navLinkClass(isActive)}
                               aria-current={isActive ? "page" : undefined}
@@ -186,24 +168,24 @@ export default function PortfolioShell({
                             >
                               {item.label}
                             </Link>
-                          );
-                        })}
-                      </div>
-                    </details>
-                  );
-                })}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))}
 
                 <Link
                   href="/about"
-                  className={`mt-4 ${navLinkClass(isAboutView)}`}
-                  aria-current={isAboutView ? "page" : undefined}
+                  className={navLinkClass(pathname === "/about")}
+                  aria-current={pathname === "/about" ? "page" : undefined}
                   onClick={closeMobileNav}
                 >
                   About
                 </Link>
               </nav>
 
-              <ContactFooter className="mt-14" {...contactDetails} />
+              <ContactFooter className="mt-12" {...contactDetails} />
             </div>
           </div>
         </aside>
@@ -211,7 +193,7 @@ export default function PortfolioShell({
         <main
           id="main-content"
           tabIndex={-1}
-          className="min-w-0 flex-1"
+          className="min-w-0 flex-1 outline-none"
           onContextMenu={(event) => {
             if (
               event.target instanceof Element &&
@@ -224,7 +206,8 @@ export default function PortfolioShell({
           {children}
         </main>
 
-        {/* On phones the sidebar footer only shows inside the open menu. */}
+        {/* On phones the sidebar footer only shows inside the open menu, so the
+            contact details are repeated here, after the content. */}
         <ContactFooter
           className="border-t border-line pt-8 md:hidden"
           {...contactDetails}

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import PortfolioSite from "@/components/PortfolioSite";
+import GalleryPager from "@/components/GalleryPager";
+import GalleryViewer from "@/components/GalleryViewer";
 import {
   galleries,
   galleryKeys,
+  getAdjacentGalleries,
   getGalleryByRoute,
   getGalleryHref,
 } from "@/lib/portfolio";
@@ -37,13 +39,11 @@ export async function generateMetadata({
     return {};
   }
 
-  const pathname = getGalleryHref(gallery.key);
-
   return pageMetadata({
     title: gallery.title,
     description: galleryDescription(gallery),
-    pathname,
-    image: gallery.images[0],
+    pathname: getGalleryHref(gallery.key),
+    shareImage: gallery.slug,
   });
 }
 
@@ -55,5 +55,16 @@ export default async function GalleryPage({ params }: RoutePageProps) {
     notFound();
   }
 
-  return <PortfolioSite view={{ type: "gallery", galleryKey: gallery.key }} />;
+  const { previous, next } = getAdjacentGalleries(gallery.key);
+  const pagerLink = (key: typeof gallery.key) => ({
+    href: getGalleryHref(key),
+    label: galleries[key].navLabel,
+  });
+
+  return (
+    <>
+      <GalleryViewer key={gallery.key} gallery={gallery} />
+      <GalleryPager previous={pagerLink(previous)} next={pagerLink(next)} />
+    </>
+  );
 }

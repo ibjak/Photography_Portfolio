@@ -16,6 +16,12 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: process.cwd(),
   images: {
     qualities: [75],
+    // The photographs are exported 2000-2500px wide, so nothing larger than
+    // 2560 is ever useful (the default list goes up to 3840).
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 2560],
+    // Photographs never change once published, so resized copies can be kept
+    // for a month instead of being regenerated every week.
+    minimumCacheTTL: 2678400,
   },
   async headers() {
     return [

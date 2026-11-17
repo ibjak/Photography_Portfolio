@@ -26,6 +26,7 @@ npm run build
 - `src/app/` contains routes, metadata, global styles, the sitemap, and robots rules.
 - `src/components/` contains the portfolio shell, navigation, homepage slideshow, and gallery layouts.
 - `src/lib/portfolio.ts` is the canonical source for project copy, routes, image order, and Jaima wall placement.
+- `src/lib/photoManifest.ts` is generated from the photograph files by `npm run photos`; it holds their sizes and any caption written in Lightroom. `npm run dev` and `npm run build` refresh it automatically.
 - `public/Photo Gallery/` contains the original portfolio photographs.
 
 Read `AGENTS.md` before making changes. Photograph order, aspect ratios, editorial meaning, and Jaima wall coordinates must be preserved unless a change is explicitly approved.

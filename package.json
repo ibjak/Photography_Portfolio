@@ -3,16 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "npm run photos && next dev",
+    "build": "npm run photos && npm run lint && next build",
     "start": "next start",
-    "lint": "eslint src next.config.ts",
-    "typecheck": "tsc --noEmit"
+    "lint": "eslint src scripts next.config.ts",
+    "typecheck": "tsc --noEmit",
+    "photos": "node scripts/photos.mjs"
   },
   "dependencies": {
     "next": "16.4.2",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

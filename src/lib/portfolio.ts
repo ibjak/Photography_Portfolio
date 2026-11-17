@@ -1,13 +1,12 @@
-import {
-  imageDimensions,
-  type ImageFileName,
-} from "./imageDimensions";
+import { photoManifest } from "./photoManifest";
 
 export type ImageItem = {
   src: string;
   alt: string;
   width: number;
   height: number;
+  // Written in Lightroom and read from the file by `npm run photos`.
+  caption?: string;
   wallPlacement?: {
     x: number;
     y: number;
@@ -45,14 +44,17 @@ export type HomeSlide = ImageItem & {
 
 type ImageAlt = string | ((position: number) => string);
 
-const getImageDimensions = (fileName: string) => {
-  const dimensions = imageDimensions[fileName as ImageFileName];
+const getPhotoInfo = (folder: string, fileName: string) => {
+  const file = `${decodeURIComponent(folder)}/${fileName}`;
+  const info = photoManifest[file];
 
-  if (!dimensions) {
-    throw new Error(`Missing dimensions for portfolio image: ${fileName}`);
+  if (!info) {
+    throw new Error(
+      `Missing photograph: public/Photo Gallery/${file}. If the file exists, run "npm run photos".`,
+    );
   }
 
-  return dimensions;
+  return info;
 };
 
 const createImage = (
@@ -61,13 +63,15 @@ const createImage = (
   alt: string,
   wallPlacement?: ImageItem["wallPlacement"],
 ): ImageItem => {
-  const [width, height] = getImageDimensions(fileName);
+  const { width, height, caption } = getPhotoInfo(folder, fileName);
 
+  // A caption embedded in the photograph also serves as its description.
   return {
     src: `/Photo%20Gallery/${folder}/${fileName}`,
-    alt,
+    alt: caption ?? alt,
     width,
     height,
+    ...(caption ? { caption } : {}),
     ...(wallPlacement ? { wallPlacement } : {}),
   };
 };
@@ -482,6 +486,19 @@ export const navigationGroups = [
   },
 ] as const satisfies readonly NavigationGroup[];
 
+// The galleries either side of one, in menu order, wrapping round at the ends.
+export function getAdjacentGalleries(galleryKey: GalleryKey) {
+  const order: readonly GalleryKey[] = navigationGroups.flatMap(
+    (group) => group.galleryKeys,
+  );
+  const position = order.indexOf(galleryKey);
+
+  return {
+    previous: order[(position - 1 + order.length) % order.length],
+    next: order[(position + 1) % order.length],
+  };
+}
+
 const findImageByFileName = (images: readonly ImageItem[], fileName: string) =>
   images.find((image) => image.src.endsWith(`/${fileName}`));
 
@@ -504,6 +521,8 @@ const createHomeSlide = (
 };
 
 export const homeSlideshowImages: readonly HomeSlide[] = [
+  createHomeSlide("jaima", "website.jaima-2.jpg"),
+  createHomeSlide("jaima", "website.jaima-3.jpg"),
   createHomeSlide(
     "uefa-champions-league-winners-2026-psg",
     "IAB-PSG_Celebration_Paris_Republique-1.jpg",
