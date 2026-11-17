@@ -253,7 +253,13 @@ export default function GalleryViewer({ gallery }: { gallery: Gallery }) {
           <PhotoSequence
             images={images}
             onSelect={selectImage}
-            editorial={isExhibitionGallery}
+            layout={
+              isExhibitionGallery
+                ? "editorial"
+                : gallery.layout === "masonry"
+                  ? "masonry"
+                  : "standard"
+            }
             eager={!isUndecided}
           />
         </div>
@@ -273,77 +279,122 @@ export default function GalleryViewer({ gallery }: { gallery: Gallery }) {
   );
 }
 
-// `editorial` is Jaima's 12-column grid; other galleries lead with one wide
-// photo followed by two columns. `eager` is false while a hidden copy is
-// server-rendered, so its first photo doesn't download for nothing.
+type SequenceLayout = "standard" | "editorial" | "masonry";
+
+const MASONRY_COLUMNS = 3;
+
+const sequenceContainerClass: Record<SequenceLayout, string> = {
+  standard:
+    "grid max-w-5xl grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 md:gap-x-10 md:gap-y-16",
+  editorial:
+    "grid max-w-6xl grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-12 md:gap-x-10 md:gap-y-16",
+  // One column below laptop width; three side by side from there up.
+  masonry: "flex max-w-5xl flex-col gap-6 lg:flex-row lg:items-start lg:gap-8",
+};
+
+// `standard` leads with one wide photo followed by two columns; `editorial`
+// is Jaima's 12-column grid; `masonry` is Paris Fashion Week's columns.
+// `eager` is false while a hidden copy is server-rendered, so its first photo
+// doesn't download for nothing.
 function PhotoSequence({
   images,
   onSelect,
-  editorial,
+  layout,
   eager,
 }: {
   images: readonly ImageItem[];
   onSelect: (index: number, thumbnail: HTMLImageElement | null) => void;
-  editorial: boolean;
+  layout: SequenceLayout;
   eager: boolean;
 }) {
-  return (
-    <div
-      className={`mx-auto mt-8 grid grid-cols-1 gap-x-8 gap-y-12 md:gap-x-10 md:gap-y-16 ${
-        editorial ? "max-w-6xl md:grid-cols-12" : "max-w-5xl md:grid-cols-2"
-      }`}
-      role="list"
-      aria-label="Photographs"
-    >
-      {images.map((image, index) => {
-        const isLead = index === 0;
-        const placement = editorial
-          ? (JAIMA_EDITORIAL_PLACEMENTS[index] ?? "md:col-span-6")
+  const renderPhoto = (image: ImageItem, index: number) => {
+    const isLead = index === 0;
+    const placement =
+      layout === "editorial"
+        ? `self-start ${JAIMA_EDITORIAL_PLACEMENTS[index] ?? "md:col-span-6"}`
+        : layout === "masonry"
+          ? ""
           : isLead
-            ? "md:col-span-2 md:mx-auto md:max-w-[78%]"
-            : "";
-        // The width each photo is shown at on desktop, capped where its grid
-        // stops growing, so large screens don't download more than they show.
-        const desktopWidth = editorial
-          ? isLead
-            ? "min(75vw, 60rem)"
-            : "min(40vw, 35rem)"
+            ? "self-start md:col-span-2 md:mx-auto md:max-w-[78%]"
+            : "self-start";
+    // The width each photo is shown at on desktop, capped where its grid
+    // stops growing, so large screens don't download more than they show.
+    const desktopWidth =
+      layout === "editorial"
+        ? isLead
+          ? "min(75vw, 60rem)"
+          : "min(40vw, 35rem)"
+        : layout === "masonry"
+          ? "(max-width: 1023px) calc(100vw - 18rem), min(26vw, 21rem)"
           : isLead
             ? "min(65vw, 50rem)"
             : "min(40vw, 31rem)";
-        const isPriority = isLead && eager;
+    const isPriority = isLead && eager;
 
-        return (
-          <figure
-            key={image.src}
-            id={`photo-${index + 1}`}
-            className={`w-full self-start ${placement}`}
-            role="listitem"
-          >
-            <button
-              type="button"
-              onClick={(event) =>
-                onSelect(index, event.currentTarget.querySelector("img"))
-              }
-              className="block w-full cursor-zoom-in bg-wash"
-              aria-label={photoButtonLabel(image, index, images.length)}
+    return (
+      <figure
+        key={image.src}
+        id={`photo-${index + 1}`}
+        className={`w-full ${placement}`}
+        // In the single column the masonry columns dissolve, and this keeps
+        // the photos in sequence.
+        style={layout === "masonry" ? { order: index } : undefined}
+        role="listitem"
+      >
+        <button
+          type="button"
+          onClick={(event) =>
+            onSelect(index, event.currentTarget.querySelector("img"))
+          }
+          className="block w-full cursor-zoom-in bg-wash"
+          aria-label={photoButtonLabel(image, index, images.length)}
+        >
+          <Image
+            ref={isPriority ? undefined : fadeInOnLoad}
+            src={image.src}
+            alt={image.alt}
+            width={image.width}
+            height={image.height}
+            sizes={`(max-width: 767px) calc(100vw - 3rem), ${desktopWidth}`}
+            className="photo-fade block h-auto w-full"
+            loading={isPriority ? "eager" : "lazy"}
+            fetchPriority={isPriority ? "high" : undefined}
+            decoding="async"
+          />
+        </button>
+      </figure>
+    );
+  };
+
+  // Masonry: each photo goes in a fixed column, dealt out in sequence
+  // (1, 4, 7 | 2, 5, 8 | 3, 6, 9), so the grid reads across in order and
+  // looks the same in every browser.
+  const masonryColumns =
+    layout === "masonry"
+      ? Array.from({ length: MASONRY_COLUMNS }, (_, column) =>
+          images
+            .map((image, index) => ({ image, index }))
+            .filter(({ index }) => index % MASONRY_COLUMNS === column),
+        )
+      : null;
+
+  return (
+    <div
+      className={`mx-auto mt-8 ${sequenceContainerClass[layout]}`}
+      role="list"
+      aria-label="Photographs"
+    >
+      {masonryColumns
+        ? masonryColumns.map((column, columnIndex) => (
+            <div
+              key={columnIndex}
+              className="contents lg:flex lg:min-w-0 lg:flex-1 lg:flex-col lg:gap-8"
+              role="none"
             >
-              <Image
-                ref={isPriority ? undefined : fadeInOnLoad}
-                src={image.src}
-                alt={image.alt}
-                width={image.width}
-                height={image.height}
-                sizes={`(max-width: 767px) calc(100vw - 3rem), ${desktopWidth}`}
-                className="photo-fade block h-auto w-full"
-                loading={isPriority ? "eager" : "lazy"}
-                fetchPriority={isPriority ? "high" : undefined}
-                decoding="async"
-              />
-            </button>
-          </figure>
-        );
-      })}
+              {column.map(({ image, index }) => renderPhoto(image, index))}
+            </div>
+          ))
+        : images.map((image, index) => renderPhoto(image, index))}
     </div>
   );
 }

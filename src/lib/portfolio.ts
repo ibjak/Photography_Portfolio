@@ -34,7 +34,7 @@ export type Gallery = {
   navLabel: string;
   introParagraphs?: readonly string[];
   images: readonly ImageItem[];
-  layout?: "exhibition-wall";
+  layout?: "exhibition-wall" | "masonry";
 };
 
 export type HomeSlide = ImageItem & {
@@ -428,6 +428,7 @@ export const galleries: Record<GalleryKey, Gallery> = {
     title: "Paris Fashion Week 2025",
     navLabel: "Paris Fashion Week",
     images: parisFashionWeekImages,
+    layout: "masonry",
   },
   "uefa-champions-league-winners-2026-psg": {
     key: "uefa-champions-league-winners-2026-psg",
