@@ -21,6 +21,7 @@ import {
   useSwipe,
   wrapIndex,
 } from "./hooks";
+import BodyText from "./BodyText";
 
 type BaseView = "wall" | "sequence";
 
@@ -92,15 +93,11 @@ function ProjectStatement({
 }) {
   return (
     <div
-      className={`mx-auto max-w-[34rem] ${
+      className={`w-full ${
         withRule ? "border-t border-line pt-5" : ""
       }`}
     >
-      <div className="grid gap-4 font-sans text-[14px] leading-6 text-justify text-pretty hyphens-auto [text-align-last:center] md:text-[15px] md:leading-7">
-        {paragraphs.map((paragraph) => (
-          <p key={paragraph}>{paragraph}</p>
-        ))}
-      </div>
+      <BodyText paragraphs={paragraphs} />
     </div>
   );
 }
@@ -266,7 +263,7 @@ export default function GalleryViewer({ gallery }: { gallery: Gallery }) {
       ) : null}
 
       {statement && isExhibitionGallery ? (
-        <div className="mx-auto mt-6 w-full max-w-5xl p-5 md:p-7">
+        <div className="mx-auto mt-6 w-full max-w-6xl py-5 md:py-7">
           <ProjectStatement paragraphs={statement} withRule={false} />
         </div>
       ) : null}
@@ -366,17 +363,11 @@ function PhotoSequence({
     );
   };
 
-  // Masonry: each photo goes in a fixed column, dealt out in sequence
-  // (1, 4, 7 | 2, 5, 8 | 3, 6, 9), so the grid reads across in order and
-  // looks the same in every browser.
+  // Masonry: photos are dealt into columns in sequence, so the grid reads
+  // across in order; see dealIntoColumns. Fixed per gallery, so it looks the
+  // same in every browser.
   const masonryColumns =
-    layout === "masonry"
-      ? Array.from({ length: MASONRY_COLUMNS }, (_, column) =>
-          images
-            .map((image, index) => ({ image, index }))
-            .filter(({ index }) => index % MASONRY_COLUMNS === column),
-        )
-      : null;
+    layout === "masonry" ? dealIntoColumns(images, MASONRY_COLUMNS) : null;
 
   return (
     <div
@@ -397,6 +388,97 @@ function PhotoSequence({
         : images.map((image, index) => renderPhoto(image, index))}
     </div>
   );
+}
+
+// Column heights are measured in column widths. MASONRY_GAP is the gap
+// between photos (2rem) as a share of a column on a laptop (about 20rem).
+const MASONRY_GAP = 0.1;
+// Columns ending within this much of each other look even (about 75px).
+const MASONRY_EVEN = 0.25;
+// A photo may go to any column whose top is at most this far below the
+// shortest one, so the sequence still reads roughly row by row.
+const MASONRY_SLACK = 0.6;
+
+type MasonryCell = { image: ImageItem; index: number };
+
+function spread(heights: readonly number[]) {
+  return Math.max(...heights) - Math.min(...heights);
+}
+
+// Photos 1, 2, 3 start the three columns and 4, 5, 6 go under them, and so
+// on. If that leaves one column hanging well below the others, the photos
+// are instead dealt so the columns end as evenly as possible, each one still
+// going into one of the shortest columns at its turn.
+function dealIntoColumns(
+  images: readonly ImageItem[],
+  count: number,
+): MasonryCell[][] {
+  const heightOf = (image: ImageItem) => image.height / image.width + MASONRY_GAP;
+  const roundRobin = images.map((_, index) => index % count);
+  const roundRobinHeights = Array<number>(count).fill(0);
+  images.forEach((image, index) => {
+    roundRobinHeights[roundRobin[index]] += heightOf(image);
+  });
+
+  const assignment =
+    spread(roundRobinHeights) <= MASONRY_EVEN
+      ? roundRobin
+      : evenAssignment(images.map(heightOf), count);
+
+  const columns = Array.from({ length: count }, () => [] as MasonryCell[]);
+  images.forEach((image, index) => {
+    columns[assignment[index]].push({ image, index });
+  });
+  return columns;
+}
+
+// Finds, photo by photo, the choice of column that leaves the most even
+// bottom edge. Results are remembered by column shape, which keeps it fast.
+function evenAssignment(heights: readonly number[], count: number) {
+  const memo = new Map<string, { spread: number; column: number }>();
+
+  const best = (index: number, columns: number[]): number => {
+    if (index === heights.length) {
+      return spread(columns);
+    }
+    const lowest = Math.min(...columns);
+    const key = `${index}:${columns.map((h) => (h - lowest).toFixed(2))}`;
+    const known = memo.get(key);
+    if (known) {
+      return known.spread;
+    }
+
+    let result = { spread: Infinity, column: 0 };
+    columns.forEach((height, column) => {
+      if (height > lowest + MASONRY_SLACK) {
+        return;
+      }
+      columns[column] += heights[index];
+      const outcome = best(index + 1, columns);
+      columns[column] -= heights[index];
+      // Prefer the shorter, then the leftmost, column when results tie.
+      const current = result.spread === Infinity ? Infinity : columns[result.column];
+      if (
+        outcome < result.spread - 1e-6 ||
+        (Math.abs(outcome - result.spread) <= 1e-6 && height < current - 1e-6)
+      ) {
+        result = { spread: outcome, column };
+      }
+    });
+    memo.set(key, result);
+    return result.spread;
+  };
+
+  const columns = Array<number>(count).fill(0);
+  best(0, columns);
+  // Replay the remembered choices from the first photo to the last.
+  return heights.map((height, index) => {
+    const lowest = Math.min(...columns);
+    const key = `${index}:${columns.map((h) => (h - lowest).toFixed(2))}`;
+    const column = memo.get(key)?.column ?? columns.indexOf(lowest);
+    columns[column] += height;
+    return column;
+  });
 }
 
 function Slideshow({

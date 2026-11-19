@@ -456,6 +456,7 @@ export const galleries: Record<GalleryKey, Gallery> = {
     title: "Dogs",
     navLabel: "Dogs",
     images: dogsImages,
+    layout: "masonry",
   },
 };
 
